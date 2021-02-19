@@ -1,0 +1,226 @@
+<!DOCTYPE html><html lang="zh-TW"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta name="generator" content="Gatsby 2.24.85"/><title data-react-helmet="true">DVD Logo | Hikari personal website</title><meta data-react-helmet="true" name="description" content="A classic bouncing DVD logo. Useful to detect monitor responses time (support 120+ fps) and check if the ghost/blur flaw exist. Although it can be achieved by marquee element, its event listener is no longer available in modern browser."/><meta data-react-helmet="true" property="og:title" content="DVD Logo"/><meta data-react-helmet="true" property="og:description" content="A classic bouncing DVD logo. Useful to detect monitor responses time (support 120+ fps) and check if the ghost/blur flaw exist. Although it can be achieved by marquee element, its event listener is no longer available in modern browser."/><meta data-react-helmet="true" property="og:type" content="website"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:creator" content="Hikari, @gatsbyjs"/><meta data-react-helmet="true" name="twitter:title" content="DVD Logo"/><meta data-react-helmet="true" name="twitter:description" content="A classic bouncing DVD logo. Useful to detect monitor responses time (support 120+ fps) and check if the ghost/blur flaw exist. Although it can be achieved by marquee element, its event listener is no longer available in modern browser."/><meta data-react-helmet="true" name="keywords" content=""/><style data-react-helmet="true">/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol,
+ul {
+  list-style: none; }
+
+blockquote,
+q {
+  quotes: none; }
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+@keyframes udscroll {
+  from {
+    transform: translateY(0px); }
+  to {
+    transform: translateY(calc(100vh - 100%)); } }
+
+@keyframes lrscroll {
+  from {
+    transform: translateX(0px); }
+  to {
+    transform: translateX(calc(100vw - 100%)); } }
+
+.ud {
+  box-sizing: border-box;
+  animation: udscroll 5s linear infinite alternate none; }
+
+.lr {
+  display: inline-block;
+  box-sizing: border-box;
+  animation: lrscroll 8s linear infinite alternate none; }
+
+.control-panel {
+  text-align: left;
+  /* opacity: 0.7; */
+  transition: opacity 0.2s, max-height 0.3s, max-width 0.3s;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border-radius: 0.2rem;
+  color: #135;
+  background-color: #fffa;
+  backdrop-filter: blur(1rem);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 0 0.7rem #0002;
+  max-width: 12rem;
+  max-height: 100vh;
+  overflow: hidden;
+  opacity: 1; }
+  .control-panel.hidden {
+    max-width: 8rem;
+    max-height: 3rem;
+    opacity: 0; }
+    .control-panel.hidden:hover, .control-panel.hidden:focus-within, .control-panel.hidden:focus {
+      opacity: 0.8; }
+
+.control-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid 2px #fff2;
+  font-size: 1.2em;
+  font-weight: 900;
+  color: #333;
+  margin-bottom: 0.5rem; }
+
+.counter {
+  backdrop-filter: blur(1rem);
+  border: 1px #7777 solid;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #777;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem; }
+  .counter > dl > dt {
+    font-size: smaller; }
+  .counter > dl > dd {
+    font-family: "consolas", "Courier New", Courier, monospace;
+    font-size: larger;
+    margin-bottom: 0.5rem; }
+    .counter > dl > dd:last-child {
+      margin-bottom: 0; }
+</style><link rel="icon" href="/homepage/favicon-32x32.png?v=eb615a011db47bd0cdd91675a84b85d7" type="image/png"/><link rel="manifest" href="/homepage/manifest.webmanifest" crossorigin="anonymous"/><meta name="theme-color" content="#8a446b"/><link rel="apple-touch-icon" sizes="48x48" href="/homepage/icons/icon-48x48.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="72x72" href="/homepage/icons/icon-72x72.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="96x96" href="/homepage/icons/icon-96x96.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="144x144" href="/homepage/icons/icon-144x144.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="192x192" href="/homepage/icons/icon-192x192.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="256x256" href="/homepage/icons/icon-256x256.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="384x384" href="/homepage/icons/icon-384x384.png?v=eb615a011db47bd0cdd91675a84b85d7"/><link rel="apple-touch-icon" sizes="512x512" href="/homepage/icons/icon-512x512.png?v=eb615a011db47bd0cdd91675a84b85d7"/><style id="jss-server-side">.MuiSvgIcon-root{fill:currentColor;width:1em;height:1em;display:inline-block;font-size:1.5rem;transition:fill .2s cubic-bezier(.4,0,.2,1) 0s;flex-shrink:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.MuiSvgIcon-colorPrimary{color:#3f51b5}.MuiSvgIcon-colorSecondary{color:#f50057}.MuiSvgIcon-colorAction{color:rgba(0,0,0,.54)}.MuiSvgIcon-colorError{color:#f44336}.MuiSvgIcon-colorDisabled{color:rgba(0,0,0,.26)}.MuiSvgIcon-fontSizeInherit{font-size:inherit}.MuiSvgIcon-fontSizeSmall{font-size:1.25rem}.MuiSvgIcon-fontSizeLarge{font-size:2.1875rem}.MuiButtonBase-root{color:inherit;border:0;cursor:pointer;margin:0;display:inline-flex;outline:0;padding:0;position:relative;align-items:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-radius:0;vertical-align:middle;-moz-appearance:none;justify-content:center;text-decoration:none;background-color:transparent;-webkit-appearance:none;-webkit-tap-highlight-color:transparent}.MuiButtonBase-root::-moz-focus-inner{border-style:none}.MuiButtonBase-root.Mui-disabled{cursor:default;pointer-events:none}@media print{.MuiButtonBase-root{-webkit-print-color-adjust:exact;color-adjust:exact}}.MuiIconButton-root{flex:0 0 auto;color:rgba(0,0,0,.54);padding:12px;overflow:visible;font-size:1.5rem;text-align:center;transition:background-color 150ms cubic-bezier(.4,0,.2,1) 0s;border-radius:50%}.MuiIconButton-root:hover{background-color:rgba(0,0,0,.04)}.MuiIconButton-root.Mui-disabled{color:rgba(0,0,0,.26);background-color:transparent}@media (hover:none){.MuiIconButton-root:hover{background-color:transparent}}.MuiIconButton-edgeStart{margin-left:-12px}.MuiIconButton-sizeSmall.MuiIconButton-edgeStart{margin-left:-3px}.MuiIconButton-edgeEnd{margin-right:-12px}.MuiIconButton-sizeSmall.MuiIconButton-edgeEnd{margin-right:-3px}.MuiIconButton-colorInherit{color:inherit}.MuiIconButton-colorPrimary{color:#3f51b5}.MuiIconButton-colorPrimary:hover{background-color:rgba(63,81,181,.04)}@media (hover:none){.MuiIconButton-colorPrimary:hover{background-color:transparent}}.MuiIconButton-colorSecondary{color:#f50057}.MuiIconButton-colorSecondary:hover{background-color:rgba(245,0,87,.04)}@media (hover:none){.MuiIconButton-colorSecondary:hover{background-color:transparent}}.MuiIconButton-sizeSmall{padding:3px;font-size:1.125rem}.MuiIconButton-label{width:100%;display:flex;align-items:inherit;justify-content:inherit}.MuiTypography-root{margin:0}.MuiTypography-body2{font-size:.875rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.43;letter-spacing:.01071em}.MuiTypography-body1{font-size:1rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.5;letter-spacing:.00938em}.MuiTypography-caption{font-size:.75rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.66;letter-spacing:.03333em}.MuiTypography-button{font-size:.875rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:500;line-height:1.75;letter-spacing:.02857em;text-transform:uppercase}.MuiTypography-h1{font-size:6rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:300;line-height:1.167;letter-spacing:-.01562em}.MuiTypography-h2{font-size:3.75rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:300;line-height:1.2;letter-spacing:-.00833em}.MuiTypography-h3{font-size:3rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.167;letter-spacing:0}.MuiTypography-h4{font-size:2.125rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.235;letter-spacing:.00735em}.MuiTypography-h5{font-size:1.5rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.334;letter-spacing:0}.MuiTypography-h6{font-size:1.25rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:500;line-height:1.6;letter-spacing:.0075em}.MuiTypography-subtitle1{font-size:1rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.75;letter-spacing:.00938em}.MuiTypography-subtitle2{font-size:.875rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:500;line-height:1.57;letter-spacing:.00714em}.MuiTypography-overline{font-size:.75rem;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:2.66;letter-spacing:.08333em;text-transform:uppercase}.MuiTypography-srOnly{width:1px;height:1px;overflow:hidden;position:absolute}.MuiTypography-alignLeft{text-align:left}.MuiTypography-alignCenter{text-align:center}.MuiTypography-alignRight{text-align:right}.MuiTypography-alignJustify{text-align:justify}.MuiTypography-noWrap{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.MuiTypography-gutterBottom{margin-bottom:.35em}.MuiTypography-paragraph{margin-bottom:16px}.MuiTypography-colorInherit{color:inherit}.MuiTypography-colorPrimary{color:#3f51b5}.MuiTypography-colorSecondary{color:#f50057}.MuiTypography-colorTextPrimary{color:rgba(0,0,0,.87)}.MuiTypography-colorTextSecondary{color:rgba(0,0,0,.54)}.MuiTypography-colorError{color:#f44336}.MuiTypography-displayInline{display:inline}.MuiTypography-displayBlock{display:block}.jss6{padding:9px}.jss9{top:0;left:0;width:100%;cursor:inherit;height:100%;margin:0;opacity:0;padding:0;z-index:1;position:absolute}.MuiFormControlLabel-root{cursor:pointer;display:inline-flex;align-items:center;margin-left:-11px;margin-right:16px;vertical-align:middle;-webkit-tap-highlight-color:transparent}.MuiFormControlLabel-root.Mui-disabled{cursor:default}.MuiFormControlLabel-labelPlacementStart{margin-left:16px;margin-right:-11px;flex-direction:row-reverse}.MuiFormControlLabel-labelPlacementTop{margin-left:16px;flex-direction:column-reverse}.MuiFormControlLabel-labelPlacementBottom{margin-left:16px;flex-direction:column}.MuiFormControlLabel-label.Mui-disabled{color:rgba(0,0,0,.38)}.jss1.jss2 .jss3{transform:scale(1) translateY(-10px)}.jss3{top:-34px;z-index:1;position:absolute;font-size:.75rem;transform:scale(0);transition:transform 150ms cubic-bezier(.4,0,.2,1) 0s;font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.2;letter-spacing:.01071em;transform-origin:bottom center}.jss4{width:32px;height:32px;display:flex;transform:rotate(-45deg);align-items:center;border-radius:50% 50% 50% 0;justify-content:center;background-color:currentColor}.jss5{color:#fff;transform:rotate(45deg)}.MuiSlider-root{color:#3f51b5;width:100%;cursor:pointer;height:2px;display:inline-block;padding:13px 0;position:relative;box-sizing:content-box;touch-action:none;-webkit-tap-highlight-color:transparent}.MuiSlider-root.Mui-disabled{color:#bdbdbd;cursor:default;pointer-events:none}.MuiSlider-root.MuiSlider-vertical{width:2px;height:100%;padding:0 13px}@media (pointer:coarse){.MuiSlider-root{padding:20px 0}.MuiSlider-root.MuiSlider-vertical{padding:0 20px}}@media print{.MuiSlider-root{-webkit-print-color-adjust:exact;color-adjust:exact}}.MuiSlider-colorSecondary{color:#f50057}.MuiSlider-marked{margin-bottom:20px}.MuiSlider-marked.MuiSlider-vertical{margin-right:20px;margin-bottom:auto}.MuiSlider-rail{width:100%;height:2px;display:block;opacity:.38;position:absolute;border-radius:1px;background-color:currentColor}.MuiSlider-vertical .MuiSlider-rail{width:2px;height:100%}.MuiSlider-track{height:2px;display:block;position:absolute;border-radius:1px;background-color:currentColor}.MuiSlider-vertical .MuiSlider-track{width:2px}.MuiSlider-trackFalse .MuiSlider-track{display:none}.MuiSlider-trackInverted .MuiSlider-track{background-color:#b6bce2}.MuiSlider-trackInverted .MuiSlider-rail{opacity:1}.MuiSlider-thumb{width:12px;height:12px;display:flex;outline:0;position:absolute;box-sizing:border-box;margin-top:-5px;transition:box-shadow 150ms cubic-bezier(.4,0,.2,1) 0s;align-items:center;margin-left:-6px;border-radius:50%;justify-content:center;background-color:currentColor}.MuiSlider-thumb::after{top:-15px;left:-15px;right:-15px;bottom:-15px;content:"";position:absolute;border-radius:50%}.MuiSlider-thumb.Mui-focusVisible,.MuiSlider-thumb:hover{box-shadow:0 0 0 8px rgba(63,81,181,.16)}.MuiSlider-thumb.MuiSlider-active{box-shadow:0 0 0 14px rgba(63,81,181,.16)}.MuiSlider-thumb.Mui-disabled{width:8px;height:8px;margin-top:-3px;margin-left:-4px}.MuiSlider-vertical .MuiSlider-thumb{margin-left:-5px;margin-bottom:-6px}.MuiSlider-vertical .MuiSlider-thumb.Mui-disabled{margin-left:-3px;margin-bottom:-4px}.MuiSlider-thumb.Mui-disabled:hover{box-shadow:none}@media (hover:none){.MuiSlider-thumb.Mui-focusVisible,.MuiSlider-thumb:hover{box-shadow:none}}.MuiSlider-thumbColorSecondary.Mui-focusVisible,.MuiSlider-thumbColorSecondary:hover{box-shadow:0 0 0 8px rgba(245,0,87,.16)}.MuiSlider-thumbColorSecondary.MuiSlider-active{box-shadow:0 0 0 14px rgba(245,0,87,.16)}.MuiSlider-valueLabel{left:calc(-50% - 4px)}.MuiSlider-mark{width:2px;height:2px;position:absolute;border-radius:1px;background-color:currentColor}.MuiSlider-markActive{opacity:.8;background-color:#fff}.MuiSlider-markLabel{top:26px;color:rgba(0,0,0,.54);position:absolute;font-size:.875rem;transform:translateX(-50%);font-family:Roboto,Helvetica,Arial,sans-serif;font-weight:400;line-height:1.43;white-space:nowrap;letter-spacing:.01071em}.MuiSlider-vertical .MuiSlider-markLabel{top:auto;left:26px;transform:translateY(50%)}@media (pointer:coarse){.MuiSlider-markLabel{top:40px}.MuiSlider-vertical .MuiSlider-markLabel{left:31px}}.MuiSlider-markLabelActive{color:rgba(0,0,0,.87)}.MuiSwitch-root{width:58px;height:38px;display:inline-flex;padding:12px;z-index:0;overflow:hidden;position:relative;box-sizing:border-box;flex-shrink:0;vertical-align:middle}@media print{.MuiSwitch-root{-webkit-print-color-adjust:exact;color-adjust:exact}}.MuiSwitch-edgeStart{margin-left:-8px}.MuiSwitch-edgeEnd{margin-right:-8px}.MuiSwitch-switchBase{top:0;left:0;color:#fafafa;z-index:1;position:absolute;transition:left 150ms cubic-bezier(.4,0,.2,1) 0s,transform 150ms cubic-bezier(.4,0,.2,1) 0s}.MuiSwitch-switchBase.Mui-checked{transform:translateX(20px)}.MuiSwitch-switchBase.Mui-disabled{color:#bdbdbd}.MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track{opacity:.5}.MuiSwitch-switchBase.Mui-disabled+.MuiSwitch-track{opacity:.12}.MuiSwitch-colorPrimary.Mui-checked{color:#3f51b5}.MuiSwitch-colorPrimary.Mui-disabled{color:#bdbdbd}.MuiSwitch-colorPrimary.Mui-checked+.MuiSwitch-track{background-color:#3f51b5}.MuiSwitch-colorPrimary.Mui-disabled+.MuiSwitch-track{background-color:#000}.MuiSwitch-colorPrimary.Mui-checked:hover{background-color:rgba(63,81,181,.04)}@media (hover:none){.MuiSwitch-colorPrimary.Mui-checked:hover{background-color:transparent}}.MuiSwitch-colorSecondary.Mui-checked{color:#f50057}.MuiSwitch-colorSecondary.Mui-disabled{color:#bdbdbd}.MuiSwitch-colorSecondary.Mui-checked+.MuiSwitch-track{background-color:#f50057}.MuiSwitch-colorSecondary.Mui-disabled+.MuiSwitch-track{background-color:#000}.MuiSwitch-colorSecondary.Mui-checked:hover{background-color:rgba(245,0,87,.04)}@media (hover:none){.MuiSwitch-colorSecondary.Mui-checked:hover{background-color:transparent}}.MuiSwitch-sizeSmall{width:40px;height:24px;padding:7px}.MuiSwitch-sizeSmall .MuiSwitch-thumb{width:16px;height:16px}.MuiSwitch-sizeSmall .MuiSwitch-switchBase{padding:4px}.MuiSwitch-sizeSmall .MuiSwitch-switchBase.Mui-checked{transform:translateX(16px)}.MuiSwitch-input{left:-100%;width:300%}.MuiSwitch-thumb{width:20px;height:20px;box-shadow:0 2px 1px -1px rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 1px 3px 0 rgba(0,0,0,.12);border-radius:50%;background-color:currentColor}.MuiSwitch-track{width:100%;height:100%;opacity:.38;z-index:-1;transition:opacity 150ms cubic-bezier(.4,0,.2,1) 0s,background-color 150ms cubic-bezier(.4,0,.2,1) 0s;border-radius:7px;background-color:#000}</style><link as="script" rel="preload" href="/homepage/webpack-runtime-dd6b2f83b2693850e107.js"/><link as="script" rel="preload" href="/homepage/framework-24550811a610052cdff3.js"/><link as="script" rel="preload" href="/homepage/app-d1dfad1e3ea0ab34995a.js"/><link as="script" rel="preload" href="/homepage/76903770211f71fe49dc99a4cdf303a7dab502a9-862e190b8033ceca52ab.js"/><link as="script" rel="preload" href="/homepage/128309949df46654b2ec8304dce721c438d8a107-6afd931a4a45089ff92f.js"/><link as="script" rel="preload" href="/homepage/4e7b6cd02ac212e9e45bfd9e27cc66b7f99dcdfa-5fb1eb0e6661e3631105.js"/><link as="script" rel="preload" href="/homepage/component---src-pages-dvd-logo-js-98bbfa35c01411d21844.js"/><link as="fetch" rel="preload" href="/homepage/page-data\dvd-logo\page-data.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/homepage/page-data/sq/d/63159454.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/homepage/page-data\app-data.json" crossorigin="anonymous"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div style="position:relative;display:block;width:100vw;height:100vh;background:black;overflow:hidden" id="dvd-logo-container"><div class="ud" id="bouncer"><div class="lr"><style id="logo-color">
+.ud{
+  color: #ffffff;
+}
+.lr &gt; div &gt; span{
+  background-color: #ffffff;
+}
+</style><style>
+.ud{
+  animation-duration: 4.266666666666667s;
+  
+  
+}
+.lr {
+  animation-duration: 5.688888888888889s;
+  
+  
+}
+.lr &gt; div &gt; span{
+  color: black;
+}
+.lr &gt; div {
+  font-size: 8rem;
+}
+</style><div style="display:inline-block;position:relative;font-weight:900;font-style:italic;font-family:consolas,sans-serif;transition:font-size 0.1s linear"><span style="display:block;color:inherit;background:none;line-height:0.3em;transform:scaleY(0.5)">DVD</span><span style="display:block;font-size:0.2em;border-radius:50%;text-align:center;letter-spacing:0.3em;line-height:1em;transform:scaleY(0.7) translateY(15%)">VIDEO</span></div></div></div><div class="control-panel"><div class="control-header"><span>Setting</span><button class="MuiButtonBase-root MuiIconButton-root" tabindex="0" type="button" aria-label="show control"><span class="MuiIconButton-label"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg></span></button></div><form class="control-form" novalidate="" autoComplete="off"><p class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom">Logo Size</p><span class="MuiSlider-root MuiSlider-colorPrimary"><span class="MuiSlider-rail"></span><span class="MuiSlider-track" style="left:0%;width:18.51851851851852%"></span><input type="hidden" value="8"/><span class="MuiSlider-thumb MuiSlider-thumbColorPrimary" tabindex="0" role="slider" style="left:18.51851851851852%" data-index="0" aria-labelledby="size-slider" aria-orientation="horizontal" aria-valuemax="30" aria-valuemin="3" aria-valuenow="8"></span></span><p class="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom">Speed</p><span class="MuiSlider-root MuiSlider-colorPrimary"><span class="MuiSlider-rail"></span><span class="MuiSlider-track" style="left:0%;width:28.571428571428573%"></span><input type="hidden" value="15"/><span class="MuiSlider-thumb MuiSlider-thumbColorPrimary" tabindex="0" role="slider" style="left:28.571428571428573%" data-index="0" aria-labelledby="speed-slider" aria-orientation="horizontal" aria-valuemax="50" aria-valuemin="1" aria-valuenow="15"></span></span><label class="MuiFormControlLabel-root"><span class="MuiSwitch-root"><span class="MuiButtonBase-root MuiIconButton-root jss6 MuiSwitch-switchBase MuiSwitch-colorPrimary" aria-disabled="false"><span class="MuiIconButton-label"><input type="checkbox" class="jss9 MuiSwitch-input" name="outline"/><span class="MuiSwitch-thumb"></span></span></span><span class="MuiSwitch-track"></span></span><span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">Outline</span></label><label class="MuiFormControlLabel-root"><span class="MuiSwitch-root"><span class="MuiButtonBase-root MuiIconButton-root jss6 MuiSwitch-switchBase MuiSwitch-colorPrimary jss7 Mui-checked" aria-disabled="false"><span class="MuiIconButton-label"><input type="checkbox" checked="" class="jss9 MuiSwitch-input" name="Play"/><span class="MuiSwitch-thumb"></span></span></span><span class="MuiSwitch-track"></span></span><span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">Play</span></label><label class="MuiFormControlLabel-root"><span class="MuiSwitch-root"><span class="MuiButtonBase-root MuiIconButton-root jss6 MuiSwitch-switchBase MuiSwitch-colorPrimary" aria-disabled="false"><span class="MuiIconButton-label"><input type="checkbox" class="jss9 MuiSwitch-input" name="Status"/><span class="MuiSwitch-thumb"></span></span></span><span class="MuiSwitch-track"></span></span><span class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1">Status</span></label><button class="MuiButtonBase-root MuiIconButton-root" tabindex="0" type="button" aria-label="Clear Status"><span class="MuiIconButton-label"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg></span></button></form></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="__LOADABLE_REQUIRED_CHUNKS__" type="application/json">[]</script><script id="__LOADABLE_REQUIRED_CHUNKS___ext" type="application/json">{"namedChunks":[]}</script><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/dvd-logo/";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-02bb231c5be2991cfad6.js"],"app":["/app-d1dfad1e3ea0ab34995a.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-ab655e2d29cb98540fe8.js"],"component---src-pages-404-js":["/component---src-pages-404-js-a7d30fe44dc6708f4bd7.js"],"component---src-pages-business-card-index-js":["/component---src-pages-business-card-index-js-6295ccd4e9fa2b5585eb.js"],"component---src-pages-dvd-logo-js":["/component---src-pages-dvd-logo-js-98bbfa35c01411d21844.js"],"component---src-pages-gradient-wallpaper-js":["/component---src-pages-gradient-wallpaper-js-cdd350b83cde6d411ac5.js"],"component---src-pages-index-js":["/component---src-pages-index-js-6a24be6eaf02b487ae85.js"],"component---src-pages-jko-js":["/component---src-pages-jko-js-94e0b1c7c13801c7669a.js"],"component---src-pages-screen-js":["/component---src-pages-screen-js-4f44821f7717f69e136c.js"],"component---src-pages-symbols-js":["/component---src-pages-symbols-js-88a49aef8f6813845787.js"],"components-homepage-model":["/components-homepage-model-f4a43d7b7a2629205ebf.js"]};/*]]>*/</script><script src="/homepage/polyfill-02bb231c5be2991cfad6.js" nomodule=""></script><script src="/homepage/component---src-pages-dvd-logo-js-98bbfa35c01411d21844.js" async=""></script><script src="/homepage/4e7b6cd02ac212e9e45bfd9e27cc66b7f99dcdfa-5fb1eb0e6661e3631105.js" async=""></script><script src="/homepage/128309949df46654b2ec8304dce721c438d8a107-6afd931a4a45089ff92f.js" async=""></script><script src="/homepage/76903770211f71fe49dc99a4cdf303a7dab502a9-862e190b8033ceca52ab.js" async=""></script><script src="/homepage/app-d1dfad1e3ea0ab34995a.js" async=""></script><script src="/homepage/framework-24550811a610052cdff3.js" async=""></script><script src="/homepage/webpack-runtime-dd6b2f83b2693850e107.js" async=""></script></body></html>
