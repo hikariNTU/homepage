@@ -1,1 +1,5 @@
-{"componentChunkName":"component---src-pages-dvd-logo-js","path":"/dvd-logo/","result":{"pageContext":{}},"staticQueryHashes":["63159454"]}
+{
+    "componentChunkName": "component---src-pages-dvd-logo-jsx",
+    "path": "/dvd-logo/",
+    "result": {"pageContext":{}},
+    "staticQueryHashes": ["63159454"]}

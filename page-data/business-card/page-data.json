@@ -1,1 +1,5 @@
-{"componentChunkName":"component---src-pages-business-card-index-js","path":"/business-card/","result":{"pageContext":{}},"staticQueryHashes":["2394858992","63159454"]}
+{
+    "componentChunkName": "component---src-pages-business-card-index-jsx",
+    "path": "/business-card/",
+    "result": {"pageContext":{}},
+    "staticQueryHashes": ["63159454"]}

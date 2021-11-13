@@ -1,1 +1,5 @@
-{"componentChunkName":"component---src-pages-screen-js","path":"/screen/","result":{"pageContext":{}},"staticQueryHashes":["63159454"]}
+{
+    "componentChunkName": "component---src-pages-screen-jsx",
+    "path": "/screen/",
+    "result": {"pageContext":{}},
+    "staticQueryHashes": ["63159454"]}

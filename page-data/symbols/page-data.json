@@ -1,1 +1,5 @@
-{"componentChunkName":"component---src-pages-symbols-js","path":"/symbols/","result":{"pageContext":{}},"staticQueryHashes":["63159454"]}
+{
+    "componentChunkName": "component---src-pages-symbols-jsx",
+    "path": "/symbols/",
+    "result": {"pageContext":{}},
+    "staticQueryHashes": ["63159454"]}
