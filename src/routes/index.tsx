@@ -5,12 +5,12 @@ import waveHorImg from "@/assets/wave-hor.svg";
 import waveImg from "@/assets/wave.svg";
 import { OtherSites } from "@/components/other-site";
 import { TooltipWrap } from "@/components/tooltip";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Suspense, lazy } from "react";
 import { Fragment } from "react/jsx-runtime";
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createFileRoute("/")({
   component: Homepage,
 });
 
