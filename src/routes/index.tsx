@@ -30,7 +30,7 @@ function Homepage() {
           aria-orientation="vertical"
           className="absolute right-4 top-0 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden"
           style={{
-            backgroundImage: `url(${waveImg})`,
+            backgroundImage: `url("${waveImg}")`,
             backgroundSize: "10px",
           }}
         ></hr>
@@ -349,7 +349,7 @@ function Footer() {
       <hr
         className="h-2.5 w-full border-none bg-repeat-x object-cover"
         style={{
-          backgroundImage: `url(${waveHorImg})`,
+          backgroundImage: `url("${waveHorImg}")`,
         }}
       ></hr>
       <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-[#bab8b4] md:mb-0">
