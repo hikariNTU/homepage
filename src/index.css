@@ -56,3 +56,26 @@ model-viewer {
   --progress-bar-height: 0.2rem;
   /* border: dashed #3333 0.1rem; */
 }
+
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(249, 246, 242);
+}
+
+::-webkit-scrollbar-track:hover {
+  background: #0001;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(138, 68, 107, 0.4);
+  border-radius: 8px;
+  border: solid 3px rgb(249, 246, 242);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(138, 68, 107);
+  border-width: 2px;
+}

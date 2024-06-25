@@ -40,6 +40,13 @@ export const TooltipWrap = forwardRef<
         <PopoverContent
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault();
+          }}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+          }}
+          side="top"
           ref={ref}
           sideOffset={4}
           className={clsx(

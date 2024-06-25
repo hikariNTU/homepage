@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 export function OtherSites() {
   return (
-    <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-x-2 gap-y-6 overflow-hidden max-md:px-4">
+    <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-x-2 gap-y-6 max-md:px-4">
       {sites.map((site) => (
         <Link
           to={site.href}

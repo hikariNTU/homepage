@@ -37,7 +37,7 @@ function Homepage() {
         ></hr>
       </div>
       <div className="md:p-12">
-        <div className="md:wave-border">
+        <div className="wave-border max-md:mx-4">
           <img
             src="./lake_orange.webp"
             alt="Lake Img"

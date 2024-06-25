@@ -15,7 +15,7 @@ function ModelsViewer() {
     <div className="flex w-full min-w-0 flex-col gap-4 p-2">
       {models.map((m) => (
         <div key={m.src}>
-          <div className="lato mb-1 flex items-start justify-between text-sm text-main-800">
+          <div className="lato mb-1 flex items-start justify-between text-sm text-main-900">
             {m.title}
             {m.description && (
               <TooltipWrap content={m.description} className="max-w-96 !p-6">
@@ -45,7 +45,7 @@ function ModelsViewer() {
               slot="poster"
               src={m.poster}
               alt=""
-              className="h-full w-full cursor-pointer object-contain"
+              className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80"
             />
             {m.hotspots.map(({ text, ...data }, index) => {
               const uid = `hotspot-${index + 1}`;
