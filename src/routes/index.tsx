@@ -316,30 +316,29 @@ function SkillSet() {
             </h3>
             <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
               {set.skills.map((skill) => (
-                <TooltipWrap
-                  className="text-light max-w-96 !p-6"
-                  content={skill.desc || "..."}
-                  key={skill.name}
-                >
-                  <li
-                    className="lato flex cursor-help gap-1 rounded-xl px-2 py-1 text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800"
-                    tabIndex={0}
+                <li>
+                  <TooltipWrap
+                    className="text-light max-w-96 !p-6"
+                    content={skill.desc || "..."}
+                    key={skill.name}
                   >
-                    {
-                      <img
-                        width={20}
-                        height={20}
-                        src={
-                          skillIcons[
-                            `../assets/skill_icon/icon-${skill.icon}.svg`
-                          ]?.default
-                        }
-                        alt=""
-                      />
-                    }
-                    {skill.name}
-                  </li>
-                </TooltipWrap>
+                    <button className="lato flex cursor-help items-center gap-1 rounded-xl px-2 py-1 text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800">
+                      {
+                        <img
+                          width={20}
+                          height={20}
+                          src={
+                            skillIcons[
+                              `../assets/skill_icon/icon-${skill.icon}.svg`
+                            ]?.default
+                          }
+                          alt=""
+                        />
+                      }
+                      {skill.name}
+                    </button>
+                  </TooltipWrap>
+                </li>
               ))}
             </ul>
           </Fragment>
