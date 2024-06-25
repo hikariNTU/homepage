@@ -1,4 +1,3 @@
-import lakeOrangeImg from "@/assets/lake_orange.webp";
 import nameImg from "@/assets/sider.webp";
 import waveBlockImg from "@/assets/wave-block.svg";
 import waveHorImg from "@/assets/wave-hor.svg";
@@ -23,8 +22,10 @@ function Homepage() {
       <div className="top-0 flex h-screen items-center justify-center md:sticky">
         <img
           src={nameImg}
-          width={150}
+          width={409}
+          height={1440}
           className="mx-16 my-10 max-w-[150px] xl:mx-[5vw]"
+          alt="Dennis Chung Personal webpage"
         />
         <hr
           aria-orientation="vertical"
@@ -37,7 +38,12 @@ function Homepage() {
       </div>
       <div className="md:p-12">
         <div className="md:wave-border">
-          <img src={lakeOrangeImg} alt="Lake Img" />
+          <img
+            src="./lake_orange.webp"
+            alt="Lake Img"
+            width={2588}
+            height={840}
+          />
         </div>
 
         <div className="flex flex-col gap-4 xl:grid xl:grid-cols-2">
@@ -352,17 +358,17 @@ function Footer() {
           backgroundImage: `url("${waveHorImg}")`,
         }}
       ></hr>
-      <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-[#bab8b4] md:mb-0">
+      <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0">
         <a
           href="https://www.linkedin.com/in/dennis-chung-tw/"
-          className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-[#aaa8a4]"
+          className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800"
         >
           <LinkedInIcon />
           LINKEDIN
         </a>
         <a
           href="https://github.com/hikariNTU"
-          className="flex items-center gap-1 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-[#aaa8a4]"
+          className="flex items-center gap-1 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800"
         >
           <GithubIcon />
           GITHUB
