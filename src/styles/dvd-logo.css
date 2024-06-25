@@ -1,0 +1,29 @@
+@keyframes udscroll {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(calc(100vh - 100%));
+  }
+}
+
+@keyframes lrscroll {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(100vw - 100%));
+  }
+}
+
+.ud {
+  box-sizing: border-box;
+
+  animation: udscroll 5s linear infinite alternate none;
+}
+
+.lr {
+  display: inline-block;
+  box-sizing: border-box;
+  animation: lrscroll 8s linear infinite alternate none;
+}
