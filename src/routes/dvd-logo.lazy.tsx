@@ -2,6 +2,24 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import "@/styles/dvd-logo.css";
+import {
+  CheckIcon,
+  GaugeIcon,
+  PauseIcon,
+  PinIcon,
+  PinOffIcon,
+  PlayIcon,
+  RotateCcwIcon,
+  SettingsIcon,
+  ShrinkIcon,
+} from "lucide-react";
+import {
+  Slider,
+  SliderRange,
+  SliderThumb,
+  SliderTrack,
+} from "@radix-ui/react-slider";
+import { Checkbox, CheckboxIndicator } from "@radix-ui/react-checkbox";
 
 export const Route = createLazyFileRoute("/dvd-logo")({
   component: () => <DVD />,
@@ -34,7 +52,7 @@ const DVD = () => {
 
   const [speed, setSpeed] = useState(15);
   const [size, setSize] = useState(8);
-  const [outline, setOutline] = useState(true);
+  const [outline, setOutline] = useState(false);
   const [paused, setPaused] = useState(false);
   const [showPanel, setShowPanel] = useState(true);
   const [count, setCount] = useState(0);
@@ -94,6 +112,118 @@ const DVD = () => {
     };
   }, []);
 
+  const ControlPanel = (
+    <div
+      className={clsx(
+        "absolute right-4 top-4 flex flex-col overflow-hidden rounded-lg bg-neutral-100/80 p-4 font-bold text-neutral-700 transition-opacity",
+        {
+          "opacity-100": showPanel,
+          "opacity-0 focus-within:opacity-30 hover:opacity-30": !showPanel,
+        },
+      )}
+    >
+      <div className="flex justify-between">
+        <h1 className="mb-4 flex items-center gap-1 font-bold uppercase">
+          <SettingsIcon size={18} />
+          Setting
+        </h1>
+        <button
+          onClick={() => {
+            setShowPanel((v) => !v);
+          }}
+          className="absolute right-4 top-4 text-neutral-400 hover:text-neutral-900"
+        >
+          {showPanel ? <PinIcon /> : <PinOffIcon />}
+        </button>
+      </div>
+      <label className="mb-2 flex flex-col">
+        <span className="flex items-center gap-1 text-sm uppercase">
+          <GaugeIcon size={16} /> Speed
+        </span>
+        <Slider
+          value={[speed]}
+          onValueChange={([v]) => {
+            setSpeed(v);
+          }}
+          className="relative flex h-5 w-[160px] touch-none select-none items-center"
+          min={1}
+          step={1}
+          max={50}
+        >
+          <SliderTrack className="relative h-[3px] grow rounded-full bg-neutral-400">
+            <SliderRange className="absolute h-full rounded-full bg-white" />
+          </SliderTrack>
+          <SliderThumb
+            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-none"
+            aria-label="Volume"
+          />
+        </Slider>
+      </label>
+
+      <label className="mb-2 flex flex-col">
+        <span className="flex items-center gap-1 text-sm uppercase">
+          <ShrinkIcon size={16} /> Size
+        </span>
+        <Slider
+          value={[size]}
+          onValueChange={([z]) => {
+            setSize(z);
+          }}
+          className="relative flex h-5 w-[160px] touch-none select-none items-center"
+          min={3}
+          step={0.1}
+          max={30}
+        >
+          <SliderTrack className="relative h-[3px] grow rounded-full bg-neutral-400">
+            <SliderRange className="absolute h-full rounded-full bg-white" />
+          </SliderTrack>
+          <SliderThumb
+            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-none"
+            aria-label="Volume"
+          />
+        </Slider>
+      </label>
+
+      <label className="mb-2 flex items-center justify-between gap-2 text-sm">
+        Show Line
+        <Checkbox
+          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          checked={outline}
+          onCheckedChange={(e) => {
+            if (e === "indeterminate") {
+              setOutline(false);
+              return;
+            }
+            setOutline(e);
+          }}
+        >
+          <CheckboxIndicator>
+            <CheckIcon size={12} />
+          </CheckboxIndicator>
+        </Checkbox>
+      </label>
+
+      <label className="mb-2 flex items-center justify-between gap-2 text-sm">
+        Show Status
+        <Checkbox
+          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          checked={showStatus}
+          onCheckedChange={(e) => {
+            if (e === "indeterminate") {
+              setShowStatus(false);
+              return;
+            }
+            setShowStatus(e);
+          }}
+        >
+          <CheckboxIndicator>
+            <CheckIcon size={12} />
+          </CheckboxIndicator>
+        </Checkbox>
+      </label>
+    </div>
+  );
+
   return (
     <div
       className="relative h-screen w-screen overflow-hidden bg-black"
@@ -126,99 +256,33 @@ const DVD = () => {
         </div>
       </div>
 
-      {/* <div className={`control-panel${!showPanel ? "hidden" : ""}`}>
-        <div className="control-header">
-          <span>Setting</span>
-          <IconButton
-            aria-label="show control"
-            onClick={(e) => setShowPanel(!showPanel)}
-            size="large"
-          >
-            {showPanel ? (
-              <Visibility fontSize="small" />
-            ) : (
-              <VisibilityOff fontSize="small" />
-            )}
-          </IconButton>
-        </div>
-        <form className="control-form" noValidate autoComplete="off">
-          <Typography gutterBottom>Logo Size</Typography>
-          <Slider
-            value={size}
-            onChange={(e, v) => setSize(Number(v))}
-            aria-labelledby="size-slider"
-            min={3}
-            step={0.1}
-            max={30}
-          />
-          <Typography gutterBottom>Speed</Typography>
-          <Slider
-            value={speed}
-            onChange={(e, v) => setSpeed(Number(v))}
-            aria-labelledby="speed-slider"
-            min={1}
-            step={1}
-            max={50}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={outline}
-                onChange={(e) => {
-                  setOutline(!outline);
-                }}
-                name="outline"
-                color="primary"
-              />
-            }
-            label="Outline"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={!paused}
-                onChange={(e) => {
-                  setPaused(!paused);
-                }}
-                name="Play"
-                color="primary"
-              />
-            }
-            label="Play"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showStatus}
-                onChange={(e) => {
-                  setShowStatus(!showStatus);
-                }}
-                name="Status"
-                color="primary"
-              />
-            }
-            label="Status"
-          />
-          <IconButton
-            aria-label="Clear Status"
-            onClick={clearCount}
-            size="large"
-          >
-            <RefreshIcon fontSize="small" />
-          </IconButton>
-        </form>
-      </div>
+      {/* Panel */}
+      {ControlPanel}
 
-      <Slide direction="up" in={showStatus} mountOnEnter unmountOnExit appear>
-        <div className="counter">
-          <dl>
+      {showStatus && (
+        <div className="absolute bottom-4 left-4 rounded-lg border border-neutral-700 p-4 text-neutral-400">
+          <dl className="mb-4">
             <dt>Bounce</dt>
             <dd>{count}</dd>
             <dt>Hit Corner</dt>
             <dd>{hit}</dd>
           </dl>
+          <button
+            className="rounded p-2 hover:bg-neutral-700"
+            onClick={() => {
+              setPaused((p) => !p);
+            }}
+          >
+            {paused ? <PlayIcon /> : <PauseIcon />}
+          </button>
+          <button
+            className="rounded p-2 hover:bg-neutral-700"
+            onClick={clearCount}
+          >
+            <RotateCcwIcon />
+          </button>
         </div>
-      </Slide> */}
+      )}
     </div>
   );
 };

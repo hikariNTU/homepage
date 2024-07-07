@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@google/model-viewer": "^3.5.0",
+    "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-slider": "^1.2.0",
     "@tanstack/react-router": "^1.39.4",
     "clsx": "^2.1.1",
     "jotai": "^2.8.4",
+    "lucide-react": "^0.400.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "swiper": "^11.1.4"
