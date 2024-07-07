@@ -24,8 +24,7 @@ function Gallery() {
 
         pagination: true,
         slideToClickedSlide: true,
-        initialSlide: 1,
-        loop: true,
+        initialSlide: 3,
       };
       Object.assign(swiperRef.current, params);
 
