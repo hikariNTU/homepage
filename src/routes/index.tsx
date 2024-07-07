@@ -4,6 +4,8 @@ import waveHorImg from "@/assets/wave-hor.svg";
 import waveImg from "@/assets/wave.svg";
 import { OtherSites } from "@/components/other-site";
 import { TooltipWrap } from "@/components/tooltip";
+import { SwitchLang } from "@/components/translations";
+import { TranslationsKey, useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Suspense, lazy } from "react";
@@ -20,13 +22,16 @@ function Homepage() {
   return (
     <div className="flex min-h-screen flex-col overscroll-none bg-main-100 text-main-900 md:flex-row">
       <div className="top-0 flex h-screen items-center justify-center md:sticky">
-        <img
-          src={nameImg}
-          width={409}
-          height={1440}
-          className="mx-16 my-10 max-w-[150px] xl:mx-[5vw]"
-          alt="Dennis Chung Personal webpage"
-        />
+        <div className="relative">
+          <img
+            src={nameImg}
+            width={409}
+            height={1440}
+            className="mx-16 my-10 max-w-[150px] xl:mx-[5vw]"
+            alt="Dennis Chung Personal webpage"
+          />
+          <SwitchLang />
+        </div>
         <hr
           aria-orientation="vertical"
           className="absolute right-4 top-0 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden"
@@ -51,17 +56,17 @@ function Homepage() {
           <SkillSet />
         </div>
 
-        <SectionChunk title="攝影作品" condensed>
+        <SectionChunk title="photoTitle" condensed>
           <Suspense fallback={"..."}>
             <Gallery />
           </Suspense>
         </SectionChunk>
 
-        <SectionChunk title="專案網站" condensed>
+        <SectionChunk title="sitesTitle" condensed>
           <OtherSites />
         </SectionChunk>
 
-        <SectionChunk title="三維建模" condensed>
+        <SectionChunk title="modelsTitle" condensed>
           <Suspense fallback={"..."}>
             <ModelsViewer />
           </Suspense>
@@ -76,7 +81,9 @@ function SectionChunk({
   title,
   children,
   condensed,
-}: React.PropsWithChildren<{ title: string; condensed?: boolean }>) {
+}: React.PropsWithChildren<{ title: TranslationsKey; condensed?: boolean }>) {
+  const { fastT } = useTranslation();
+  const titleText = fastT(title);
   return (
     <section
       className={clsx("my-8 flex gap-4 max-xs:flex-col max-xs:gap-0", {
@@ -96,9 +103,9 @@ function SectionChunk({
             },
           )}
         >
-          {title.slice(0, 2)}
+          {titleText.slice(0, 2)}
           <br />
-          {title.slice(2)}
+          {titleText.slice(2)}
         </h2>
         <img
           src={waveBlockImg}
@@ -120,53 +127,19 @@ function SectionChunk({
 }
 
 function SelfIntro() {
+  const { t } = useTranslation();
   return (
-    <SectionChunk title="個人簡介">
+    <SectionChunk title="selfTitle">
       <div className="flex flex-col p-4 text-sm font-light leading-relaxed tracking-wider">
-        <p>
-          研究所主修電腦圖學，論文研究如何利用 f-map 配合 Laplace Interpolation
-          將人體器官表面模型轉換成目標之體態，出社會後發現還是喜歡做前端，就沒有深入圖學領域了。自學能力強，喜歡接觸新的知識、工具，對於
-          3D
-          建模，前端網頁開發有相當的了解。平常會遨遊大小開發社群，逛逛新的技術。
-          目前將目光放在 Tanstack 的那些新奇玩意，希望哪天能將他們放到
-          Production 的網站上。
-        </p>
-        <p className="my-4">
-          人生至今有滿滿的撰寫網頁經驗，一路從 FrontPage、DreamWeaver 走到
-          wordpress 再到 bootstrap + angularJS，最後投入 React 跟 Vue 這種前端
-          亞馬遜叢林生態系的懷抱。每天思考著我的人生是不是有人刻了一個模板出來，然後上帝看著
-          dependencies install 後就 build 出一個個的人，早期在中研院資創所開發
-          WWW 2020 conference 的靜態網頁，React Material UI Gatsby nginx AWS SSL
-          Reverse Proxy 樣樣來，現在回頭看看 styles 刻的爛到有剩，
-          不過我想這就是我成長的象徵吧？那個上帝不好意思幫我升個 major
-          版號，謝謝。
-        </p>
+        <p className="mb-4">{t("migrationNote")}</p>
+        <p className="mb-4">{t("selfP2")}</p>
         <details>
-          <summary className="my-4 cursor-pointer rounded px-2 hover:bg-neutral-500/10">
-            Read More...
+          <summary className="mb-4 cursor-pointer rounded px-2 hover:bg-neutral-500/10">
+            {t("readMore")}
           </summary>
+          <p className="mb-4">{t("selfP1")}</p>
 
-          <p className="my-4">
-            曾經在 ASUS AICS
-            當前端工程師，主要負責開發醫院內部系統使用的檢視網頁。
-            也順帶將技能樹從爛爛的 Vue2 直升上
-            Vue3，頓時豁然開朗，考試都考一百分了。過程還偷點了 iOS app
-            的開發流程，不過是走 capacitor
-            偷吃步，沒偷到多少，但吃了很多苦是真的。
-            現在在哪間公司不好說，自己上 LinkedIn 看比較快，畢竟我換得挺快的。
-          </p>
-
-          <p className="my-4">
-            This website is under migration process. Migration is something I
-            want to do in a long time. I initially start in modern web dev world
-            with the knowledge of Gatsby directly! Which I guess nowadays it has
-            been replaced by Next.js. So there's a lot of legacy code, styles
-            component, material ui and graphql with yml data fetcher (pukes).
-            And it is 2024, no one really using these stuff anymore, so I spent
-            some time and trying to migrate these things into Vite + Tanstack
-            Router + Tailwind CSS + Radix UI. And I believe I will do the same
-            thing again in 3 years at most 😀.
-          </p>
+          <p className="">{t("selfP3")}</p>
         </details>
       </div>
     </SectionChunk>
@@ -307,7 +280,7 @@ const skillList: {
 
 function SkillSet() {
   return (
-    <SectionChunk title="專項能力">
+    <SectionChunk title="specialTitle">
       <div className="p-3">
         {skillList.map((set) => (
           <Fragment key={set.group}>
@@ -316,7 +289,7 @@ function SkillSet() {
             </h3>
             <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
               {set.skills.map((skill) => (
-                <li>
+                <li key={skill.name}>
                   <TooltipWrap
                     className="text-light max-w-96 !p-6"
                     content={skill.desc || "..."}
