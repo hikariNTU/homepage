@@ -69,9 +69,7 @@ h2 {
 
 .input-form {
   display: flex;
-  @media screen and (max-width: 720px) {
-    flex-direction: column;
-  }
+
   // background-color: #eee;
   overflow-y: hidden;
   padding: 1rem;
@@ -103,6 +101,9 @@ h2 {
         background-color: $primary;
       }
     }
+  }
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
   }
   @media print {
     background: unset;
