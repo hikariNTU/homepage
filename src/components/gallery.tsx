@@ -1,80 +1,47 @@
-import { useEffect, useRef, useState } from "react";
-import { register, SwiperContainer } from "swiper/element/bundle";
-import { SwiperOptions } from "swiper/types";
 import { TooltipWrap } from "@/components/tooltip";
-import swiperCustomStyles from "./swiper-custom.css?raw";
-import clsx from "clsx";
+import { useRef } from "react";
 
-// @refresh reset
 function Gallery() {
-  const swiperRef = useRef<SwiperContainer>(null);
-  const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      if (!swiperRef.current) {
-        return;
-      }
-      await new Promise((res) => setTimeout(res, 20));
-      // Register Swiper web component
-      register();
-
-      const params: SwiperOptions = {
-        injectStyles: [swiperCustomStyles],
-
-        pagination: true,
-        slideToClickedSlide: true,
-        initialSlide: 3,
-      };
-      Object.assign(swiperRef.current, params);
-
-      // initialize swiper
-      swiperRef.current.initialize();
-      setInitialized(true);
-    })();
-  }, []);
-
+  const ref = useRef<HTMLDivElement>(null);
   return (
     <div
-      className={clsx("wave-border py-2 max-md:mx-4", {
-        "max-h-[266px] overflow-hidden opacity-0": !initialized,
-        "opacity-100": initialized,
-      })}
+      className={
+        "flex h-[256px] snap-x snap-proximity gap-4 overflow-auto scroll-smooth py-2 max-md:mx-4"
+      }
+      ref={ref}
     >
-      <swiper-container
-        ref={swiperRef}
-        navigation
-        pagination
-        slides-per-view="auto"
-        space-between={24}
-        centered-slides
-        init={false}
-      >
-        {imageData.map((i) => (
-          <swiper-slide key={i.title}>
-            <TooltipWrap
-              content={
-                <section className="max-w-[400px] p-4">
-                  <h4 className="lato mb-1 text-xl">{i.title}</h4>
-                  <p className="font-thin">{i.text}</p>
-                </section>
-              }
-            >
-              <button
-                className="wave-border h-[256px] w-fit transition-opacity hover:opacity-90"
-                tabIndex={0}
-              >
-                <img
-                  src={i.src}
-                  alt={i.title}
-                  height={256}
-                  className="h-full w-full object-contain"
-                />
-              </button>
-            </TooltipWrap>
-          </swiper-slide>
-        ))}
-      </swiper-container>
+      {imageData.map((i) => (
+        <TooltipWrap
+          key={i.title}
+          content={
+            <section className="max-w-[400px] p-4">
+              <h4 className="lato mb-1 text-xl">{i.title}</h4>
+              <p className="font-thin">{i.text}</p>
+            </section>
+          }
+        >
+          <button
+            className="wave-border h-full min-w-fit snap-start transition-opacity hover:opacity-90"
+            id={i.src}
+            tabIndex={0}
+            onClick={() => {
+              const btn = document.getElementById(i.src) as HTMLButtonElement;
+              ref.current?.scrollTo({
+                left: btn.offsetLeft - ref.current.offsetLeft,
+                behavior: "smooth",
+              });
+            }}
+          >
+            <img
+              src={i.src}
+              alt={i.title}
+              height={256}
+              className="h-full object-contain"
+              loading="lazy"
+            />
+          </button>
+        </TooltipWrap>
+      ))}
     </div>
   );
 }
@@ -86,7 +53,7 @@ const images = import.meta.glob<string>("../assets/gallery/*", {
   import: "default",
 });
 
-const a = {
+const data: Record<string, { text: string; title: string }> = {
   JKC_5134: {
     text: "A tired horse in California Disney land, such a beautiful place. Should go there again and again until our dream come true.",
     title: "Horse in Disney",
@@ -141,7 +108,8 @@ const a = {
   },
 };
 
-const imageData = Object.entries(a).map(([key, value]) => ({
-  src: Object.entries(images).find(([path]) => path.includes(key))?.[1],
+const imageData = Object.entries(data).map(([key, value]) => ({
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+  src: Object.entries(images).find(([path]) => path.includes(key))?.[1]!,
   ...value,
 }));
