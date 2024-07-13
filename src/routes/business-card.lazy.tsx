@@ -1,12 +1,34 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import dom2Image from "dom-to-image";
-import "@/styles/business-card.scss";
 import { Loader2Icon } from "lucide-react";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import "@google/model-viewer";
 import cardModel from "@/assets/model/business-card-base.glb?url";
 import { ModelViewerElement } from "@google/model-viewer";
+
+import styleData from "@/styles/business-card.scss?inline";
+
+function useStyleData() {
+  const id = "business-card-styles";
+  useLayoutEffect(() => {
+    const styleTag = document.createElement("style");
+    styleTag.id = id;
+    styleTag.innerHTML = styleData;
+
+    document.head.appendChild(styleTag);
+
+    return () => {
+      document.getElementById(id)?.remove();
+    };
+  });
+}
 
 export const Route = createLazyFileRoute("/business-card")({
   component: () => <EntryPage />,
@@ -43,6 +65,7 @@ const Header = () => {
 };
 
 const EntryPage = () => {
+  useStyleData();
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardImg, setCardImage] = useState("");
   const [updater, setUpdater] = useState(0);
