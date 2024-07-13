@@ -288,7 +288,15 @@ function Drawer(props: {
 
       <label className="mt-2 flex flex-col gap-2">
         <span className="font-bold">Composition Method</span>
-        <select className="rounded-full bg-neutral-200 px-4 py-2">
+        <select
+          className="rounded-full bg-neutral-200 px-4 py-2"
+          value={props.composite}
+          onChange={(e) =>
+            props.setComposite(
+              e.currentTarget.value as GlobalCompositeOperation,
+            )
+          }
+        >
           {Object.entries(compositionOption).map(([key]) => (
             <option key={key} value={key}>
               {key}
