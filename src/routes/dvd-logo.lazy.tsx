@@ -25,10 +25,24 @@ export const Route = createLazyFileRoute("/dvd-logo")({
   component: () => <DVD />,
 });
 
-const DVDLogo = () => (
+const DVDLogo = ({ inverted = false }: { inverted: boolean }) => (
   <div className="relative inline font-[consolas,sans-serif] font-black italic transition-[font-size] duration-100 ease-linear">
-    <div className="scale-y-50 leading-[0.3em]">DVD</div>
-    <div className="translate-y-[15%] scale-y-[70%] rounded-[50%] bg-[--color] text-center text-[0.2em] leading-[1em] tracking-[0.3em] text-black">
+    <div
+      className={clsx("scale-y-50 leading-[0.3em]", {
+        "p-2 text-black": inverted,
+      })}
+    >
+      DVD
+    </div>
+    <div
+      className={clsx(
+        "translate-y-[15%] scale-y-[70%] rounded-[50%] text-center text-[0.2em] leading-[1em] tracking-[0.3em] text-black",
+        {
+          "bg-[--color]": !inverted,
+          "m-2 -mt-2 bg-black p-1 text-[--color]": inverted,
+        },
+      )}
+    >
       VIDEO
     </div>
   </div>
@@ -58,6 +72,7 @@ const DVD = () => {
   const [count, setCount] = useState(0);
   const [hit, setHit] = useState(0);
   const [showStatus, setShowStatus] = useState(false);
+  const [inverted, setInverted] = useState(false);
 
   const clearCount = () => {
     setCount(0);
@@ -221,6 +236,25 @@ const DVD = () => {
           </CheckboxIndicator>
         </Checkbox>
       </label>
+
+      <label className="mb-2 flex items-center justify-between gap-2 text-sm">
+        Inverted Color
+        <Checkbox
+          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          checked={inverted}
+          onCheckedChange={(e) => {
+            if (e === "indeterminate") {
+              setInverted(false);
+              return;
+            }
+            setInverted(e);
+          }}
+        >
+          <CheckboxIndicator>
+            <CheckIcon size={12} />
+          </CheckboxIndicator>
+        </Checkbox>
+      </label>
     </div>
   );
 
@@ -244,6 +278,7 @@ const DVD = () => {
         <div
           className={clsx("lr leading-[0]", {
             "outline outline-2 outline-red-500": outline,
+            "bg-current": inverted,
           })}
           style={{
             animationDuration: `${width / speed ** 2}s`,
@@ -252,7 +287,7 @@ const DVD = () => {
             animationPlayState: paused ? "paused" : "running",
           }}
         >
-          <DVDLogo />
+          <DVDLogo inverted={inverted} />
         </div>
       </div>
 
