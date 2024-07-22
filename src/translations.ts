@@ -71,7 +71,7 @@ const translations = {
     "zh-TW": "攝影作品",
   },
   sitesTitle: {
-    "en-US": "SITE",
+    "en-US": "PROJ",
     "zh-TW": "專案網站",
   },
   modelsTitle: {

@@ -15,7 +15,7 @@ function ModelsViewer() {
     <div className="flex w-full min-w-0 flex-col gap-4 p-2">
       {models.map((m) => (
         <div key={m.src}>
-          <div className="lato mb-1 flex items-start justify-between text-sm text-main-900">
+          <div className="lato dark:text-main-200 mb-1 flex items-start justify-between text-sm text-main-900">
             {m.title}
             {m.description && (
               <TooltipWrap content={m.description} className="max-w-96 !p-6">
@@ -53,7 +53,7 @@ function ModelsViewer() {
                 <div
                   key={uid}
                   slot={uid}
-                  className="pointer-events-none rounded bg-main-100/80 p-1"
+                  className="pointer-events-none rounded bg-main-100/80 p-1 dark:bg-neutral-950"
                   data-visibility-attribute="visible"
                   {...data}
                 >

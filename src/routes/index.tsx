@@ -8,8 +8,9 @@ import { SwitchLang } from "@/components/translations";
 import { TranslationsKey, useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useLayoutEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
+import { MoonIcon, SunIcon } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Homepage,
@@ -19,22 +20,48 @@ const Gallery = lazy(() => import("@/components/gallery"));
 const ModelsViewer = lazy(() => import("@/components/models"));
 
 function Homepage() {
+  const [theme, setTheme] = useState<"dark" | "light">(() =>
+    window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
+  );
+
+  useLayoutEffect(() => {
+    if (theme === "dark") {
+      document.body.classList.add("dark");
+    }
+    return () => {
+      document.body.classList.remove("dark");
+    };
+  }, [theme]);
+
   return (
-    <div className="flex min-h-screen flex-col overscroll-none bg-main-100 text-main-900 md:flex-row">
+    <div
+      className={clsx(
+        "flex min-h-screen flex-col overscroll-none bg-main-100 text-main-900 md:flex-row dark:bg-neutral-900 dark:text-main-100",
+      )}
+    >
       <div className="top-0 flex h-screen items-center justify-center md:sticky">
         <div className="relative">
           <img
             src={nameImg}
             width={409}
             height={1440}
-            className="mx-16 my-10 max-w-[150px] xl:mx-[5vw]"
+            className="mx-16 my-10 max-w-[150px] xl:mx-[5vw] dark:brightness-[5] dark:grayscale"
             alt="Dennis Chung Personal webpage"
           />
-          <SwitchLang />
+          <div className="absolute bottom-0 flex w-full items-center justify-center md:pr-4">
+            <SwitchLang />
+            <SwitchTheme
+              theme={theme}
+              setTheme={(value) => {
+                window.localStorage.setItem("theme", value);
+                setTheme(value);
+              }}
+            />
+          </div>
         </div>
         <hr
           aria-orientation="vertical"
-          className="absolute right-4 top-0 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden"
+          className="absolute right-4 top-0 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden dark:brightness-[0.3]"
           style={{
             backgroundImage: `url("${waveImg}")`,
             backgroundSize: "10px",
@@ -45,6 +72,7 @@ function Homepage() {
         <div className="wave-border max-md:mx-4">
           <img
             src="./lake_orange.webp"
+            className="dark:brightness-75"
             alt="Lake Img"
             width={2588}
             height={840}
@@ -77,6 +105,38 @@ function Homepage() {
   );
 }
 
+function SwitchTheme({
+  theme,
+  setTheme,
+}: {
+  theme: "dark" | "light";
+  setTheme: (value: "dark" | "light") => void;
+}) {
+  return (
+    <TooltipWrap content="Dark Mode Switch">
+      <button
+        className="flex items-center gap-1 rounded-full px-4 py-1 font-light text-neutral-500 transition-colors hover:bg-neutral-950/5 active:bg-main-900/20 dark:hover:bg-neutral-50/10"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      >
+        <span
+          className={clsx({
+            "dark:text-main-200 font-black text-main-800": theme === "dark",
+          })}
+        >
+          <MoonIcon aria-description="dark-mode" />
+        </span>
+        <span
+          className={clsx({
+            "dark:text-main-200 font-black text-main-800": theme === "light",
+          })}
+        >
+          <SunIcon aria-description="light-mode" />
+        </span>
+      </button>
+    </TooltipWrap>
+  );
+}
+
 function SectionChunk({
   title,
   children,
@@ -97,7 +157,7 @@ function SectionChunk({
       >
         <h2
           className={clsx(
-            "shrink-0 text-2xl font-light leading-[2.5] tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px]",
+            "dark:text-main-200 shrink-0 text-2xl font-light leading-[2.5] tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px]",
             {
               "max-xl:leading-[2.5] max-xl:tracking-[32px]": condensed,
             },
@@ -114,7 +174,7 @@ function SectionChunk({
           height={148}
           alt=""
           className={clsx(
-            "pointer-events-none -mt-4 select-none p-2 max-xs:-mt-8 max-xs:rotate-90 max-xs:p-3",
+            "pointer-events-none -mt-4 select-none p-2 max-xs:-mt-8 max-xs:rotate-90 max-xs:p-3 dark:brightness-150",
             {
               "max-xl:-mt-8 max-xl:rotate-90 max-xl:p-3": condensed,
             },
@@ -284,7 +344,7 @@ function SkillSet() {
       <div className="p-3">
         {skillList.map((set) => (
           <Fragment key={set.group}>
-            <h3 className="mb-2 mt-4 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6">
+            <h3 className="dark:text-main-200 mb-2 mt-4 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6">
               {set.group}
             </h3>
             <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
@@ -295,7 +355,7 @@ function SkillSet() {
                     content={skill.desc || "..."}
                     key={skill.name}
                   >
-                    <button className="lato flex cursor-help items-center gap-1 rounded-xl px-2 py-1 text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800">
+                    <button className="lato flex cursor-help items-center gap-1 rounded-xl px-2 py-1 text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800 dark:text-neutral-300 dark:hover:text-main-100">
                       {
                         <img
                           width={20}
@@ -305,6 +365,7 @@ function SkillSet() {
                               `../assets/skill_icon/icon-${skill.icon}.svg`
                             ]?.default
                           }
+                          className="dark:brightness-[6] dark:grayscale"
                           alt=""
                         />
                       }
@@ -330,17 +391,17 @@ function Footer() {
           backgroundImage: `url("${waveHorImg}")`,
         }}
       ></hr>
-      <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0">
+      <div className="lato dark:text-main-200 mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0">
         <a
           href="https://www.linkedin.com/in/dennis-chung-tw/"
-          className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800"
+          className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"
         >
           <LinkedInIcon />
           LINKEDIN
         </a>
         <a
           href="https://github.com/hikariNTU"
-          className="flex items-center gap-1 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800"
+          className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"
         >
           <GithubIcon />
           GITHUB

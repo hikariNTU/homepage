@@ -31,6 +31,10 @@ html {
     z-index: 1;
   }
 
+  .dark .wave-border::after {
+    border-image-source: url(./assets/border-fill-dark.svg);
+  }
+
   .lato {
     font-family: "Lato", sans-serif;
     font-weight: 700;
@@ -45,16 +49,11 @@ html {
 model-viewer {
   width: 100%;
   height: min(30rem, calc(80vh - 3rem));
-  background: linear-gradient(
-    45deg,
-    rgba(238, 238, 238, 1) 0%,
-    rgb(226, 221, 221) 100%
-  );
+  background: linear-gradient(45deg, #6662 0%, #6661 100%);
   --poster-color: transparent;
   --progress-mask: transparent;
   --progress-bar-color: #22254f;
   --progress-bar-height: 0.2rem;
-  /* border: dashed #3333 0.1rem; */
 }
 
 ::-webkit-scrollbar {
@@ -66,7 +65,7 @@ model-viewer {
 }
 
 ::-webkit-scrollbar-track:hover {
-  background: #0001;
+  background: #8882;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -76,6 +75,26 @@ model-viewer {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(138, 68, 107);
+  background-color: rgb(138, 68, 107) !important;
   border-width: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(172, 111, 144) !important;
+}
+
+.dark::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgb(138, 68, 107);
+  border: solid 3px rgb(23 23 23);
+}
+
+.dark::-webkit-scrollbar-track,
+.dark ::-webkit-scrollbar-track {
+  background: rgb(23 23 23);
+}
+
+.dark::-webkit-scrollbar-track:hover,
+.dark ::-webkit-scrollbar-track:hover {
+  background: rgb(69 69 69);
 }

@@ -28,12 +28,12 @@ export function SwitchLang() {
   return (
     <TooltipWrap content="Incase you don't read Chinese/English">
       <button
-        className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full px-4 py-1 font-light text-neutral-500 transition-colors hover:bg-neutral-950/5 active:bg-main-900/20"
+        className="flex items-center gap-1 rounded-full px-4 py-1 font-light text-neutral-500 transition-colors hover:bg-neutral-950/5 active:bg-main-900/20 dark:hover:bg-neutral-50/10"
         onClick={toggle}
       >
         <span
           className={clsx({
-            "font-black text-main-800": lang === "en-US",
+            "dark:text-main-200 font-black text-main-800": lang === "en-US",
           })}
         >
           EN
@@ -41,7 +41,7 @@ export function SwitchLang() {
         <span>.</span>
         <span
           className={clsx({
-            "font-black text-main-800": lang !== "en-US",
+            "dark:text-main-200 font-black text-main-800": lang !== "en-US",
           })}
         >
           中文
