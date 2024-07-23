@@ -11,12 +11,12 @@ export function OtherSites() {
         >
           <div
             aria-hidden
-            className="dark:group-active:bg-main-200/30 pointer-events-none absolute -inset-2 z-10 rounded-xl transition-colors group-hover:bg-main-800/5 group-active:bg-main-800/15 dark:group-hover:bg-main-100/10"
+            className="pointer-events-none absolute -inset-2 z-10 rounded-xl transition-colors group-hover:bg-main-800/5 group-active:bg-main-800/15 dark:group-hover:bg-main-100/10 dark:group-active:bg-main-200/30"
           />
           <div className="wave-border">
             <img src={site.img} className="object-contain" alt="" />
           </div>
-          <div className="lato dark:text-main-200 mt-3 text-xl text-main-800">
+          <div className="lato mt-3 text-xl text-main-800 dark:text-main-200">
             {site.title}
           </div>
           <div className="font-light">{site.description}</div>
@@ -34,7 +34,11 @@ const images = Object.entries(
 );
 
 function find(path: string) {
-  return images.find(([key]) => key.includes(path))?.[1] || "";
+  const url = images.find(([key]) => key.includes(path))?.[1];
+  if (!url) {
+    throw `[Image not found]: ${path}`;
+  }
+  return url;
 }
 
 const sites: {
@@ -43,6 +47,13 @@ const sites: {
   description: string;
   href: string;
 }[] = [
+  {
+    img: find("ani-skip"),
+    title: "Ani Skip Extension",
+    description:
+      "An extension to mute and wait for animation crazy's ADs.自動跳過並靜音動畫瘋廣告。這個擴充功能會新增一個跳過並靜音動畫瘋廣告的按鈕至播放介面。",
+    href: "https://chromewebstore.google.com/detail/kdipgoiohdigddmlpmohjdjfogmmmjfi",
+  },
   {
     img: find("sudoku"),
     title: "Sudoku Solver",
