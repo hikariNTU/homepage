@@ -33,7 +33,7 @@ export function useTranslation() {
 
       return (
         data[lang].substring(0, Math.floor(data[lang].length * progress)) +
-        "🚧🚧⛔🚧🚧" +
+        "░▒▓" +
         data[ops].substring(Math.floor(data[ops].length * progress))
       );
     },

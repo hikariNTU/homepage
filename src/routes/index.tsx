@@ -8,7 +8,7 @@ import { SwitchLang } from "@/components/translations";
 import { TranslationsKey, useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
-import { Suspense, lazy, useLayoutEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useLayoutEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { MoonIcon, SunIcon } from "lucide-react";
 
@@ -20,6 +20,7 @@ const Gallery = lazy(() => import("@/components/gallery"));
 const ModelsViewer = lazy(() => import("@/components/models"));
 
 function Homepage() {
+  const [hasChangedTheme, setHasChangedTheme] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() =>
     window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
   );
@@ -39,6 +40,7 @@ function Homepage() {
         "flex min-h-screen flex-col overscroll-none bg-main-100 text-main-900 md:flex-row dark:bg-neutral-900 dark:text-main-100",
       )}
     >
+      {hasChangedTheme && <TransitionMask key={theme} />}
       <div className="top-0 flex h-screen items-center justify-center md:sticky">
         <div className="relative">
           <img
@@ -55,6 +57,7 @@ function Homepage() {
               setTheme={(value) => {
                 window.localStorage.setItem("theme", value);
                 setTheme(value);
+                setHasChangedTheme(true);
               }}
             />
           </div>
@@ -120,20 +123,40 @@ function SwitchTheme({
       >
         <span
           className={clsx({
-            "dark:text-main-200 font-black text-main-800": theme === "dark",
+            "font-black text-main-800 dark:text-main-200": theme === "dark",
           })}
         >
           <MoonIcon aria-description="dark-mode" />
         </span>
         <span
           className={clsx({
-            "dark:text-main-200 font-black text-main-800": theme === "light",
+            "font-black text-main-800 dark:text-main-200": theme === "light",
           })}
         >
           <SunIcon aria-description="light-mode" />
         </span>
       </button>
     </TooltipWrap>
+  );
+}
+
+function TransitionMask() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoaded(true);
+    }, 100);
+  }, []);
+  return (
+    <div
+      aria-hidden
+      className={clsx(
+        "pointer-events-none fixed inset-0 z-50 select-none bg-neutral-900 transition-opacity ease-in-out [transition-duration:1.5s] dark:bg-main-100",
+        {
+          "opacity-0": loaded,
+        },
+      )}
+    />
   );
 }
 
@@ -157,7 +180,7 @@ function SectionChunk({
       >
         <h2
           className={clsx(
-            "dark:text-main-200 shrink-0 text-2xl font-light leading-[2.5] tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px]",
+            "shrink-0 text-2xl font-light leading-[2.5] tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px] dark:text-main-200",
             {
               "max-xl:leading-[2.5] max-xl:tracking-[32px]": condensed,
             },
@@ -344,7 +367,7 @@ function SkillSet() {
       <div className="p-3">
         {skillList.map((set) => (
           <Fragment key={set.group}>
-            <h3 className="dark:text-main-200 mb-2 mt-4 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6">
+            <h3 className="mb-2 mt-4 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6 dark:text-main-200">
               {set.group}
             </h3>
             <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
@@ -391,7 +414,7 @@ function Footer() {
           backgroundImage: `url("${waveHorImg}")`,
         }}
       ></hr>
-      <div className="lato dark:text-main-200 mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0">
+      <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0 dark:text-main-200">
         <a
           href="https://www.linkedin.com/in/dennis-chung-tw/"
           className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"

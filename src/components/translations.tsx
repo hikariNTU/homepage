@@ -33,7 +33,7 @@ export function SwitchLang() {
       >
         <span
           className={clsx({
-            "dark:text-main-200 font-black text-main-800": lang === "en-US",
+            "font-black text-main-800 dark:text-main-200": lang === "en-US",
           })}
         >
           EN
@@ -41,7 +41,7 @@ export function SwitchLang() {
         <span>.</span>
         <span
           className={clsx({
-            "dark:text-main-200 font-black text-main-800": lang !== "en-US",
+            "font-black text-main-800 dark:text-main-200": lang !== "en-US",
           })}
         >
           中文
