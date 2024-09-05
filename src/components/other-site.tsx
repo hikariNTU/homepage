@@ -48,6 +48,13 @@ const sites: {
   href: string;
 }[] = [
   {
+    img: find("stereo-splitter"),
+    title: "Stereo Splitter",
+    description:
+      "A web tool to extract different stereo channel from the provided audio file. This tool can be used to detect Out of Phase Stereo file, which result in silent mono file when combining stereo channels into one.",
+    href: "https://hikarintu.github.io/audio-splitter/",
+  },
+  {
     img: find("ani-skip"),
     title: "Ani Skip Extension",
     description:
