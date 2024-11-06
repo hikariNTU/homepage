@@ -22,7 +22,7 @@ function useStyleData() {
 export function CVPage() {
   useStyleData();
   return (
-    <main className="p-8 text-neutral-950">
+    <main className="mx-auto max-w-[800px] p-8 text-neutral-950">
       <Title />
       <footer className="absolute right-8 top-8 text-[6px]">
         Rev.2024.11.03
