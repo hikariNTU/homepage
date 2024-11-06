@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CvImport } from './routes/cv'
 import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
@@ -52,6 +53,11 @@ const BusinessCardLazyRoute = BusinessCardLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/business-card.lazy').then((d) => d.Route))
 
+const CvRoute = CvImport.update({
+  path: '/cv',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
@@ -66,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cv': {
+      id: '/cv'
+      path: '/cv'
+      fullPath: '/cv'
+      preLoaderRoute: typeof CvImport
       parentRoute: typeof rootRoute
     }
     '/business-card': {
@@ -110,6 +123,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  CvRoute,
   BusinessCardLazyRoute,
   DvdLogoLazyRoute,
   GradientWallpaperLazyRoute,
@@ -126,6 +140,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/cv",
         "/business-card",
         "/dvd-logo",
         "/gradient-wallpaper",
@@ -135,6 +150,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/cv": {
+      "filePath": "cv.tsx"
     },
     "/business-card": {
       "filePath": "business-card.lazy.tsx"
