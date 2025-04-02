@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as QrcodeImport } from './routes/qrcode'
 import { Route as ProjImport } from './routes/proj'
 import { Route as CvImport } from './routes/cv'
 import { Route as IndexImport } from './routes/index'
@@ -54,6 +55,11 @@ const BusinessCardLazyRoute = BusinessCardLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/business-card.lazy').then((d) => d.Route))
 
+const QrcodeRoute = QrcodeImport.update({
+  path: '/qrcode',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ProjRoute = ProjImport.update({
   path: '/proj',
   getParentRoute: () => rootRoute,
@@ -92,6 +98,13 @@ declare module '@tanstack/react-router' {
       path: '/proj'
       fullPath: '/proj'
       preLoaderRoute: typeof ProjImport
+      parentRoute: typeof rootRoute
+    }
+    '/qrcode': {
+      id: '/qrcode'
+      path: '/qrcode'
+      fullPath: '/qrcode'
+      preLoaderRoute: typeof QrcodeImport
       parentRoute: typeof rootRoute
     }
     '/business-card': {
@@ -138,6 +151,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   CvRoute,
   ProjRoute,
+  QrcodeRoute,
   BusinessCardLazyRoute,
   DvdLogoLazyRoute,
   GradientWallpaperLazyRoute,
@@ -156,6 +170,7 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/cv",
         "/proj",
+        "/qrcode",
         "/business-card",
         "/dvd-logo",
         "/gradient-wallpaper",
@@ -171,6 +186,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/proj": {
       "filePath": "proj.tsx"
+    },
+    "/qrcode": {
+      "filePath": "qrcode.tsx"
     },
     "/business-card": {
       "filePath": "business-card.lazy.tsx"
