@@ -1,14 +1,44 @@
 import { TooltipWrap } from "@/components/tooltip";
-import { useRef } from "react";
+import clsx from "clsx";
+import { useRef, useState } from "react";
 
 function Gallery() {
   const ref = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault(); // Prevent text selection
+    if (!ref.current) return;
+    const originalPos = {
+      x: e.pageX,
+      scrollLeft: ref.current.scrollLeft,
+    };
+    setIsDragging(true);
+    const onMouseMove = (e: MouseEvent) => {
+      e.preventDefault(); // Prevent text selection while dragging
+      if (!ref.current) return;
+      const deltaX = e.pageX - originalPos.x;
+      ref.current.scrollLeft = originalPos.scrollLeft - deltaX;
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener(
+      "mouseup",
+      () => {
+        setIsDragging(false);
+        document.removeEventListener("mousemove", onMouseMove);
+      },
+      { once: true },
+    );
+  };
+
   return (
     <div
-      className={
-        "flex h-[256px] snap-x snap-proximity gap-4 overflow-auto scroll-smooth py-2 max-md:mx-4"
-      }
+      className={clsx("flex h-[256px] gap-4 overflow-auto py-2 max-md:mx-4", {
+        "cursor-grabbing": isDragging,
+        "cursor-grab": !isDragging,
+      })}
       ref={ref}
+      onMouseDown={onMouseDown}
     >
       {imageData.map((i) => (
         <TooltipWrap
@@ -24,13 +54,6 @@ function Gallery() {
             className="wave-border h-full min-w-fit snap-start transition-opacity hover:opacity-90"
             id={i.src}
             tabIndex={0}
-            onClick={() => {
-              const btn = document.getElementById(i.src) as HTMLButtonElement;
-              ref.current?.scrollTo({
-                left: btn.offsetLeft - ref.current.offsetLeft,
-                behavior: "smooth",
-              });
-            }}
           >
             <img
               src={i.src}
