@@ -1,14 +1,21 @@
-import {
-  createRootRoute,
-  Outlet,
-  ScrollRestoration,
-} from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
   component: () => (
     <>
-      <ScrollRestoration />
+      <HeadContent />
       <Outlet />
     </>
   ),
+  head: () => ({
+    meta: [
+      {
+        name: "description",
+        content: "Dennis Chung personal website",
+      },
+      {
+        title: "Landing Page | Dennis Chung personal website",
+      },
+    ],
+  }),
 });

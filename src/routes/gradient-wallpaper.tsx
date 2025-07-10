@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/cv")({
+export const Route = createFileRoute("/gradient-wallpaper")({
   head() {
     return {
       meta: [
         {
-          title: "CV | Dennis Chung personal website",
+          title: "Gradient Wallpaper | Dennis Chung personal website",
         },
       ],
     };

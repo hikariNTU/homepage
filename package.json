@@ -15,7 +15,7 @@
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-slider": "^1.2.0",
-    "@tanstack/react-router": "^1.39.4",
+    "@tanstack/react-router": "^1.125.6",
     "clsx": "^2.1.1",
     "dom-to-image": "^2.6.0",
     "jotai": "^2.8.4",

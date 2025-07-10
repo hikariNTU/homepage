@@ -17,6 +17,8 @@ const hashHistory = createHashHistory();
 const router = createRouter({
   routeTree,
   history: hashHistory,
+  scrollRestoration: true,
+  scrollRestorationBehavior: "smooth",
 });
 
 // Register the router instance for type safety
@@ -33,7 +35,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
-        <RouterProvider router={router} />
+        <RouterProvider router={router}></RouterProvider>
       </ErrorBoundary>
     </StrictMode>,
   );
