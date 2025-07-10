@@ -48,6 +48,19 @@ const sites: {
   href: string;
 }[] = [
   {
+    img: find("midi-parser"),
+    title: "MIDI Parser & Inspector",
+    description:
+      "A web-based MIDI file parser and inspector. Upload a MIDI file to view its structure, events, and metadata. In the raw format without extra parsing logic.",
+    href: "./midi-parser",
+  },
+  {
+    img: find("qrcode"),
+    title: "QR Code Generator",
+    description: "Generate QR codes for any text or URL. Easy, Simple.",
+    href: "./qrcode",
+  },
+  {
     img: find("stereo-splitter"),
     title: "Stereo Splitter",
     description:

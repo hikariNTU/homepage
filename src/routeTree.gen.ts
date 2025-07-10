@@ -22,6 +22,7 @@ import { Route as IndexImport } from './routes/index'
 
 const SymbolsLazyImport = createFileRoute('/symbols')()
 const ScreenLazyImport = createFileRoute('/screen')()
+const MidiParserLazyImport = createFileRoute('/midi-parser')()
 const GradientWallpaperLazyImport = createFileRoute('/gradient-wallpaper')()
 const DvdLogoLazyImport = createFileRoute('/dvd-logo')()
 const BusinessCardLazyImport = createFileRoute('/business-card')()
@@ -37,6 +38,11 @@ const ScreenLazyRoute = ScreenLazyImport.update({
   path: '/screen',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/screen.lazy').then((d) => d.Route))
+
+const MidiParserLazyRoute = MidiParserLazyImport.update({
+  path: '/midi-parser',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/midi-parser.lazy').then((d) => d.Route))
 
 const GradientWallpaperLazyRoute = GradientWallpaperLazyImport.update({
   path: '/gradient-wallpaper',
@@ -128,6 +134,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GradientWallpaperLazyImport
       parentRoute: typeof rootRoute
     }
+    '/midi-parser': {
+      id: '/midi-parser'
+      path: '/midi-parser'
+      fullPath: '/midi-parser'
+      preLoaderRoute: typeof MidiParserLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/screen': {
       id: '/screen'
       path: '/screen'
@@ -155,6 +168,7 @@ export const routeTree = rootRoute.addChildren({
   BusinessCardLazyRoute,
   DvdLogoLazyRoute,
   GradientWallpaperLazyRoute,
+  MidiParserLazyRoute,
   ScreenLazyRoute,
   SymbolsLazyRoute,
 })
@@ -174,6 +188,7 @@ export const routeTree = rootRoute.addChildren({
         "/business-card",
         "/dvd-logo",
         "/gradient-wallpaper",
+        "/midi-parser",
         "/screen",
         "/symbols"
       ]
@@ -198,6 +213,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/gradient-wallpaper": {
       "filePath": "gradient-wallpaper.lazy.tsx"
+    },
+    "/midi-parser": {
+      "filePath": "midi-parser.lazy.tsx"
     },
     "/screen": {
       "filePath": "screen.lazy.tsx"

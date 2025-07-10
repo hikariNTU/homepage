@@ -6,13 +6,14 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import clsx from "clsx";
-import { PropsWithChildren, forwardRef, useState } from "react";
+import { ComponentProps, PropsWithChildren, forwardRef, useState } from "react";
 
 export const TooltipWrap = forwardRef<
   React.ElementRef<typeof PopoverContent>,
   PropsWithChildren<{
     content: React.ReactNode;
     className?: string;
+    side?: ComponentProps<typeof PopoverContent>["side"];
   }>
 >(function PopoverWrap({ className, children, content, ...props }, ref) {
   const [open, setOpen] = useState(false);
@@ -44,7 +45,7 @@ export const TooltipWrap = forwardRef<
           onCloseAutoFocus={(e) => {
             e.preventDefault();
           }}
-          side="top"
+          side={props.side || "top"}
           ref={ref}
           sideOffset={4}
           className={clsx(

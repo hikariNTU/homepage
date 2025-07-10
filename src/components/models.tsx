@@ -15,7 +15,7 @@ function ModelsViewer() {
     <div className="flex w-full min-w-0 flex-col gap-4 p-2">
       {models.map((m) => (
         <div key={m.src}>
-          <div className="lato dark:text-main-200 mb-1 flex items-start justify-between text-sm text-main-900">
+          <div className="lato mb-1 flex items-start justify-between text-sm text-main-900 dark:text-main-200">
             {m.title}
             {m.description && (
               <TooltipWrap content={m.description} className="max-w-96 !p-6">
