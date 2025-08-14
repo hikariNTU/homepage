@@ -36,10 +36,10 @@ const DVDLogo = ({ inverted = false }: { inverted: boolean }) => (
     </div>
     <div
       className={clsx(
-        "translate-y-[15%] scale-y-[70%] rounded-[50%] text-center text-[0.2em] leading-[1em] tracking-[0.3em] text-black",
+        "translate-y-[15%] scale-y-70 rounded-[50%] text-center text-[0.2em] leading-[1em] tracking-[0.3em] text-black",
         {
-          "bg-[--color]": !inverted,
-          "m-2 -mt-2 bg-black p-1 text-[--color]": inverted,
+          "bg-(--color)": !inverted,
+          "m-2 -mt-2 bg-black p-1 text-(--color)": inverted,
         },
       )}
     >
@@ -169,7 +169,7 @@ const DVD = () => {
             <SliderRange className="absolute h-full rounded-full bg-white" />
           </SliderTrack>
           <SliderThumb
-            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-none"
+            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-hidden"
             aria-label="Volume"
           />
         </Slider>
@@ -193,7 +193,7 @@ const DVD = () => {
             <SliderRange className="absolute h-full rounded-full bg-white" />
           </SliderTrack>
           <SliderThumb
-            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-none"
+            className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-hidden"
             aria-label="Volume"
           />
         </Slider>
@@ -202,7 +202,7 @@ const DVD = () => {
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Show Line
         <Checkbox
-          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={outline}
           onCheckedChange={(e) => {
             if (e === "indeterminate") {
@@ -221,7 +221,7 @@ const DVD = () => {
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Show Status
         <Checkbox
-          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={showStatus}
           onCheckedChange={(e) => {
             if (e === "indeterminate") {
@@ -240,7 +240,7 @@ const DVD = () => {
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Inverted Color
         <Checkbox
-          className="inline-flex size-4 items-center justify-center rounded bg-white"
+          className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={inverted}
           onCheckedChange={(e) => {
             if (e === "indeterminate") {
@@ -266,7 +266,7 @@ const DVD = () => {
       {/* Bouncer Element */}
       <div
         className={clsx("ud leading-[0]", {
-          "outline outline-2 outline-blue-500": outline,
+          "outline-solid outline-2 outline-blue-500": outline,
         })}
         style={{
           animationDuration: `${height / speed ** 2}s`,
@@ -277,7 +277,7 @@ const DVD = () => {
       >
         <div
           className={clsx("lr leading-[0]", {
-            "outline outline-2 outline-red-500": outline,
+            "outline-solid outline-2 outline-red-500": outline,
             "bg-current": inverted,
           })}
           style={{

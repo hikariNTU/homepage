@@ -217,7 +217,7 @@ function SelfIntro() {
         <p className="mb-4">{t("migrationNote")}</p>
         <p className="mb-4">{t("selfP2")}</p>
         <details>
-          <summary className="mb-4 cursor-pointer rounded px-2 hover:bg-neutral-500/10">
+          <summary className="mb-4 cursor-pointer rounded-sm px-2 hover:bg-neutral-500/10">
             {t("readMore")}
           </summary>
           <p className="mb-4">{t("selfP1")}</p>
@@ -374,7 +374,7 @@ function SkillSet() {
               {set.skills.map((skill) => (
                 <li key={skill.name}>
                   <TooltipWrap
-                    className="text-light max-w-96 !p-6"
+                    className="text-light max-w-96 p-6!"
                     content={skill.desc || "..."}
                     key={skill.name}
                   >

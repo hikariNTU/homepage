@@ -18,7 +18,7 @@ function ModelsViewer() {
           <div className="lato mb-1 flex items-start justify-between text-sm text-main-900 dark:text-main-200">
             {m.title}
             {m.description && (
-              <TooltipWrap content={m.description} className="max-w-96 !p-6">
+              <TooltipWrap content={m.description} className="max-w-96 p-6!">
                 <button aria-label="info">
                   <InfoIcon className="text-xl" />
                 </button>
@@ -53,7 +53,7 @@ function ModelsViewer() {
                 <div
                   key={uid}
                   slot={uid}
-                  className="pointer-events-none rounded bg-main-100/80 p-1 dark:bg-neutral-950"
+                  className="pointer-events-none rounded-sm bg-main-100/80 p-1 dark:bg-neutral-950"
                   data-visibility-attribute="visible"
                   {...data}
                 >

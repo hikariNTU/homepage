@@ -190,7 +190,7 @@ function MidiPage() {
             />
             <label
               htmlFor="midi-upload"
-              className="inline-flex cursor-pointer items-center rounded-full bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="inline-flex cursor-pointer items-center rounded-full bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Choose File
             </label>
@@ -222,7 +222,7 @@ function MidiPage() {
           <div className="space-y-6">
             {/* File Info */}
             {fileName && (
-              <div className="rounded-lg bg-white p-4 shadow">
+              <div className="rounded-lg bg-white p-4 shadow-sm">
                 <h2 className="mb-2 text-lg font-semibold text-gray-900">
                   File Information
                 </h2>
@@ -231,7 +231,7 @@ function MidiPage() {
             )}
 
             {/* Header Info */}
-            <div className="rounded-lg bg-white p-6 shadow">
+            <div className="rounded-lg bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-xl font-semibold text-gray-900">
                 MIDI Header
               </h2>
@@ -278,7 +278,7 @@ function MidiPage() {
               return (
                 <div
                   key={trackIndex}
-                  className="rounded-lg bg-white p-6 shadow"
+                  className="rounded-lg bg-white p-6 shadow-sm"
                 >
                   <h3 className="mb-4 text-lg font-semibold text-gray-900">
                     Track {trackIndex + 1} ({track.events.length} events)
@@ -297,12 +297,12 @@ function MidiPage() {
                               key={eventIndex}
                               className="flex items-start space-x-3 rounded-lg border p-3 text-sm"
                             >
-                              <div className="flex-shrink-0">
+                              <div className="shrink-0">
                                 <span className="font-mono text-xs text-gray-500">
                                   {eventIndex.toString().padStart(4, "0")}
                                 </span>
                               </div>
-                              <div className="min-w-10 flex-shrink-0">
+                              <div className="min-w-10 shrink-0">
                                 {isSimultaneous ? (
                                   <div className="group relative">
                                     <TooltipWrap
@@ -320,12 +320,12 @@ function MidiPage() {
                                   </span>
                                 )}
                               </div>
-                              <div className="min-w-12 flex-shrink-0">
+                              <div className="min-w-12 shrink-0">
                                 <span className="font-mono text-xs text-gray-400">
                                   T={accumulatedTime}
                                 </span>
                               </div>
-                              <div className="flex-shrink-0">
+                              <div className="shrink-0">
                                 <span
                                   className={`rounded-full px-2 py-1 text-xs font-medium ${getEventTypeColor(
                                     event.type,
@@ -335,7 +335,7 @@ function MidiPage() {
                                 </span>
                               </div>
                               {event.channel !== undefined && (
-                                <div className="flex-shrink-0">
+                                <div className="shrink-0">
                                   <span className="text-xs text-gray-500">
                                     Ch{event.channel}
                                   </span>

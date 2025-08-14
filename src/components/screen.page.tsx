@@ -281,7 +281,7 @@ const DescriptionList: React.FC<{
   data: Record<string, string>;
 }> = ({ title = "Specification", data }) => {
   return (
-    <div className="m-2 block min-w-[230px] rounded-lg bg-white px-4 pb-6 pt-2 shadow">
+    <div className="m-2 block min-w-[230px] rounded-lg bg-white px-4 pb-6 pt-2 shadow-sm">
       <span className="text-xs font-light text-gray-500">{title}</span>
       <div className="mb-3 block h-1 bg-gray-400/20"></div>
       <dl className="space-y-2">
@@ -325,7 +325,7 @@ const ViewDistanceWidget: React.FC = () => {
             value={distance}
             onClick={(e) => e.currentTarget.select()}
             onChange={(e) => setDistance(Number(e.target.value))}
-            className="w-20 max-w-full rounded border border-gray-300 px-3 py-1 text-sm"
+            className="w-20 max-w-full rounded-sm border border-gray-300 px-3 py-1 text-sm"
             style={{ minWidth: 0 }}
           />
           <span className="ml-2 text-sm text-gray-500">cm</span>
@@ -342,7 +342,7 @@ const ViewDistanceWidget: React.FC = () => {
           <Slider.Range className="absolute h-full rounded-full bg-blue-500" />
         </Slider.Track>
         <Slider.Thumb
-          className="block h-5 w-5 rounded-full border-2 border-blue-500 bg-white shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block h-5 w-5 rounded-full border-2 border-blue-500 bg-white shadow-sm transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-400"
           aria-label="View Distance"
         />
       </Slider.Root>
@@ -480,7 +480,7 @@ const ControlPanel: React.FC = () => {
               type="text"
               value={display.name}
               onChange={(e) => updateName(e.target.value)}
-              className="w-full rounded border border-gray-300 px-3 py-1"
+              className="w-full rounded-sm border border-gray-300 px-3 py-1"
             />
           </div>
 
@@ -494,7 +494,7 @@ const ControlPanel: React.FC = () => {
                 value={display.width}
                 onChange={(e) => updateWidth(Number(e.target.value))}
                 onFocus={(e) => e.target.select()}
-                className="w-full rounded border border-gray-300 px-3 py-1"
+                className="w-full rounded-sm border border-gray-300 px-3 py-1"
               />
             </div>
             <div>
@@ -506,7 +506,7 @@ const ControlPanel: React.FC = () => {
                 value={display.height}
                 onChange={(e) => updateHeight(Number(e.target.value))}
                 onFocus={(e) => e.target.select()}
-                className="w-full rounded border border-gray-300 px-3 py-1"
+                className="w-full rounded-sm border border-gray-300 px-3 py-1"
               />
             </div>
           </div>
@@ -520,7 +520,7 @@ const ControlPanel: React.FC = () => {
               value={display.size}
               onChange={(e) => updateSize(Number(e.target.value))}
               onFocus={(e) => e.target.select()}
-              className="w-full rounded border border-gray-300 px-3 py-1"
+              className="w-full rounded-sm border border-gray-300 px-3 py-1"
               step="0.1"
             />
           </div>
@@ -544,7 +544,7 @@ const ControlPanel: React.FC = () => {
                       display.aspect.lock,
                     )
                   }
-                  className="min-w-0 flex-shrink rounded border border-gray-300 px-3 py-1"
+                  className="min-w-0 shrink rounded-sm border border-gray-300 px-3 py-1"
                 />
                 <div className="shrink-0">:</div>
                 <input
@@ -557,13 +557,13 @@ const ControlPanel: React.FC = () => {
                       display.aspect.lock,
                     )
                   }
-                  className="min-w-0 flex-shrink rounded border border-gray-300 px-3 py-1"
+                  className="min-w-0 shrink rounded-sm border border-gray-300 px-3 py-1"
                 />
               </div>
               <div className="flex items-center">
                 <label className="ml-1 flex items-center gap-2 text-sm">
                   <Checkbox
-                    className="flex h-4 w-4 items-center justify-center rounded border border-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
+                    className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                     checked={display.aspect.lock}
                     onCheckedChange={(checked) =>
                       updateAspect(
@@ -590,7 +590,7 @@ const ControlPanel: React.FC = () => {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
               <Checkbox
-                className="flex h-4 w-4 items-center justify-center rounded border border-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
+                className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                 checked={display.curvature.use}
                 onCheckedChange={(checked) =>
                   updateCurvature(display.curvature.r, checked === true)
@@ -620,7 +620,7 @@ const ControlPanel: React.FC = () => {
                       display.curvature.use,
                     )
                   }
-                  className="w-full rounded border border-gray-300 px-3 py-1"
+                  className="w-full rounded-sm border border-gray-300 px-3 py-1"
                 />
               </div>
             )}
@@ -630,7 +630,7 @@ const ControlPanel: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={saveDevice}
-              className="flex-1 rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+              className="flex-1 rounded-sm bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
             >
               Save Device
             </button>
@@ -651,7 +651,7 @@ const ControlPanel: React.FC = () => {
                         loadPreset(preset);
                         setShowPresets(false);
                       }}
-                      className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-gray-100"
+                      className="flex w-full items-center gap-2 rounded-sm p-2 text-left hover:bg-gray-100"
                     >
                       {preset.name.includes("iPhone") ||
                       preset.name.includes("PSP") ? (
@@ -694,7 +694,7 @@ const ControlPanel: React.FC = () => {
                     display.deviceList.map((device, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between rounded p-2 hover:bg-gray-100"
+                        className="flex items-center justify-between rounded-sm p-2 hover:bg-gray-100"
                       >
                         <button
                           onClick={() => {
@@ -732,7 +732,7 @@ export function ScreenPage() {
   useLocalStorage();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-800 via-blue-900 to-blue-800">
+    <div className="min-h-screen bg-linear-to-br from-purple-800 via-blue-900 to-blue-800">
       {/* Header */}
       <header className="px-8 py-20 text-center text-white">
         <h1 className="mb-4 text-4xl font-bold drop-shadow-lg">

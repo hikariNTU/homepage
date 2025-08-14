@@ -1,18 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-html {
-  font-family: "Noto Sans TC", sans-serif;
-  font-optical-sizing: auto;
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-main-100: rgb(249, 246, 242);
+  --color-main-200: #d48cb4;
+  --color-main-800: rgb(138, 68, 107);
+  --color-main-900: #20244a;
+
+  --breakpoint-xs: 568px;
 }
 
-@layer components {
-  .wave-border {
-    position: relative;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
-  .wave-border::after {
-    content: "";
+}
+
+@utility wave-border {
+  position: relative;
+  &::after {
+    content: '';
     position: absolute;
     top: -1px;
     left: -1px;
@@ -31,15 +53,31 @@ html {
     z-index: 1;
   }
 
-  .dark .wave-border::after {
+  .dark &::after {
     border-image-source: url(./assets/border-fill-dark.svg);
   }
+}
 
-  .lato {
-    font-family: "Lato", sans-serif;
-    font-weight: 700;
-    font-style: italic;
+@utility dark {
+  & .wave-border::after {
+    border-image-source: url(./assets/border-fill-dark.svg);
   }
+}
+
+@utility lato {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@layer utilities {
+  html {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-optical-sizing: auto;
+  }
+}
+
+@layer components {
 
   *:focus-visible {
     outline-color: rgb(138, 68, 107);

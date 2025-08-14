@@ -203,7 +203,7 @@ function LinkSet(props: { icon: string; title: string; url: string }) {
   return (
     <a
       href={props.url}
-      className="flex items-center gap-1 rounded px-2 py-1 text-[10px] transition-colors hover:bg-neutral-500/10"
+      className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] transition-colors hover:bg-neutral-500/10"
     >
       <img src={props.icon} alt="" className="size-5" />
       <div className="overflow-hidden">

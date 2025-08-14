@@ -12,7 +12,7 @@ export function QRCodePage() {
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full rounded border border-gray-300 p-2"
+            className="w-full rounded-sm border border-gray-300 p-2"
           />
         </label>
         <QRCodeSVG value={text} size={256} />

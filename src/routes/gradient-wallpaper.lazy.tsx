@@ -162,7 +162,7 @@ const Wallpaper = () => {
   };
 
   return (
-    <div className="relative max-h-screen max-w-[100vw]">
+    <div className="relative max-h-screen max-w-screen">
       <Drawer
         {...{
           stop1,

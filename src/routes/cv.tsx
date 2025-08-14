@@ -5,7 +5,7 @@ export const Route = createFileRoute("/cv")({
     return {
       meta: [
         {
-          title: "CV | Dennis Chung personal website",
+          title: "CV, Dennis Chung",
         },
       ],
     };
