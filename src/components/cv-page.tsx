@@ -1,8 +1,161 @@
-import styleData from "@/styles/cv.css?inline";
 import { PropsWithChildren, ReactNode, useLayoutEffect } from "react";
+import clsx from "clsx";
+import { startCase } from "lodash";
+import styleData from "@/styles/cv.css?inline";
 import linkedinIcon from "@/assets/linkedin.png";
 import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
+
+const contexts = {
+  revision: "2025.09.12",
+  intro:
+    "Hi, I'm Dennis Chung, a passionate and results-driven full-stack software engineer with a proven track record of building and optimizing high-performance, scalable, and maintainable systems. I'm an avid learner with a knack for web development and visual arts.",
+  skills: {
+    languages: ["Typescript", "Python", "HTML5", "CSS3"],
+    frameworksAndLibraries: [
+      "React",
+      "Next.js",
+      "Vue",
+      "NestJS",
+      "Express",
+      "Vite",
+      "Rollup",
+      "TypeORM",
+    ],
+    toolsAndPlatforms: ["Docker", "Git", "Kubernetes", "AWS-EKS", "MySQL"],
+  },
+  educations: [
+    {
+      degree: "Bachelor",
+      period: "2013 ~ 2017",
+      school: "National Taiwan University",
+      department: "Information Management",
+    },
+    {
+      degree: "Master",
+      period: "2017 ~ 2019",
+      school: "National Taiwan University",
+      department: "CMLab@Information Management",
+    },
+  ],
+  experiences: [
+    {
+      where: "Taiwan AI Labs",
+      title: "Lead Software Engineer, Fullstack (Studio Team)",
+      period: "2023-09 ~ Now",
+      projects: [
+        {
+          title: "Transkribera - Studio",
+          extra: "https://asr.yating.tw",
+          items: [
+            "**Challenge:** Maintain a production-grade transcription service (**1500 DAU with 8000 files per day**) with stable pipelines, low latency, and accurate results while scaling usage.",
+            "**Action:** Owned infra reliability — ensured RabbitMQ pipeline queues and autoscaling worked reliably, monitored underlying DB health and queries, triaged and fixed production bugs, and introduced an AI-based summary feature into the transcription pipeline.",
+            "**Result:** Delivered robust service-level reliability and a new **AI summary** feature for transcriptions; reduced operational incidents and improved user experience.",
+            "**Metric:** Reduced DB CPU usage by **90%** by monitoring SQL and adding missing indexes / query improvements.",
+          ],
+        },
+        {
+          title: "Studio Control Tower Dashboard",
+          extra: "Internal — Customer Support",
+          items: [
+            "**Challenge:** Customer support needed an easy way to inspect and query customer account issues across services. And also create coupons for paid accounts.",
+            '**Action:** Designed and implemented a "Control Tower" dashboard aggregating logs, job queue states, DB insights and runtime metrics to enable fast root-cause analysis by non-engineers.',
+            "**Result:** Reduced mean time to resolution for support tickets and enabled safe, auditable queries for support staff.",
+          ],
+        },
+        {
+          title: "FedGPT - Studio",
+          extra: "https://fedgpt.cc",
+          items: [
+            "**Challenge:** Real-time, low-latency voice interactions and safe rendering of rich model outputs.",
+            "**Action:** Engineered streaming audio stacks (ASR → orchestration → TTS), hybrid model routing and safe renderers to support diverse model outputs.",
+            "**Result:** Built a scalable, low-latency interaction platform with improved security and extensibility for multi-modal outputs.",
+          ],
+        },
+        {
+          title: "AI-music Pavilion Engineering - Hualien AI Music Lab",
+          extra: "https://hmusic.moc.gov.tw/",
+          items: [
+            "**Challenge:** Architected and owned the complex **end-to-end media pipeline** for a large-scale interactive pavilion.",
+            "**Action:** Architected **full-stack applications** and AWS Kubernetes deployments with autoscaling and job queuing systems.",
+            "**Result:** Ensured a seamless user experience, handling QR session creation, audio/video generation, and synchronized 360° playback for a live public installation.",
+          ],
+        },
+        {
+          title: "AI-music Vocal Generation Platform",
+          extra: "https://studio.yating.tw/music",
+          items: [
+            "**Challenge:** Developed a complex **Digital Audio Workstation (DAW)** within the browser for AI-vocal generation.",
+            "**Action:** Engineered a front-end to handle a variety of audio and MIDI inputs, utilizing the **Browser Audio Context API** to enable real-time synesthesia. Implemented intricate **canvas drawing** and note manipulation, including drag-and-drop, resize, pitch shifts, and BPM changes.",
+            "**Result:** Enabled users to compose, edit, and generate AI-vocal tracks from MIDI files. Also built a 'near zero-shot' feature to guide users in generating complete songs automatically, similar to Suno, broadening user accessibility and creative output.",
+          ],
+        },
+        {
+          title: "Yating Studio",
+          extra: "https://studio.yating.tw",
+          items: [
+            "**Challenge:** The existing front-end needed a complete overhaul to improve performance and maintainability.",
+            "**Action:** Led the rewrite of multiple front-end applications using **Next.js** and **Vite**, implementing a component-driven design.",
+            "**Result:** Achieved **90+ Lighthouse scores** through **SSR/ISR**, code-splitting, and **CDN** optimizations, dramatically improving user-facing performance.",
+          ],
+        },
+      ],
+    },
+    {
+      where: "Houzz",
+      title: "Fullstack Engineer (Website Services)",
+      period: "2022-04 ~ 2023-08",
+      projects: [
+        {
+          title: "Prepublish Wizard",
+          extra:
+            "A supporting tool which checks if the site meets recommended criteria",
+          items: [
+            "**Challenge:** Needed an automated tool to validate sites against recommended criteria.",
+            "**Action:** Designed and built a general-purpose interface to implement **8 critical checkers** in the backend.",
+            "**Result:** Optimized the tool to achieve a **500ms response time**, processing an average of **1000 API calls per week** and ensuring site quality.",
+          ],
+        },
+      ],
+    },
+    {
+      where: "ASUS AICS",
+      title: "Software Engineer",
+      period: "2021-03 ~ 2022-04",
+      projects: [
+        {
+          title: "XUI",
+          extra: "Dedicated Vue Component Library for xHIS",
+          items: [
+            "**Challenge:** A dedicated UI framework was needed to match a fine-tuned design specification for the xHIS project.",
+            "**Action:** Created a **Vue Component Library**, designing and implementing **15 components** from scratch.",
+            "**Result:** Developed complex components with **virtual scroll** and **sticky header** capabilities, improving the developer experience with a monorepo structure.",
+          ],
+        },
+        {
+          title: "xHIS Patient Record submodule",
+          extra:
+            "A sub-system in xHIS to provide CRUD functionality for patient's records",
+          items: [
+            "**Challenge:** The original system had a slow and inefficient UI for patient record management.",
+            "**Action:** Authored a new sub-system using **Electron** and **Vue**, focusing on a lean front-end without a UI framework.",
+            "**Result:** **Reduced operation time by 50%** and achieved a final bundle size of only **200KB (gzipped)**, representing a **95% size reduction** compared to typical projects.",
+          ],
+        },
+        {
+          title: "xHIS Mobile Rounding",
+          extra:
+            "A Medical rounding supporting application run on iPad for daily usage",
+          items: [
+            "**Challenge:** Inpatient rounding procedures were reliant on paper documents, creating inefficiencies.",
+            "**Action:** Provided a mobile solution for inpatient rounding on iPad, eliminating the need for paper.",
+            "**Result:** The app's deployment led to a **35% reduction in rounding time** and reached **100 monthly active users (MAU)** with **10,000 monthly active records (MAR)** in its first quarter.",
+          ],
+        },
+      ],
+    },
+  ],
+};
 
 function useStyleData() {
   const id = "cv-styles";
@@ -16,7 +169,7 @@ function useStyleData() {
     return () => {
       document.getElementById(id)?.remove();
     };
-  });
+  }, []);
 }
 
 export function CVPage() {
@@ -24,177 +177,96 @@ export function CVPage() {
   return (
     <main className="mx-auto max-w-[800px] p-8 text-neutral-950">
       <Title />
-      <footer className="absolute right-8 top-8 text-[6px]">
-        Rev.2024.11.03
+      <footer className="absolute top-8 right-8 text-[6px]">
+        Rev.{contexts.revision}
       </footer>
       <Header />
       <Section title="Summary">
-        <p className="text-xs">
-          I mainly focus on web development. I have strong experience with HTML
-          and CSS and all modern JS/TS developing toolchains. I also enjoy
-          creating visual art, including graphic design and 3D modeling. The
-          combination of these skills makes me focus on innovation.
-        </p>
+        <p className="text-xs leading-normal font-light">{contexts.intro}</p>
       </Section>
-      <div className="flex flex-wrap">
-        <Section title="Skill Set">
-          <dl className="mr-8 flex max-w-72 flex-col text-sm font-light">
-            <dt className="mt-2 inline font-bold first-of-type:mt-0">
-              Launguage
-            </dt>
-            <dd className="inline text-xs">
-              Javascript, Typescript, Python, HTML5, CSS3
-            </dd>
-            <dt className="mt-2 inline font-bold first-of-type:mt-0">
-              Framework & Tools
-            </dt>
-            <dd className="inline text-xs">
-              React, Next, Vue, NestJS, Express, Vite, Rollup, Docker, Git, K8S,
-              MySQL, TypeORM, AWS
-            </dd>
-            <dt className="mt-2 inline font-bold first-of-type:mt-0">Others</dt>
-            <dd className="inline text-xs">
-              Figma, Photoshop, Illustrator, LightRoom, Blender
-            </dd>
+      <div className="flex flex-wrap justify-between">
+        <Section title="Skill Set" className="flex-2/3">
+          <dl className="xs:mr-8 flex flex-col">
+            {Object.entries(contexts.skills).map(([title, items]) => (
+              <BorderBox key={title} className="flex flex-col">
+                <dt className="mb-0.5 inline text-xs font-bold">
+                  {startCase(title)}
+                </dt>
+                <dd className="inline text-xs leading-snug font-light">
+                  {items.join(", ")}
+                </dd>
+              </BorderBox>
+            ))}
           </dl>
         </Section>
-        <Section title="Education">
-          <BorderBox>
-            <div className="flex justify-between text-[10px]">
-              <div>Bachelor</div>
-              <div>2013 ~ 2017</div>
-            </div>
-            <div className="text-xs font-bold">National Taiwan University</div>
-            <div className="text-xs">Infomation Management</div>
-          </BorderBox>
-          <BorderBox>
-            <div className="flex justify-between text-[10px]">
-              <div>Master</div>
-              <div>2017 ~ 2019</div>
-            </div>
-            <div className="text-xs font-bold">National Taiwan University</div>
-            <div className="text-xs">CMLab@Infomation Management</div>
-          </BorderBox>
+        <Section title="Education" className="min-w-40 flex-1/3">
+          {contexts.educations.map(({ degree, period, school, department }) => (
+            <BorderBox
+              key={degree}
+              className="flex flex-col justify-between text-xs"
+            >
+              <div className="mb-0.5 flex justify-between font-bold">
+                <div>{degree}</div>
+                <div>{period}</div>
+              </div>
+              <div className="font-light">{school}</div>
+              <div className="text-[10px] font-light">{department}</div>
+            </BorderBox>
+          ))}
         </Section>
       </div>
       <Section title="Experiences">
-        <Experience
-          where="Taiwan AI Labs"
-          title="Lead Software Engineer, Fullstack (Studio Team)"
-          period="2023-09 ~ Now"
-        >
-          <Project
-            title="AI-music experience Engineering - Hualien AI Music experimental base"
-            extra="(Start in 2025 Q1)"
-            items={[
-              "An astonishing experience where visitors can use their phones to scan a QR code, chat with AI to create unique music with a music video, and then schedule and play the video on 360-degree projector screens.",
-            ]}
-          />
-          <Project
-            title="Yating Studio"
-            extra="https://studio.yating.tw"
-            items={[
-              "Recreate the whole AI-Music frontend using Next.js and React-Query with TailwindCSS and RadixUI.",
-              "Astonishing animations with optmized performance, leading to a **score of 90+ in lighthouse benchmark**",
-            ]}
-          />
-          <Project
-            title="FedGPT - Studio"
-            extra="https://fedgpt.cc"
-            items={[
-              "Apply Voice QA with **ASR and TTS** api to provide the ability to literally chat with LLM models.",
-              "Implement extra markdown component to deal with special response like video retrival result or avatar result",
-            ]}
-          />
-        </Experience>
-        <Experience
-          where="Houzz"
-          title="Fullstack Engineer (Website Services)"
-          period="2022-04 ~ 2023-08"
-        >
-          <Project
-            title="Prebublish Wizard"
-            extra="A supporting tool which checks if the site meets recommended criteria"
-            items={[
-              "Designed and build a general interface to implement each checker",
-              "8 checkers running in the backend with a 500ms response time. On average, there are 1000 API calls per week.",
-            ]}
-          />
-        </Experience>
-        <Experience
-          where="ASUS AICS"
-          title="Software Engineer"
-          period="2021-03 ~ 2022-04"
-        >
-          <Project
-            title="XUI"
-            extra="Dedicated Vue Component Library for xHIS"
-            items={[
-              "Create the UI framework based on Vue to match our fine-tuned design specification",
-              "Designed **15 components**, including a complex table component with virtual scroll and sticky header ability",
-              "Fully written in TypeScript and well-documented with an interactive website. The monorepo structure improves the DX as well",
-            ]}
-          />
-          <Project
-            title="xHIS Patient Record submodule"
-            extra="A sub-system in xHIS to provide CRUD functionality for patient's records"
-            items={[
-              "Built on top of Electron and Vue, providing a faster UI experience compared to the original system by reducing operation time by 50%",
-              "Zero UI framework included. Components are built with Vue and CSS only, resulting in a 200KB gzip size of our frontend bundle. Normal projects that include a lightweight UI framework would end up with a 2-4MB bundle size, **saving up to 95% bundle size**.",
-              "Fully written in TypeScript and well-documented with an interactive website. The monorepo structure improves the DX as well",
-            ]}
-          />
-          <Project
-            title="xHIS Mobile Rounding"
-            extra="A Medical rounding supporting application run on iPad for daily usage"
-            items={[
-              "Provided a mobile solution for inpatient rounding procedures, eliminating the need for paper documents",
-              "Currently deployed in a single hospital with **100 mounthly active users(MAU) and 10k MAR** in 2021 Q3",
-              "Greatly **reduced the rounding time by up to 35%**. Patients can also benefit from the medical record that our app can display",
-            ]}
-          />
-        </Experience>
+        {contexts.experiences.map(({ where, title, period, projects }) => (
+          <Experience key={where} where={where} title={title} period={period}>
+            {projects.map(({ title, extra, items }) => (
+              <Project key={title} title={title} extra={extra} items={items} />
+            ))}
+          </Experience>
+        ))}
       </Section>
     </main>
   );
 }
 
 function Title() {
+  const email = new URL(document.location.toString()).searchParams.get("email");
+
   return (
-    <h1 className="flex flex-wrap items-center gap-4 text-xl tracking-widest text-neutral-600 max-sm:gap-2">
-      <span className="font-light">Chung, LiAn</span>{" "}
-      <span className="border-l pl-4 font-bold text-neutral-800 max-sm:pl-2">
-        Resume
-      </span>
-    </h1>
+    <div className="flex items-center">
+      <h1 className="flex flex-wrap items-center gap-4 text-xl tracking-widest text-neutral-600 max-sm:gap-2">
+        <span className="font-light">Chung, LiAn</span>{" "}
+        <span className="border-l border-neutral-200 pl-4 font-bold text-neutral-800 max-sm:pl-2">
+          Resume
+        </span>
+      </h1>
+      <div className="ml-4 flex flex-col border-l border-neutral-200 pl-4 text-[10px] leading-3">
+        <div className="tracking-[8px]">鍾禮安</div>
+        <div className="tracking-wide">{email || "*******@gmail.com"}</div>
+      </div>
+    </div>
   );
 }
 
 function Header() {
-  const email = new URL(document.location.toString()).searchParams.get("email");
   return (
-    <header className="mt-4 flex flex-wrap items-center gap-2">
-      <div className="mr-4 flex-1 text-[10px] font-bold">
-        <div className="tracking-[8px]">鍾禮安</div>
-        <span className="tracking-wide">{email || "*******@gmail.com"}</span>
-      </div>
-      <div className="-ml-2 flex flex-wrap items-center gap-2">
-        <LinkSet
-          icon={linkedinIcon}
-          title="LinkedIn"
-          url="https://www.linkedin.com/in/dennis-chung-tw"
-        />
-        <LinkSet
-          icon={homepageIcon}
-          title="Personal Website"
-          url="https://hikarintu.github.io/homepage/"
-        />
-        <LinkSet
-          icon={githubIcon}
-          title="Github - hikariNTU"
-          url="https://github.com/hikariNTU"
-        />
-      </div>
+    <header className="mt-2 -ml-2 flex flex-wrap items-center gap-1">
+      <LinkSet
+        icon={linkedinIcon}
+        title="LinkedIn"
+        url="https://www.linkedin.com/in/dennis-chung-tw"
+      />
+      <hr className="h-6 w-px bg-neutral-200" />
+      <LinkSet
+        icon={homepageIcon}
+        title="Personal Website"
+        url="https://hikarintu.github.io/homepage/"
+      />
+      <hr className="h-6 w-px bg-neutral-200" />
+      <LinkSet
+        icon={githubIcon}
+        title="Github - hikariNTU"
+        url="https://github.com/hikariNTU"
+      />
     </header>
   );
 }
@@ -214,18 +286,30 @@ function LinkSet(props: { icon: string; title: string; url: string }) {
   );
 }
 
-function Section(props: PropsWithChildren<{ title: string }>) {
+function Section(
+  props: PropsWithChildren<{ title: string; className?: string }>,
+) {
   return (
-    <section className="mt-4">
-      <h2 className="mb-2 text-2xl font-black">{props.title}</h2>
+    <section className={clsx("mt-4", props.className)}>
+      <h2 className="mb-2 text-lg font-light text-neutral-500">
+        {props.title}
+      </h2>
       {props.children}
     </section>
   );
 }
 
-function BorderBox({ children }: PropsWithChildren) {
+function BorderBox({
+  children,
+  className,
+}: PropsWithChildren<{ className?: string }>) {
   return (
-    <section className="border border-t-0 border-neutral-600 px-3 pb-3 pt-2 first-of-type:rounded-t-xl first-of-type:border-t last-of-type:rounded-b-xl">
+    <section
+      className={clsx(
+        "border-b border-neutral-300 pt-2 pb-3 first-of-type:border-t",
+        className,
+      )}
+    >
       {children}
     </section>
   );
@@ -238,11 +322,11 @@ function Experience({
   children,
 }: PropsWithChildren<{ where: string; title: string; period: string }>) {
   return (
-    <BorderBox>
+    <BorderBox className="">
       <div className="mt-1 flex items-end gap-2">
-        <h3 className="text-base font-bold leading-[1.1]">{where}</h3>
+        <h3 className="text-base leading-[1.1] font-bold">{where}</h3>
         <div className="text-xs font-light">{title}</div>
-        <div className="ml-auto text-xs font-light">{period}</div>
+        <div className="ml-auto text-xs font-bold">{period}</div>
       </div>
       {children}
     </BorderBox>
@@ -253,12 +337,20 @@ function Project({
   title,
   extra,
   items,
-}: PropsWithChildren<{ title: string; extra?: ReactNode; items: string[] }>) {
+}: PropsWithChildren<{
+  title: string;
+  extra?: ReactNode;
+  items: readonly string[];
+}>) {
   return (
-    <section className="my-2 pl-0.5">
+    <section className="my-2 break-inside-avoid pl-0.5">
       <div className="mb-1 flex items-end gap-1 text-xs">
         <h4>{title}</h4>
-        {extra && <div className="text-[10px] font-light">{extra}</div>}
+        {extra && (
+          <div className="text-[10px] font-light">
+            <MaybeLink>{extra}</MaybeLink>
+          </div>
+        )}
       </div>
       <ul className="list-disc pl-3.5 text-[10px] font-light">
         {items.map((v) => {
@@ -272,5 +364,16 @@ function Project({
         })}
       </ul>
     </section>
+  );
+}
+
+function MaybeLink({ children }: PropsWithChildren) {
+  if (typeof children !== "string" || !children.startsWith("http")) {
+    return children;
+  }
+  return (
+    <a href={children} className="text-blue-600 hover:underline">
+      {children}
+    </a>
   );
 }
