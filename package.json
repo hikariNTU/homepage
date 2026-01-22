@@ -19,7 +19,7 @@
     "clsx": "^2.1.1",
     "dom-to-image": "^2.6.0",
     "jotai": "^2.8.4",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lucide-react": "^0.400.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.1",
