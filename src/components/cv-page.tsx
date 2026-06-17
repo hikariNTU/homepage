@@ -7,22 +7,37 @@ import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
 
 const contexts = {
-  revision: "2025.09.12",
+  revision: "2026.06.17",
   intro:
-    "Hi, I'm Dennis Chung, a passionate and results-driven full-stack software engineer with a proven track record of building and optimizing high-performance, scalable, and maintainable systems. I'm an avid learner with a knack for web development and visual arts.",
+    "Hi, I'm Dennis Chung. I am a full-stack engineer who specializes in modernizing core web architecture, optimizing distributed infrastructure, and orchestrating production-grade AI systems. From engineering low-latency browser DAWs utilizing the Web Audio and Canvas APIs to building context-aware AI platform agents integrated with live Kubernetes clusters, I focus on cutting operational latency and building developer platforms that scale. By anchoring my day-to-day workflow in specification-driven development and advanced AI automation, I bridge the gap between frontend execution, backend telemetry, and extreme delivery speed.",
   skills: {
-    languages: ["Typescript", "Python", "HTML5", "CSS3"],
-    frameworksAndLibraries: [
+    languages: ["TypeScript", "JavaScript (ES6+)", "Python", "SQL"],
+    frontendArchitecture: [
       "React",
       "Next.js",
-      "Vue",
-      "NestJS",
-      "Express",
+      "Vue.js",
+      "Module Federation",
       "Vite",
       "Rollup",
-      "TypeORM",
+      "Web Audio API",
+      "HTML5 Canvas",
     ],
-    toolsAndPlatforms: ["Kubernetes", "AWS", "GCP", "Terraform"],
+    backendAndInfra: [
+      "NestJS",
+      "Express",
+      "TypeORM",
+      "Kubernetes (K8s)",
+      "AWS",
+      "GCP",
+      "Terraform",
+      "RabbitMQ",
+    ],
+    AIAndAutomation: [
+      "AI-Agent Workflows",
+      "Specification-Driven Development (SDD)",
+      "OpenAPI / JSON Schema Orchestration",
+      "Claude API & LLM Tooling",
+    ],
   },
   educations: [
     {
@@ -41,9 +56,30 @@ const contexts = {
   experiences: [
     {
       where: "Netskope",
-      title: "Software Engineer, WebUI Fullstack",
+      title: "Senior Software Engineer (WebUI InlineSWG)",
       period: "2025-09 ~ Now",
-      projects: [],
+      projects: [
+        {
+          title: "Context-Aware AI On-Call Agent (Slack-Native IDP)",
+          extra: "Core Operations & Platform Engineering",
+          items: [
+            "**Challenge:** High cognitive load and prolonged MTTR (Mean Time to Resolution) during critical customer escalations due to fragmented monitoring data across diverse observability platforms.",
+            "**Action:** Co-developed an autonomous, Slack-native AI agent integrated with enterprise knowledge graphs (Jira, Confluence) and production infrastructure APIs (**Kubernetes cluster states, Git repositories, Sumo Logic, Grafana/Prometheus metrics**).",
+            "**Result:** Established the system as the de facto front-line triage tool for all customer escalations, providing on-call engineers with instant, unified root-cause analysis and centralized traceability.",
+            "**Metric:** Slashed incident triage duration from 30+ minutes down to **30 seconds per round**, resulting in a **90% reduction in MTTR** for critical service issues.",
+          ],
+        },
+        {
+          title: "Next-Gen WebUI Architecture & Test Suite Migration",
+          extra: "Infrastructure Modernization",
+          items: [
+            "**Challenge:** Legacy Webpack/CRACO build configurations and heavy Cypress/Jest test suites caused slow local development spin-up times, high pipeline latency, and flaky CI/CD execution for micro-frontend applications.",
+            "**Action:** Leveraged an AI-agent-driven, specification-backed workflow to spearhead the migration of the build ecosystem to **Vite** with **Module Federation**, while refactoring the testing infrastructure to **Playwright** and **Vitest**.",
+            "**Result:** Drastically optimized developer experience (DX) with near-instant Hot Module Replacement (HMR), unlocked seamless micro-frontend code-sharing, and established a highly stable, parallelized validation pipeline.",
+            "**Metric:** Slashed local server start time by **90%** (45s to <3s), accelerated CI pipeline E2E execution speed by **40%** (22m to 13m), and reduced unit test runtime by **10%** while entirely eliminating flaky failures.",
+          ],
+        },
+      ],
     },
     {
       where: "Taiwan AI Labs",
@@ -51,58 +87,48 @@ const contexts = {
       period: "2023-09 ~ 2025-09",
       projects: [
         {
-          title: "Transkribera - Studio",
+          title: "Transkribera - Studio Core",
           extra: "https://asr.yating.tw",
           items: [
-            "**Challenge:** Maintain a production-grade transcription service (**1500 DAU with 8000 files per day**) with stable pipelines, low latency, and accurate results while scaling usage.",
-            "**Action:** Owned infra reliability — ensured RabbitMQ pipeline queues and autoscaling worked reliably, monitored underlying DB health and queries, triaged and fixed production bugs, and introduced an AI-based summary feature into the transcription pipeline.",
-            "**Result:** Delivered robust service-level reliability and a new **AI summary** feature for transcriptions; reduced operational incidents and improved user experience.",
-            "**Metric:** Reduced DB CPU usage by **90%** by monitoring SQL and adding missing indexes / query improvements.",
+            "**Challenge:** Maintain a high-scale transcription service (**1,500 DAU, 8,000 files/day**) with stable data pipelines and low query latency.",
+            "**Action:** Audited database queries, patched missing SQL indexes, managed RabbitMQ autoscaling, and integrated a new AI-based summary pipeline feature.",
+            "**Metric:** Reduced core database CPU utilization by **90%** through targeted SQL optimization.",
           ],
         },
         {
-          title: "Studio Control Tower Dashboard",
-          extra: "Internal — Customer Support",
-          items: [
-            "**Challenge:** Customer support needed an easy way to inspect and query customer account issues across services. And also create coupons for paid accounts.",
-            '**Action:** Designed and implemented a "Control Tower" dashboard aggregating logs, job queue states, DB insights and runtime metrics to enable fast root-cause analysis by non-engineers.',
-            "**Result:** Reduced mean time to resolution for support tickets and enabled safe, auditable queries for support staff.",
-          ],
-        },
-        {
-          title: "FedGPT - Studio",
-          extra: "https://fedgpt.cc",
-          items: [
-            "**Challenge:** Real-time, low-latency voice interactions and safe rendering of rich model outputs.",
-            "**Action:** Engineered streaming audio stacks (ASR → orchestration → TTS), hybrid model routing and safe renderers to support diverse model outputs.",
-            "**Result:** Built a scalable, low-latency interaction platform with improved security and extensibility for multi-modal outputs.",
-          ],
-        },
-        {
-          title: "AI-music Pavilion Engineering - Hualien AI Music Lab",
-          extra: "https://hmusic.moc.gov.tw/",
-          items: [
-            "**Challenge:** Architected and owned the complex **end-to-end media pipeline** for a large-scale interactive pavilion.",
-            "**Action:** Architected **full-stack applications** and AWS Kubernetes deployments with autoscaling and job queuing systems.",
-            "**Result:** Ensured a seamless user experience, handling QR session creation, audio/video generation, and synchronized 360° playback for a live public installation.",
-          ],
-        },
-        {
-          title: "AI-music Vocal Generation Platform",
+          title: "AI-Music Vocal Generation Platform & Browser DAW",
           extra: "https://studio.yating.tw/music",
           items: [
-            "**Challenge:** Developed a complex **Digital Audio Workstation (DAW)** within the browser for AI-vocal generation.",
-            "**Action:** Engineered a front-end to handle a variety of audio and MIDI inputs, utilizing the **Browser Audio Context API** to enable real-time synesthesia. Implemented intricate **canvas drawing** and note manipulation, including drag-and-drop, resize, pitch shifts, and BPM changes.",
-            "**Result:** Enabled users to compose, edit, and generate AI-vocal tracks from MIDI files. Also built a 'near zero-shot' feature to guide users in generating complete songs automatically, similar to Suno, broadening user accessibility and creative output.",
+            "**Challenge:** Build a complex, highly interactive Digital Audio Workstation (DAW) entirely inside the browser.",
+            "**Action:** Leveraged the **Browser Audio Context API** and high-performance **HTML5 Canvas drawing** to engineer real-time audio synesthesia, drag-and-drop note manipulation, and pitch/BPM shifting.",
+            "**Result:** Enabled creators to edit MIDI files natively and introduced a near zero-shot automated song generation feature.",
           ],
         },
         {
-          title: "Yating Studio",
+          title: "Yating Studio Frontend Modernization",
           extra: "https://studio.yating.tw",
           items: [
-            "**Challenge:** The existing front-end needed a complete overhaul to improve performance and maintainability.",
-            "**Action:** Led the rewrite of multiple front-end applications using **Next.js** and **Vite**, implementing a component-driven design.",
-            "**Result:** Achieved **90+ Lighthouse scores** through **SSR/ISR**, code-splitting, and **CDN** optimizations, dramatically improving user-facing performance.",
+            "**Challenge:** Legacy frontend applications suffered from poor maintainability and slow client-side loading speeds.",
+            "**Action:** Led the comprehensive architectural rewrite of multiple applications using **Next.js** and **Vite** with strict component-driven design.",
+            "**Result:** Achieved **90+ Lighthouse scores** via aggressive SSR/ISR routing, strategic code-splitting, and CDN optimizations.",
+          ],
+        },
+        {
+          title: "FedGPT Multi-Modal Streaming Platform",
+          extra: "https://fedgpt.cc",
+          items: [
+            "**Challenge:** Deliver real-time, low-latency streaming audio interactions while safely rendering diverse LLM outputs.",
+            "**Action:** Engineered full-stack streaming audio stacks (ASR → custom orchestration layer → TTS) paired with hybrid model routing and sanitized renderers.",
+            "**Result:** Built a highly extensible, secure platform optimized for high-performance multi-modal model serving.",
+          ],
+        },
+        {
+          title: "Interactive AI-Music Exhibition Pavilion",
+          extra: "https://hmusic.moc.gov.tw/",
+          items: [
+            "**Challenge:** Architect and own an end-to-end media generation pipeline for a massive interactive public art installation.",
+            "**Action:** Deployed full-stack applications onto **AWS Kubernetes (EKS)** utilizing auto-scaling groups and distributed job queuing systems.",
+            "**Result:** Guaranteed a seamless public user experience for live QR-session tracking, audio/video generation, and synchronized 360° pavilion playback.",
           ],
         },
       ],
@@ -180,6 +206,7 @@ function useStyleData() {
 
 export function CVPage() {
   useStyleData();
+
   return (
     <main className="mx-auto max-w-200 p-8 text-neutral-950">
       <Title />
@@ -190,11 +217,11 @@ export function CVPage() {
       <Section title="Summary">
         <p className="text-xs leading-normal font-light">{contexts.intro}</p>
       </Section>
-      <div className="flex flex-wrap justify-between">
+      <div className="flex flex-wrap justify-between print:mb-4">
         <Section title="Skill Set" className="flex-2/3">
           <dl className="flex flex-col xs:mr-8">
             {Object.entries(contexts.skills).map(([title, items]) => (
-              <BorderBox key={title} className="flex flex-col">
+              <BorderBox key={title} as="div" className="flex flex-col">
                 <dt className="mb-0.5 inline text-xs font-bold">
                   {startCase(title)}
                 </dt>
@@ -308,16 +335,18 @@ function Section(
 function BorderBox({
   children,
   className,
-}: PropsWithChildren<{ className?: string }>) {
+  as = "section",
+}: PropsWithChildren<{ className?: string; as?: React.ElementType }>) {
+  const Component = as;
   return (
-    <section
+    <Component
       className={clsx(
         "border-b border-neutral-300 pt-2 pb-3 first-of-type:border-t",
         className,
       )}
     >
       {children}
-    </section>
+    </Component>
   );
 }
 
@@ -330,9 +359,18 @@ function Experience({
   return (
     <BorderBox className="">
       <div className="mt-1 flex items-end gap-2">
-        <h3 className="text-base leading-[1.1] font-bold">{where}</h3>
-        <div className="text-xs font-light">{title}</div>
-        <div className="ml-auto text-xs font-bold">{period}</div>
+        <h3 className="text-base leading-[1.1] font-bold">
+          <span className="sr-only">Company: </span>
+          {where}
+        </h3>
+        <div className="text-xs font-light">
+          <span className="sr-only">Title: </span>
+          {title}
+        </div>
+        <div className="ml-auto text-xs font-bold">
+          <span className="sr-only">Period: </span>
+          {period}
+        </div>
       </div>
       {children}
     </BorderBox>

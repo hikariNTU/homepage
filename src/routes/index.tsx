@@ -10,7 +10,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Suspense, lazy, useEffect, useLayoutEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, NewspaperIcon } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Homepage,
@@ -47,7 +47,7 @@ function Homepage() {
             src={nameImg}
             width={409}
             height={1440}
-            className="mx-16 my-10 max-w-[150px] xl:mx-[5vw] dark:brightness-[5] dark:grayscale"
+            className="mx-16 my-10 max-w-37.5 xl:mx-[5vw] dark:brightness-[5] dark:grayscale"
             alt="Dennis Chung Personal webpage"
           />
           <div className="absolute bottom-0 flex w-full items-center justify-center md:pr-4">
@@ -429,6 +429,15 @@ function Footer() {
           <GithubIcon />
           GITHUB
         </a>
+        <TooltipWrap content="For anyone who want to contact me, please reach out to me via LinkedIn or Email. I don't check my Github often, and I don't have any plan to open source my email address, sorry for the inconvenience.">
+          <Route.Link
+            to="/cv"
+            className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"
+          >
+            <NewspaperIcon size={16} />
+            CV
+          </Route.Link>
+        </TooltipWrap>
       </div>
     </footer>
   );
