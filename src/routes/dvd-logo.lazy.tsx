@@ -130,7 +130,7 @@ const DVD = () => {
   const ControlPanel = (
     <div
       className={clsx(
-        "absolute right-4 top-4 flex flex-col overflow-hidden rounded-lg bg-neutral-100/80 p-4 font-bold text-neutral-700 transition-opacity",
+        "absolute top-4 right-4 flex flex-col overflow-hidden rounded-lg bg-neutral-100/80 p-4 font-bold text-neutral-700 transition-opacity",
         {
           "opacity-100": showPanel,
           "opacity-0 focus-within:opacity-30 hover:opacity-30": !showPanel,
@@ -146,7 +146,7 @@ const DVD = () => {
           onClick={() => {
             setShowPanel((v) => !v);
           }}
-          className="absolute right-4 top-4 text-neutral-400 hover:text-neutral-900"
+          className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900"
         >
           {showPanel ? <PinIcon /> : <PinOffIcon />}
         </button>
@@ -160,7 +160,7 @@ const DVD = () => {
           onValueChange={([v]) => {
             setSpeed(v);
           }}
-          className="relative flex h-5 w-[160px] touch-none select-none items-center"
+          className="relative flex h-5 w-[160px] touch-none items-center select-none"
           min={1}
           step={1}
           max={50}
@@ -184,7 +184,7 @@ const DVD = () => {
           onValueChange={([z]) => {
             setSize(z);
           }}
-          className="relative flex h-5 w-[160px] touch-none select-none items-center"
+          className="relative flex h-5 w-[160px] touch-none items-center select-none"
           min={3}
           step={0.1}
           max={30}
@@ -266,7 +266,7 @@ const DVD = () => {
       {/* Bouncer Element */}
       <div
         className={clsx("ud leading-[0]", {
-          "outline-solid outline-2 outline-blue-500": outline,
+          "outline-2 outline-blue-500 outline-solid": outline,
         })}
         style={{
           animationDuration: `${height / speed ** 2}s`,
@@ -277,7 +277,7 @@ const DVD = () => {
       >
         <div
           className={clsx("lr leading-[0]", {
-            "outline-solid outline-2 outline-red-500": outline,
+            "outline-2 outline-red-500 outline-solid": outline,
             "bg-current": inverted,
           })}
           style={{

@@ -15,3 +15,14 @@ export declare global {
     }
   }
 }
+
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "model-viewer": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & ModelViewerAttributes,
+        React.AllHTMLAttributes<Partial<ModelViewerElement>> & ExtraDef
+      >;
+    }
+  }
+}

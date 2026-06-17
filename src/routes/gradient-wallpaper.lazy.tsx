@@ -179,7 +179,7 @@ const Wallpaper = () => {
       <canvas
         id="canvas-handle"
         tabIndex={0}
-        className="absolute left-0 top-0 h-screen w-screen"
+        className="absolute top-0 left-0 h-screen w-screen"
         onMouseDown={(e) => {
           setWhere([e.clientX, e.clientY]);
         }}
@@ -246,7 +246,7 @@ function Drawer(props: {
       )}
     >
       <button
-        className="absolute right-0 top-6 translate-x-full rounded-r-full bg-neutral-50 p-2 hover:bg-neutral-100 active:bg-neutral-200"
+        className="absolute top-6 right-0 translate-x-full rounded-r-full bg-neutral-50 p-2 hover:bg-neutral-100 active:bg-neutral-200"
         onClick={() => {
           setOpen((o) => !o);
         }}

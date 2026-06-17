@@ -45,7 +45,7 @@ function Gallery() {
           key={i.title}
           content={
             <section className="max-w-[400px] p-4">
-              <h4 className="lato mb-1 text-xl">{i.title}</h4>
+              <h4 className="mb-1 lato text-xl">{i.title}</h4>
               <p className="font-thin">{i.text}</p>
             </section>
           }

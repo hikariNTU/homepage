@@ -16,7 +16,7 @@ export function OtherSites() {
           <div className="wave-border">
             <img src={site.img} className="object-contain" alt="" />
           </div>
-          <div className="lato mt-3 text-xl text-main-800 dark:text-main-200">
+          <div className="mt-3 lato text-xl text-main-800 dark:text-main-200">
             {site.title}
           </div>
           <div className="font-light">{site.description}</div>
@@ -47,6 +47,13 @@ const sites: {
   description: string;
   href: string;
 }[] = [
+  {
+    img: find("api-playground"),
+    title: "Browser API Playground",
+    description:
+      "A full-featured playground for testing and exploring various browser APIs. It provides a convenient environment to experiment with different APIs, view their outputs, and understand their behavior through interactive examples with live coding experience.",
+    href: "https://hikarintu.github.io/browser-api-playground/",
+  },
   {
     img: find("midi-parser"),
     title: "MIDI Parser & Inspector",

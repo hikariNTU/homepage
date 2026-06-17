@@ -22,7 +22,7 @@ const contexts = {
       "Rollup",
       "TypeORM",
     ],
-    toolsAndPlatforms: ["Docker", "Git", "Kubernetes", "AWS-EKS", "MySQL"],
+    toolsAndPlatforms: ["Kubernetes", "AWS", "GCP", "Terraform"],
   },
   educations: [
     {
@@ -40,9 +40,15 @@ const contexts = {
   ],
   experiences: [
     {
+      where: "Netskope",
+      title: "Software Engineer, WebUI Fullstack",
+      period: "2025-09 ~ Now",
+      projects: [],
+    },
+    {
       where: "Taiwan AI Labs",
       title: "Lead Software Engineer, Fullstack (Studio Team)",
-      period: "2023-09 ~ Now",
+      period: "2023-09 ~ 2025-09",
       projects: [
         {
           title: "Transkribera - Studio",
@@ -175,7 +181,7 @@ function useStyleData() {
 export function CVPage() {
   useStyleData();
   return (
-    <main className="mx-auto max-w-[800px] p-8 text-neutral-950">
+    <main className="mx-auto max-w-200 p-8 text-neutral-950">
       <Title />
       <footer className="absolute top-8 right-8 text-[6px]">
         Rev.{contexts.revision}
@@ -186,7 +192,7 @@ export function CVPage() {
       </Section>
       <div className="flex flex-wrap justify-between">
         <Section title="Skill Set" className="flex-2/3">
-          <dl className="xs:mr-8 flex flex-col">
+          <dl className="flex flex-col xs:mr-8">
             {Object.entries(contexts.skills).map(([title, items]) => (
               <BorderBox key={title} className="flex flex-col">
                 <dt className="mb-0.5 inline text-xs font-bold">

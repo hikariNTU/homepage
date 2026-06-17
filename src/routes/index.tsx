@@ -64,7 +64,7 @@ function Homepage() {
         </div>
         <hr
           aria-orientation="vertical"
-          className="absolute right-4 top-0 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden dark:brightness-[0.3]"
+          className="absolute top-0 right-4 my-16 h-[calc(100%-8rem)] w-5 overflow-hidden border-none bg-repeat-y object-cover max-md:hidden dark:brightness-[0.3]"
           style={{
             backgroundImage: `url("${waveImg}")`,
             backgroundSize: "10px",
@@ -151,7 +151,7 @@ function TransitionMask() {
     <div
       aria-hidden
       className={clsx(
-        "pointer-events-none fixed inset-0 z-50 select-none bg-neutral-900 transition-opacity ease-in-out [transition-duration:1.5s] dark:bg-main-100",
+        "pointer-events-none fixed inset-0 z-50 bg-neutral-900 transition-opacity [transition-duration:1.5s] ease-in-out select-none dark:bg-main-100",
         {
           "opacity-0": loaded,
         },
@@ -180,7 +180,7 @@ function SectionChunk({
       >
         <h2
           className={clsx(
-            "shrink-0 text-2xl font-light leading-[2.5] tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px] dark:text-main-200",
+            "shrink-0 text-2xl leading-[2.5] font-light tracking-[40px] text-main-800 [writing-mode:vertical-lr] max-xs:leading-[2.5] max-xs:tracking-[32px] dark:text-main-200",
             {
               "max-xl:leading-[2.5] max-xl:tracking-[32px]": condensed,
             },
@@ -197,7 +197,7 @@ function SectionChunk({
           height={148}
           alt=""
           className={clsx(
-            "pointer-events-none -mt-4 select-none p-2 max-xs:-mt-8 max-xs:rotate-90 max-xs:p-3 dark:brightness-150",
+            "pointer-events-none -mt-4 p-2 select-none max-xs:-mt-8 max-xs:rotate-90 max-xs:p-3 dark:brightness-150",
             {
               "max-xl:-mt-8 max-xl:rotate-90 max-xl:p-3": condensed,
             },
@@ -213,7 +213,7 @@ function SelfIntro() {
   const { t } = useTranslation();
   return (
     <SectionChunk title="selfTitle">
-      <div className="flex flex-col p-4 text-sm font-light leading-relaxed tracking-wider">
+      <div className="flex flex-col p-4 text-sm leading-relaxed font-light tracking-wider">
         <p className="mb-4">{t("migrationNote")}</p>
         <p className="mb-4">{t("selfP2")}</p>
         <details>
@@ -367,7 +367,7 @@ function SkillSet() {
       <div className="p-3">
         {skillList.map((set) => (
           <Fragment key={set.group}>
-            <h3 className="mb-2 mt-4 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6 dark:text-main-200">
+            <h3 className="mt-4 mb-2 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6 dark:text-main-200">
               {set.group}
             </h3>
             <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
@@ -378,7 +378,7 @@ function SkillSet() {
                     content={skill.desc || "..."}
                     key={skill.name}
                   >
-                    <button className="lato flex cursor-help items-center gap-1 rounded-xl px-2 py-1 text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800 dark:text-neutral-300 dark:hover:text-main-100">
+                    <button className="flex cursor-help items-center gap-1 rounded-xl px-2 py-1 lato text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800 dark:text-neutral-300 dark:hover:text-main-100">
                       {
                         <img
                           width={20}
@@ -414,7 +414,7 @@ function Footer() {
           backgroundImage: `url("${waveHorImg}")`,
         }}
       ></hr>
-      <div className="lato mb-8 mt-4 flex flex-wrap items-center justify-center text-main-800/70 md:mb-0 dark:text-main-200">
+      <div className="mt-4 mb-8 flex flex-wrap items-center justify-center lato text-main-800/70 md:mb-0 dark:text-main-200">
         <a
           href="https://www.linkedin.com/in/dennis-chung-tw/"
           className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"

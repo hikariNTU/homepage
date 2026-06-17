@@ -186,9 +186,6 @@ const EntryPage = () => {
             material.pbrMetallicRoughness["baseColorTexture"].setTexture(
               await card.createTexture(dataUrl),
             );
-
-            material.pbrMetallicRoughness["baseColorTexture"].texture?.source
-              .uri;
           } else {
             console.error("Model material not found!!");
           }
@@ -452,7 +449,9 @@ const CardContainer = forwardRef<
             <h2>{company}</h2>
             <address className="addr">
               <p>{address}</p>
-              {additional?.split(/\r?\n/).map((v) => <p key={v}>{v}</p>)}
+              {additional?.split(/\r?\n/).map((v) => (
+                <p key={v}>{v}</p>
+              ))}
             </address>
           </div>
         </div>

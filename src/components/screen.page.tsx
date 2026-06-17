@@ -281,7 +281,7 @@ const DescriptionList: React.FC<{
   data: Record<string, string>;
 }> = ({ title = "Specification", data }) => {
   return (
-    <div className="m-2 block min-w-[230px] rounded-lg bg-white px-4 pb-6 pt-2 shadow-sm">
+    <div className="m-2 block min-w-[230px] rounded-lg bg-white px-4 pt-2 pb-6 shadow-sm">
       <span className="text-xs font-light text-gray-500">{title}</span>
       <div className="mb-3 block h-1 bg-gray-400/20"></div>
       <dl className="space-y-2">
@@ -336,13 +336,13 @@ const ViewDistanceWidget: React.FC = () => {
         onValueChange={([value]) => setDistance(value)}
         max={max}
         step={5}
-        className="relative flex w-full touch-none select-none items-center"
+        className="relative flex w-full touch-none items-center select-none"
       >
         <Slider.Track className="relative h-2 w-full grow rounded-full bg-gray-200">
           <Slider.Range className="absolute h-full rounded-full bg-blue-500" />
         </Slider.Track>
         <Slider.Thumb
-          className="block h-5 w-5 rounded-full border-2 border-blue-500 bg-white shadow-sm transition-colors duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-400"
+          className="block h-5 w-5 rounded-full border-2 border-blue-500 bg-white shadow-sm transition-colors duration-200 focus:ring-2 focus:ring-blue-400 focus:outline-hidden"
           aria-label="View Distance"
         />
       </Slider.Root>
@@ -408,10 +408,10 @@ const ScreenVisualization: React.FC = () => {
         </div>
 
         {/* Right info */}
-        <div className="absolute bottom-2 right-2 text-xs">{display.size}"</div>
+        <div className="absolute right-2 bottom-2 text-xs">{display.size}"</div>
 
         {/* DPI indicator */}
-        <div className="absolute right-2 top-2 text-xs">
+        <div className="absolute top-2 right-2 text-xs">
           {Math.round(dpi)} DPI
         </div>
       </div>
@@ -563,7 +563,7 @@ const ControlPanel: React.FC = () => {
               <div className="flex items-center">
                 <label className="ml-1 flex items-center gap-2 text-sm">
                   <Checkbox
-                    className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
+                    className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-hidden data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                     checked={display.aspect.lock}
                     onCheckedChange={(checked) =>
                       updateAspect(
@@ -590,7 +590,7 @@ const ControlPanel: React.FC = () => {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
               <Checkbox
-                className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-400 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
+                className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-hidden data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                 checked={display.curvature.use}
                 onCheckedChange={(checked) =>
                   updateCurvature(display.curvature.r, checked === true)

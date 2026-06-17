@@ -5,7 +5,7 @@ export const Route = createFileRoute("/proj")({
   component: () => (
     <div>
       <button
-        className="fixed right-4 top-4 bg-red-300 p-2"
+        className="fixed top-4 right-4 bg-red-300 p-2"
         onClick={() => {
           document.body.requestFullscreen();
         }}
