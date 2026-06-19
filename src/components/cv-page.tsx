@@ -1,13 +1,14 @@
-import { PropsWithChildren, ReactNode, useLayoutEffect } from "react";
+import { PropsWithChildren, ReactNode, useEffect } from "react";
 import clsx from "clsx";
 import { startCase } from "lodash";
-import styleData from "@/styles/cv.css?inline";
+import styleLink from "@/styles/cv.css?url";
 import linkedinIcon from "@/assets/linkedin.png";
 import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
+import { useStyleData } from "@/lib/useStyleData";
 
 const contexts = {
-  revision: "2026.06.17",
+  revision: "2026.06.18",
   intro:
     "Hi, I'm Dennis Chung. I am a full-stack engineer who specializes in modernizing core web architecture, optimizing distributed infrastructure, and orchestrating production-grade AI systems. From engineering low-latency browser DAWs utilizing the Web Audio and Canvas APIs to building context-aware AI platform agents integrated with live Kubernetes clusters, I focus on cutting operational latency and building developer platforms that scale. By anchoring my day-to-day workflow in specification-driven development and advanced AI automation, I bridge the gap between frontend execution, backend telemetry, and extreme delivery speed.",
   skills: {
@@ -61,22 +62,22 @@ const contexts = {
       projects: [
         {
           title: "Context-Aware AI On-Call Agent (Slack-Native IDP)",
-          extra: "Core Operations & Platform Engineering",
+          extra: "Generative AI & Enterprise Knowledge Automation",
           items: [
-            "**Challenge:** High cognitive load and prolonged MTTR (Mean Time to Resolution) during critical customer escalations due to fragmented monitoring data across diverse observability platforms.",
-            "**Action:** Co-developed an autonomous, Slack-native AI agent integrated with enterprise knowledge graphs (Jira, Confluence) and production infrastructure APIs (**Kubernetes cluster states, Git repositories, Sumo Logic, Grafana/Prometheus metrics**).",
-            "**Result:** Established the system as the de facto front-line triage tool for all customer escalations, providing on-call engineers with instant, unified root-cause analysis and centralized traceability.",
-            "**Metric:** Slashed incident triage duration from 30+ minutes down to **30 seconds per round**, resulting in a **90% reduction in MTTR** for critical service issues.",
+            "**Challenge:** Critical system escalations and project tracking suffered from slow resolution times because stakeholders had to manually aggregate fragmented diagnostic data, Jira timelines, and code states across multiple internal platforms.",
+            "**Action:** Co-developed an autonomous, Slack-native AI agent integrated with enterprise knowledge bases (Jira, Confluence, onboarding docs) and live production infrastructure (**Kubernetes cluster states, Git logs, Sumo Logic, Grafana/Prometheus, login E2E test against production websites**).",
+            "**Scale & Impact:** Successfully expanded adoption across cross-functional channels; transformed the tool into a company-wide assistant enabling PMs to track feature readiness and outside engineers to automate bug replication scenarios.",
+            "**Result & Metric:** Established as the company's highest-accuracy internal AI agent, providing instant root-cause analysis with verifiable evidence links. Slashed incident triage duration from 10 minutes down to 30 seconds, achieving a 95% reduction in frontline triage latency and drastically accelerating overall MTTR. After the first 3 months of launch, our team caught **3** emerging infra structure issues before other teams.",
           ],
         },
         {
-          title: "Next-Gen WebUI Architecture & Test Suite Migration",
-          extra: "Infrastructure Modernization",
+          title: "Next-Gen WebUI Architecture & AI-Assisted Migration",
+          extra: "Infrastructure Modernization & Technical Evangelism",
           items: [
-            "**Challenge:** Legacy Webpack/CRACO build configurations and heavy Cypress/Jest test suites caused slow local development spin-up times, high pipeline latency, and flaky CI/CD execution for micro-frontend applications.",
-            "**Action:** Leveraged an AI-agent-driven, specification-backed workflow to spearhead the migration of the build ecosystem to **Vite** with **Module Federation**, while refactoring the testing infrastructure to **Playwright** and **Vitest**.",
-            "**Result:** Drastically optimized developer experience (DX) with near-instant Hot Module Replacement (HMR), unlocked seamless micro-frontend code-sharing, and established a highly stable, parallelized validation pipeline.",
-            "**Metric:** Slashed local server start time by **90%** (45s to <3s), accelerated CI pipeline E2E execution speed by **40%** (22m to 13m), and reduced unit test runtime by **10%** while entirely eliminating flaky failures.",
+            "**Challenge:** Legacy build configurations caused severe pipeline latency across 10+ micro-frontend applications, while migrating to a modern testing framework faced high friction and adoption resistance from distributed feature teams.",
+            "**Action:** Spearheaded the core migration to **Vite** and **Module Federation** while engineering an autonomous AI-agent migration skill that automatically audited repositories, caught common pitfalls (e.g., unmocked requests, feature-flag providers), and generated tailored, risk-free co-existence blueprints for **Playwright** and **Cypress**.",
+            "**Leadership:** Evangelized the framework by delivering a comprehensive technical presentation to the global WebUI team (~50 engineers), illustrating architectural benefits, zero-downtime rollback protocols, and practical Claude API utilization.",
+            "**Metric:** Slashed local server spin-up times by **90%** (45s to <3s), accelerated CI pipeline execution by **40%**, and successfully initiated team-wide rollout, establishing a seamless co-existence framework actively adopted by micro-frontend code owners without delivery disruption.",
           ],
         },
       ],
@@ -87,11 +88,21 @@ const contexts = {
       period: "2023-09 ~ 2025-09",
       projects: [
         {
+          title: "Interactive AI-Music Exhibition Pavilion(2025)",
+          extra: "https://www.moc.gov.tw/News_Content.aspx?n=105&s=230666",
+          items: [
+            "**Challenge:** Architect and deploy an end-to-end multimedia generation pipeline for a massive public installation (Ministry of Culture) under a strict 3-month deadline, resolving severe on-site network lag, bandwidth limits, and 360° projection synchronization issues.",
+            "**Action:** Built an **AWS Kubernetes (EKS)** auto-scaling pipeline that handled mobile web QR-code scanning, real-time chat inputs, and distributed processing to generate custom AI media in **under 3 minutes**; integrated the cloud pipeline with an on-site media player and professional projection software (**MadMapper**).",
+            "**Stakeholder Leadership:** Collaborated on-site with hardware vendors and audio engineers to resolve playback lag; negotiated a high-pressure scoping split with the creative director to prioritize P0 core system stability over minor features to guarantee a flawless launch, bringing postponed features back into the AWS pipeline over the next year.",
+            "**Result:** Successfully delivered a stable, low-latency infrastructure managing public user sessions and real-time media generation for flawless, synchronized 360° pavilion playback.",
+          ],
+        },
+        {
           title: "Transkribera - Studio Core",
           extra: "https://asr.yating.tw",
           items: [
             "**Challenge:** Maintain a high-scale transcription service (**1,500 DAU, 8,000 files/day**) with stable data pipelines and low query latency.",
-            "**Action:** Audited database queries, patched missing SQL indexes, managed RabbitMQ autoscaling, and integrated a new AI-based summary pipeline feature.",
+            "**Action:** Audited database queries, patched missing SQL indexes, managed ASR processors autoscaling, and integrated a new AI-based summary pipeline feature.",
             "**Metric:** Reduced core database CPU utilization by **90%** through targeted SQL optimization.",
           ],
         },
@@ -99,18 +110,9 @@ const contexts = {
           title: "AI-Music Vocal Generation Platform & Browser DAW",
           extra: "https://studio.yating.tw/music",
           items: [
-            "**Challenge:** Build a complex, highly interactive Digital Audio Workstation (DAW) entirely inside the browser.",
+            "**Challenge:** Build a complex, highly interactive Digital Audio Workstation (DAW) entirely inside the browser with AI synthetic audio generation.",
             "**Action:** Leveraged the **Browser Audio Context API** and high-performance **HTML5 Canvas drawing** to engineer real-time audio synesthesia, drag-and-drop note manipulation, and pitch/BPM shifting.",
             "**Result:** Enabled creators to edit MIDI files natively and introduced a near zero-shot automated song generation feature.",
-          ],
-        },
-        {
-          title: "Yating Studio Frontend Modernization",
-          extra: "https://studio.yating.tw",
-          items: [
-            "**Challenge:** Legacy frontend applications suffered from poor maintainability and slow client-side loading speeds.",
-            "**Action:** Led the comprehensive architectural rewrite of multiple applications using **Next.js** and **Vite** with strict component-driven design.",
-            "**Result:** Achieved **90+ Lighthouse scores** via aggressive SSR/ISR routing, strategic code-splitting, and CDN optimizations.",
           ],
         },
         {
@@ -120,15 +122,6 @@ const contexts = {
             "**Challenge:** Deliver real-time, low-latency streaming audio interactions while safely rendering diverse LLM outputs.",
             "**Action:** Engineered full-stack streaming audio stacks (ASR → custom orchestration layer → TTS) paired with hybrid model routing and sanitized renderers.",
             "**Result:** Built a highly extensible, secure platform optimized for high-performance multi-modal model serving.",
-          ],
-        },
-        {
-          title: "Interactive AI-Music Exhibition Pavilion",
-          extra: "https://hmusic.moc.gov.tw/",
-          items: [
-            "**Challenge:** Architect and own an end-to-end media generation pipeline for a massive interactive public art installation.",
-            "**Action:** Deployed full-stack applications onto **AWS Kubernetes (EKS)** utilizing auto-scaling groups and distributed job queuing systems.",
-            "**Result:** Guaranteed a seamless public user experience for live QR-session tracking, audio/video generation, and synchronized 360° pavilion playback.",
           ],
         },
       ],
@@ -189,23 +182,16 @@ const contexts = {
   ],
 };
 
-function useStyleData() {
-  const id = "cv-styles";
-  useLayoutEffect(() => {
-    const styleTag = document.createElement("style");
-    styleTag.id = id;
-    styleTag.innerHTML = styleData;
-
-    document.head.appendChild(styleTag);
-
-    return () => {
-      document.getElementById(id)?.remove();
-    };
-  }, []);
-}
-
 export function CVPage() {
-  useStyleData();
+  useStyleData({
+    id: "cv-styles",
+    style: null,
+    link: styleLink,
+  });
+
+  useEffect(() => {
+    document.title = `CV, Dennis Chung - Rev.${contexts.revision}`;
+  }, []);
 
   return (
     <main className="mx-auto max-w-200 p-8 text-neutral-950">
@@ -357,7 +343,7 @@ function Experience({
   children,
 }: PropsWithChildren<{ where: string; title: string; period: string }>) {
   return (
-    <BorderBox className="">
+    <BorderBox className="break-inside-avoid border-none">
       <div className="mt-1 flex items-end gap-2">
         <h3 className="text-base leading-[1.1] font-bold">
           <span className="sr-only">Company: </span>
@@ -367,10 +353,14 @@ function Experience({
           <span className="sr-only">Title: </span>
           {title}
         </div>
-        <div className="ml-auto text-xs font-bold">
+        <div className="text-xs font-bold">
           <span className="sr-only">Period: </span>
           {period}
         </div>
+        <div
+          aria-hidden
+          className="w-auto flex-1 self-center border-b border-dashed border-neutral-300"
+        ></div>
       </div>
       {children}
     </BorderBox>
@@ -412,12 +402,23 @@ function Project({
 }
 
 function MaybeLink({ children }: PropsWithChildren) {
-  if (typeof children !== "string" || !children.startsWith("http")) {
+  if (typeof children !== "string") {
     return children;
   }
+
+  const chunks = children.split("|").map((s) => s.trim());
   return (
-    <a href={children} className="text-blue-600 hover:underline">
-      {children}
-    </a>
+    <>
+      {chunks.map((text) => {
+        if (text.startsWith("http")) {
+          return (
+            <a key={text} href={text} className="text-blue-600 hover:underline">
+              {text}
+            </a>
+          );
+        }
+        return text;
+      })}
+    </>
   );
 }
