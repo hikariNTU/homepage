@@ -431,7 +431,7 @@ function Footer() {
         </a>
         <TooltipWrap content="For anyone who want to contact me, please reach out to me via LinkedIn or Email. I don't check my Github often, and I don't have any plan to open source my email address, sorry for the inconvenience.">
           <Route.Link
-            to="/cv"
+            to="/cv/{-$var}"
             className="flex items-center gap-2 rounded-xl p-2 hover:bg-neutral-400/10 hover:text-main-800 dark:hover:bg-neutral-800 dark:hover:text-main-100"
           >
             <NewspaperIcon size={16} />

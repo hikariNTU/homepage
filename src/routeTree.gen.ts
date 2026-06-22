@@ -16,9 +16,9 @@ import { Route as ProjRouteImport } from './routes/proj'
 import { Route as MidiParserRouteImport } from './routes/midi-parser'
 import { Route as GradientWallpaperRouteImport } from './routes/gradient-wallpaper'
 import { Route as DvdLogoRouteImport } from './routes/dvd-logo'
-import { Route as CvRouteImport } from './routes/cv'
 import { Route as BusinessCardRouteImport } from './routes/business-card'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CvChar123VarChar125RouteImport } from './routes/cv.{-$var}'
 
 const SymbolsRoute = SymbolsRouteImport.update({
   id: '/symbols',
@@ -57,11 +57,6 @@ const DvdLogoRoute = DvdLogoRouteImport.update({
   path: '/dvd-logo',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/dvd-logo.lazy').then((d) => d.Route))
-const CvRoute = CvRouteImport.update({
-  id: '/cv',
-  path: '/cv',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/cv.lazy').then((d) => d.Route))
 const BusinessCardRoute = BusinessCardRouteImport.update({
   id: '/business-card',
   path: '/business-card',
@@ -72,11 +67,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CvChar123VarChar125Route = CvChar123VarChar125RouteImport.update({
+  id: '/cv/{-$var}',
+  path: '/cv/{-$var}',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/cv.{-$var}.lazy').then((d) => d.Route))
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
-  '/cv': typeof CvRoute
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
@@ -84,11 +83,11 @@ export interface FileRoutesByFullPath {
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
   '/symbols': typeof SymbolsRoute
+  '/cv/{-$var}': typeof CvChar123VarChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
-  '/cv': typeof CvRoute
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
@@ -96,12 +95,12 @@ export interface FileRoutesByTo {
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
   '/symbols': typeof SymbolsRoute
+  '/cv/{-$var}': typeof CvChar123VarChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
-  '/cv': typeof CvRoute
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
@@ -109,13 +108,13 @@ export interface FileRoutesById {
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
   '/symbols': typeof SymbolsRoute
+  '/cv/{-$var}': typeof CvChar123VarChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/business-card'
-    | '/cv'
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
@@ -123,11 +122,11 @@ export interface FileRouteTypes {
     | '/qrcode'
     | '/screen'
     | '/symbols'
+    | '/cv/{-$var}'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/business-card'
-    | '/cv'
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
@@ -135,11 +134,11 @@ export interface FileRouteTypes {
     | '/qrcode'
     | '/screen'
     | '/symbols'
+    | '/cv/{-$var}'
   id:
     | '__root__'
     | '/'
     | '/business-card'
-    | '/cv'
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
@@ -147,12 +146,12 @@ export interface FileRouteTypes {
     | '/qrcode'
     | '/screen'
     | '/symbols'
+    | '/cv/{-$var}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BusinessCardRoute: typeof BusinessCardRoute
-  CvRoute: typeof CvRoute
   DvdLogoRoute: typeof DvdLogoRoute
   GradientWallpaperRoute: typeof GradientWallpaperRoute
   MidiParserRoute: typeof MidiParserRoute
@@ -160,6 +159,7 @@ export interface RootRouteChildren {
   QrcodeRoute: typeof QrcodeRoute
   ScreenRoute: typeof ScreenRoute
   SymbolsRoute: typeof SymbolsRoute
+  CvChar123VarChar125Route: typeof CvChar123VarChar125Route
 }
 
 declare module '@tanstack/react-router' {
@@ -213,13 +213,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DvdLogoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cv': {
-      id: '/cv'
-      path: '/cv'
-      fullPath: '/cv'
-      preLoaderRoute: typeof CvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/business-card': {
       id: '/business-card'
       path: '/business-card'
@@ -234,13 +227,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cv/{-$var}': {
+      id: '/cv/{-$var}'
+      path: '/cv/{-$var}'
+      fullPath: '/cv/{-$var}'
+      preLoaderRoute: typeof CvChar123VarChar125RouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BusinessCardRoute: BusinessCardRoute,
-  CvRoute: CvRoute,
   DvdLogoRoute: DvdLogoRoute,
   GradientWallpaperRoute: GradientWallpaperRoute,
   MidiParserRoute: MidiParserRoute,
@@ -248,6 +247,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrcodeRoute: QrcodeRoute,
   ScreenRoute: ScreenRoute,
   SymbolsRoute: SymbolsRoute,
+  CvChar123VarChar125Route: CvChar123VarChar125Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
