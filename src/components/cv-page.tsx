@@ -7,6 +7,7 @@ import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
 import { useStyleData } from "@/lib/useStyleData";
 import { getCVContext } from "@/data/cv-context";
+import { cvImages } from "@/data/cv-images";
 
 export function CVPage(props: { var: string | undefined }) {
   const contexts = getCVContext(props.var);
@@ -181,8 +182,17 @@ function Experience({
   return (
     <BorderBox className="border-none">
       <div className="mt-1 flex items-end gap-2">
-        <h3 className="text-base leading-[1.1] font-semibold text-neutral-800">
+        <h3 className="inline-flex items-center gap-1 text-base leading-[1.1] font-semibold text-neutral-600">
           <span className="sr-only">Company: </span>
+          {cvImages[where] && (
+            <img
+              src={cvImages[where]}
+              width={24}
+              height={24}
+              aria-hidden
+              className="inline size-4"
+            />
+          )}
           {where}
         </h3>
         <div className="text-xs font-light">
