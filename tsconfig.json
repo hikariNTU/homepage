@@ -23,7 +23,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["./src"],
+  "include": ["./src", "./vite.config.ts", "transform-image-plugin.ts"],
 
   "references": [{ "path": "./tsconfig.node.json" }]
 }

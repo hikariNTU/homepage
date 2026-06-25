@@ -1,6 +1,9 @@
+@use "sass:color";
+
 $scale: 2;
 $primary: rgb(180, 56, 91);
-@mixin Shadow($color: #2222) {
+
+@mixin Shadow($color: rgba(34, 34, 34, 0.133)) { // #2222 equivalent
   border: none;
   border-radius: 10px;
   box-shadow: 0 0 15px 2px $color;
@@ -10,7 +13,6 @@ $primary: rgb(180, 56, 91);
   from {
     max-height: 0;
   }
-
   to {
     max-height: 30rem;
   }
@@ -19,7 +21,7 @@ $primary: rgb(180, 56, 91);
 body {
   margin: 0;
   padding: 0;
-  background-color: #6661;
+  background-color: rgba(102, 102, 102, 0.067); // #6661 equivalent
   background-size: 256px;
 }
 
@@ -33,7 +35,7 @@ h2 {
   background-color: $primary;
   font-weight: 300;
   padding: 0.5em 1em;
-  @include Shadow(#2224);
+  @include Shadow(rgba(34, 34, 34, 0.267)); // #2224 equivalent
   @media print {
     all: initial;
   }
@@ -60,8 +62,9 @@ h2 {
       color: #eee;
       width: 90%;
       padding: 2em;
-      background: linear-gradient(45deg, $primary, darken($primary, 15));
-      @include Shadow(#2225);
+      // FIX: Changed undefined $color to existing $primary
+      background: linear-gradient(45deg, $primary, color.adjust($primary, $lightness: -15%));
+      @include Shadow(rgba(34, 34, 34, 0.333)); // #2225 equivalent
       transform: translateY(-25%);
     }
   }
@@ -69,8 +72,6 @@ h2 {
 
 .input-form {
   display: flex;
-
-  // background-color: #eee;
   overflow-y: hidden;
   padding: 1rem;
   > fieldset {
@@ -116,7 +117,7 @@ h2 {
   height: 90vh;
   max-height: calc(100vh - 4rem);
   background-color: #333;
-  @include Shadow(#2225);
+  @include Shadow(rgba(34, 34, 34, 0.333));
   @media print {
     display: none;
   }
@@ -142,17 +143,14 @@ h2 {
     text-align: center;
     background-color: #eee;
     border-radius: 15px 15px 0 0;
-    // transform: translate(20px, 0px);
   }
   > img {
     width: 200px;
     min-height: 120px;
     border-radius: 0 0 15px 15px;
-    // position: absolute;
     top: 20px;
     left: 20px;
-    // transform: translate(20px, 20px);
-    box-shadow: 0 0 15px 2px #2222;
+    box-shadow: 0 0 15px 2px rgba(34, 34, 34, 0.133);
   }
   > .update-btn {
     margin-top: -12px;
@@ -162,6 +160,7 @@ h2 {
     opacity: 1;
   }
 }
+
 .update-btn {
   display: flex;
   align-items: center;
@@ -183,15 +182,12 @@ h2 {
   width: min-content;
   height: min-content;
   margin: 4rem 2rem;
-  // border-radius: 3mm * $scale;
-  // border: #2225 solid 1px;
   @media screen {
-    box-shadow: 0px 0px 5mm 1mm #2223;
+    box-shadow: 0px 0px 5mm 1mm rgba(34, 34, 34, 0.2); // #2223 equivalent
     overflow: hidden;
     background-color: white;
   }
   @media print {
-    // For outline position when printing
     overflow: visible;
     &::before {
       font-size: small;
@@ -227,12 +223,11 @@ h2 {
   width: 90mm * $scale;
   height: 54mm * $scale;
   font-family: "Noto Sans", "Noto Sans CJK TC", sans-serif;
-  white-space: pre-wrap; // for \n newline
+  white-space: pre-wrap;
   color: #333;
   padding: 1em;
   box-sizing: border-box;
   position: relative;
-  // Dangerous Performance Issue Here
   transition: font-size 1s, width 1s, height 1s;
   @media print {
     font-size: 2.5mm;
@@ -245,7 +240,7 @@ h2 {
     bottom: 0;
     font-size: 2.8em;
     font-weight: 900;
-    color: #2222;
+    color: rgba(34, 34, 34, 0.133);
     transform-origin: bottom left;
     transform: rotate(0.75turn) translate(-3%, 30%);
   }
@@ -312,7 +307,7 @@ h2 {
     width: 0.1em;
     height: 70%;
     transform: translateX(1em);
-    background-color: #2222;
+    background-color: rgba(34, 34, 34, 0.133);
     position: absolute;
   }
 }
@@ -394,9 +389,9 @@ h2 {
   font-size: 0.8rem;
   line-height: 1.4em;
   color: #666;
-  background-color: lighten($color: $primary, $amount: 45);
+  background-color: color.adjust($primary, $lightness: 45%);
   padding: 1rem;
-  border-left: lighten($color: $primary, $amount: 25) solid 0.5rem;
+  border-left: color.adjust($primary, $lightness: 25%) solid 0.5rem;
   @media print {
     display: none;
   }
@@ -464,7 +459,7 @@ nav {
   position: absolute;
   overflow: hidden;
   top: 3rem;
-  left: unquote("max(0px, calc(50% - 640px - 2rem))");
+  left: max(0px, calc(50% - 640px - 2rem));
   max-width: 90vw;
   box-sizing: border-box;
   padding: 2rem;
@@ -519,10 +514,10 @@ nav {
       color: $primary;
     }
     &:hover {
-      color: darken($primary, 10);
+      color: color.adjust($primary, $lightness: -10%);
     }
     &:active {
-      color: darken($primary, 20);
+      color: color.adjust($primary, $lightness: -20%);
     }
   }
   > h2 {
@@ -548,9 +543,9 @@ nav {
   > blockquote {
     max-inline-size: 720px;
     margin: 0 auto;
-    background-color: lighten($color: $primary, $amount: 45);
+    background-color: color.adjust($primary, $lightness: 45%);
     padding: 1rem;
-    border-left: lighten($color: $primary, $amount: 25) solid 0.5rem;
+    border-left: color.adjust($primary, $lightness: 25%) solid 0.5rem;
   }
   > ul {
     max-inline-size: 960px;
