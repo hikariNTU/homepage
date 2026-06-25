@@ -30,9 +30,9 @@ export function CVPage(props: { var: string | undefined }) {
   }, [revText]);
 
   return (
-    <main className="mx-auto max-w-200 p-8 text-neutral-950 print:zoom-110">
+    <main className="mx-auto max-w-200 p-8 text-neutral-950 max-xs:p-4 print:zoom-110">
       <Title />
-      <footer className="absolute top-8 right-8 text-[8px] text-neutral-600">
+      <footer className="absolute top-8 right-8 text-[8px] text-neutral-600 max-xs:top-2 max-xs:right-2">
         {revText}
       </footer>
       <Header />
@@ -101,14 +101,14 @@ function Title() {
   const email = new URL(document.location.toString()).searchParams.get("email");
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-1 max-xs:mt-2 max-xs:flex-col max-xs:items-start">
       <h1 className="flex flex-wrap items-center gap-4 text-xl tracking-widest text-neutral-600 max-sm:gap-2">
         <span className="font-light">Chung, LiAn</span>{" "}
         <span className="border-l border-neutral-200 pl-4 font-semibold text-neutral-800 max-sm:pl-2">
           Resume
         </span>
       </h1>
-      <div className="ml-4 flex flex-col border-l border-neutral-200 pl-4 text-[0.625rem] leading-3">
+      <div className="ml-4 flex flex-col border-l border-neutral-200 pl-4 text-[0.625rem] leading-3 max-xs:ml-0 max-xs:flex-row max-xs:border-none max-xs:pl-0">
         <div className="tracking-[8px]">鍾禮安</div>
         <div className="tracking-wide">{email || "*******@gmail.com"}</div>
       </div>
@@ -118,19 +118,19 @@ function Title() {
 
 function Header() {
   return (
-    <header className="mt-2 -ml-2 flex flex-wrap items-center gap-1">
+    <header className="mt-2 -ml-2 flex flex-wrap items-center gap-1 max-xs:flex-col max-xs:items-start">
       <LinkSet
         icon={linkedinIcon}
         title="LinkedIn"
         url="https://www.linkedin.com/in/dennis-chung-tw"
       />
-      <hr className="h-6 w-px bg-neutral-200" />
+      <hr className="h-6 w-px bg-neutral-200 max-xs:hidden" />
       <LinkSet
         icon={homepageIcon}
         title="Personal Website"
         url="https://hikarintu.github.io/homepage/"
       />
-      <hr className="h-6 w-px bg-neutral-200" />
+      <hr className="h-6 w-px bg-neutral-200 max-xs:hidden" />
       <LinkSet
         icon={githubIcon}
         title="Github - hikariNTU"
@@ -199,8 +199,8 @@ function Experience({
 }: PropsWithChildren<{ where: string; title: string; period: string }>) {
   return (
     <BorderBox className="border-none">
-      <div className="mt-1 flex items-end gap-2">
-        <h3 className="inline-flex items-center gap-1 text-base leading-[1.1] font-semibold text-neutral-600">
+      <div className="mt-1 flex grid-cols-[1fr_auto] items-end gap-2 [grid-template-areas:'company_period'_'title_title'] max-xs:grid">
+        <h3 className="inline-flex items-center gap-1 text-base leading-[1.1] font-semibold text-neutral-600 [grid-area:company] max-xs:text-sm">
           <span className="sr-only">Company: </span>
           {cvImages[where] && (
             <img
@@ -212,16 +212,20 @@ function Experience({
             />
           )}
           {where}
+          <div
+            aria-hidden
+            className="hidden w-auto flex-1 translate-y-px self-center border-b border-dashed border-neutral-300 max-xs:inline"
+          ></div>
         </h3>
-        <div className="text-xs font-light">
+        <div className="text-xs font-light [grid-area:title]">
           <span className="sr-only">Title: </span>
           {title}
         </div>
         <div
           aria-hidden
-          className="w-auto flex-1 translate-y-px self-center border-b border-dashed border-neutral-300"
+          className="w-auto flex-1 translate-y-px self-center border-b border-dashed border-neutral-300 max-xs:hidden"
         ></div>
-        <div className="text-xs font-semibold">
+        <div className="text-xs font-semibold whitespace-nowrap [grid-area:period]">
           <span className="sr-only">Period: </span>
           {period}
         </div>
@@ -242,7 +246,7 @@ function Project({
 }>) {
   return (
     <section className="my-2 break-inside-avoid pl-0.5">
-      <div className="mb-1 flex items-end gap-1 text-xs font-semibold text-neutral-800">
+      <div className="mb-1 flex items-end gap-1 text-xs font-semibold text-neutral-800 max-xs:flex-col max-xs:items-start">
         <h4>{title}</h4>
         {extra && (
           <div className="text-[0.625rem] font-light">
