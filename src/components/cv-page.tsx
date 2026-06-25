@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode, useEffect } from "react";
+import { ComponentType, PropsWithChildren, ReactNode, useEffect } from "react";
 import clsx from "clsx";
 import { startCase } from "lodash";
 import styleLink from "@/styles/cv.css?url";
@@ -8,6 +8,13 @@ import homepageIcon from "@/assets/homepage-manifest-icon.png";
 import { useStyleData } from "@/lib/useStyleData";
 import { getCVContext } from "@/data/cv-context";
 import { cvImages } from "@/data/cv-images";
+import {
+  BookUserIcon,
+  GraduationCapIcon,
+  LucideProps,
+  ScrollTextIcon,
+  ToolCaseIcon,
+} from "lucide-react";
 
 export function CVPage(props: { var: string | undefined }) {
   const contexts = getCVContext(props.var);
@@ -29,13 +36,13 @@ export function CVPage(props: { var: string | undefined }) {
         {revText}
       </footer>
       <Header />
-      <Section title="Summary">
+      <Section title="Summary" Icon={BookUserIcon}>
         <p className="text-[0.625rem] leading-normal font-normal">
           {contexts.intro}
         </p>
       </Section>
       <div className="flex flex-wrap justify-between print:mb-4">
-        <Section title="Skill Set" className="flex-2/3">
+        <Section title="Skill Set" className="flex-2/3" Icon={ToolCaseIcon}>
           <dl className="flex flex-col xs:mr-8">
             {Object.entries(contexts.skills).map(([title, items]) => (
               <BorderBox key={title} as="div" className="flex not-sm:flex-col">
@@ -49,7 +56,11 @@ export function CVPage(props: { var: string | undefined }) {
             ))}
           </dl>
         </Section>
-        <Section title="Education" className="min-w-40 flex-1/3">
+        <Section
+          title="Education"
+          Icon={GraduationCapIcon}
+          className="min-w-40 flex-1/3"
+        >
           {contexts.educations.map(({ degree, period, school, department }) => (
             <BorderBox
               key={degree}
@@ -65,7 +76,7 @@ export function CVPage(props: { var: string | undefined }) {
           ))}
         </Section>
       </div>
-      <Section title="Experiences">
+      <Section title="Experiences" Icon={ScrollTextIcon}>
         {contexts.experiences.map(({ where, title, period, projects }) => (
           <Experience key={where} where={where} title={title} period={period}>
             {projects.map(
@@ -145,11 +156,18 @@ function LinkSet(props: { icon: string; title: string; url: string }) {
 }
 
 function Section(
-  props: PropsWithChildren<{ title: string; className?: string }>,
+  props: PropsWithChildren<{
+    title: ReactNode;
+    className?: string;
+    Icon?: ComponentType<LucideProps>;
+  }>,
 ) {
   return (
     <section className={clsx("mt-4", props.className)}>
-      <h2 className="mb-2 font-light text-neutral-500">{props.title}</h2>
+      <h2 className="inline-flex items-center gap-1 text-sm text-neutral-600">
+        {props.Icon ? <props.Icon size={16} aria-hidden /> : null}
+        {props.title}
+      </h2>
       {props.children}
     </section>
   );
