@@ -19,6 +19,7 @@ const router = createRouter({
   history: hashHistory,
   scrollRestoration: true,
   scrollRestorationBehavior: "smooth",
+  defaultViewTransition: true,
 });
 
 // Register the router instance for type safety

@@ -45,7 +45,7 @@ function ModelsViewer() {
               slot="poster"
               src={m.poster}
               alt=""
-              className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80"
+              className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80 dark:brightness-70"
             />
             {m.hotspots.map(({ text, ...data }, index) => {
               const uid = `hotspot-${index + 1}`;

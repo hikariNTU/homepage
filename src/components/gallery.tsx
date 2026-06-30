@@ -33,7 +33,7 @@ function Gallery() {
 
   return (
     <div
-      className={clsx("flex h-[256px] gap-4 overflow-auto py-2 max-md:mx-4", {
+      className={clsx("flex h-64 gap-4 overflow-auto py-2 max-md:mx-4", {
         "cursor-grabbing": isDragging,
         "cursor-grab": !isDragging,
       })}
@@ -44,7 +44,7 @@ function Gallery() {
         <TooltipWrap
           key={i.title}
           content={
-            <section className="max-w-[400px] p-4">
+            <section className="max-w-100 p-4">
               <h4 className="mb-1 lato text-xl">{i.title}</h4>
               <p className="font-thin">{i.text}</p>
             </section>
@@ -59,7 +59,7 @@ function Gallery() {
               src={i.src}
               alt={i.title}
               height={256}
-              className="h-full object-contain"
+              className="h-full object-contain dark:brightness-70"
               loading="lazy"
             />
           </button>

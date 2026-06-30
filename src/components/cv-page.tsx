@@ -6,10 +6,11 @@ import linkedinIcon from "@/assets/linkedin.png";
 import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
 import { useStyleData } from "@/lib/useStyleData";
-import { getCVContext } from "@/data/cv-context";
+import { CVContext, getCVContext } from "@/data/cv-context";
 import { cvImages } from "@/data/cv-images";
 import {
   BookUserIcon,
+  ExternalLinkIcon,
   GraduationCapIcon,
   LucideProps,
   ScrollTextIcon,
@@ -77,20 +78,8 @@ export function CVPage(props: { var: string | undefined }) {
         </Section>
       </div>
       <Section title="Experiences" Icon={ScrollTextIcon}>
-        {contexts.experiences.map(({ where, title, period, projects }) => (
-          <Experience key={where} where={where} title={title} period={period}>
-            {projects.map(
-              ({ title, extra, items, disable }) =>
-                !disable && (
-                  <Project
-                    key={title}
-                    title={title}
-                    extra={extra}
-                    items={items}
-                  />
-                ),
-            )}
-          </Experience>
+        {contexts.experiences.map((exp) => (
+          <Experience key={exp.where} data={exp}></Experience>
         ))}
       </Section>
     </main>
@@ -191,27 +180,36 @@ function BorderBox({
   );
 }
 
-function Experience({
-  period,
-  title,
-  where,
-  children,
-}: PropsWithChildren<{ where: string; title: string; period: string }>) {
+function Experience({ data }: { data: CVContext["experiences"][number] }) {
   return (
     <BorderBox className="border-none">
       <div className="mt-1 flex grid-cols-[1fr_auto] items-end gap-2 [grid-template-areas:'company_period'_'title_title'] max-xs:grid">
         <h3 className="inline-flex items-center gap-1 text-base leading-[1.1] font-semibold text-neutral-600 [grid-area:company] max-xs:text-sm">
           <span className="sr-only">Company: </span>
-          {cvImages[where] && (
+          {cvImages[data.where] && (
             <img
-              src={cvImages[where]}
+              src={cvImages[data.where]}
               width={24}
               height={24}
               aria-hidden
               className="inline size-4"
             />
           )}
-          {where}
+          {data.link ? (
+            <a
+              href={data.link}
+              className="group text-neutral-600 transition-colors hover:text-blue-500 hover:underline focus-visible:text-blue-500 focus-visible:ring-blue-500"
+            >
+              <span className="pr-1">{data.where}</span>
+              <ExternalLinkIcon
+                className="absolute z-10 inline translate-y-0.5 bg-white opacity-0 outline-4 outline-white transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 print:invisible"
+                size="14"
+                aria-label={`Link to ${data.where}`}
+              />
+            </a>
+          ) : (
+            data.where
+          )}
           <div
             aria-hidden
             className="hidden w-auto flex-1 translate-y-px self-center border-b border-dashed border-neutral-300 max-xs:inline"
@@ -219,18 +217,26 @@ function Experience({
         </h3>
         <div className="text-xs font-light [grid-area:title]">
           <span className="sr-only">Title: </span>
-          {title}
+          {data.title}
         </div>
         <div
           aria-hidden
           className="w-auto flex-1 translate-y-px self-center border-b border-dashed border-neutral-300 max-xs:hidden"
         ></div>
+
         <div className="text-xs font-semibold whitespace-nowrap [grid-area:period]">
           <span className="sr-only">Period: </span>
-          {period}
+          {data.period}
         </div>
       </div>
-      {children}
+      <section className="mt-3">
+        {data.projects.map(
+          ({ title, extra, items, disable }) =>
+            !disable && (
+              <Project key={title} title={title} extra={extra} items={items} />
+            ),
+        )}
+      </section>
     </BorderBox>
   );
 }

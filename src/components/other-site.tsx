@@ -14,7 +14,11 @@ export function OtherSites() {
             className="pointer-events-none absolute -inset-2 z-10 rounded-xl transition-colors group-hover:bg-main-800/5 group-active:bg-main-800/15 dark:group-hover:bg-main-100/10 dark:group-active:bg-main-200/30"
           />
           <div className="wave-border">
-            <img src={site.img} className="object-contain" alt="" />
+            <img
+              src={site.img}
+              className="object-contain dark:brightness-70"
+              alt=""
+            />
           </div>
           <div className="mt-3 lato text-xl text-main-800 dark:text-main-200">
             {site.title}

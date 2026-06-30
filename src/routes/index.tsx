@@ -8,7 +8,7 @@ import { SwitchLang } from "@/components/translations";
 import { TranslationsKey, useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
-import { Suspense, lazy, useEffect, useLayoutEffect, useState } from "react";
+import { Suspense, lazy, useLayoutEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { MoonIcon, SunIcon, NewspaperIcon } from "lucide-react";
 
@@ -20,27 +20,12 @@ const Gallery = lazy(() => import("@/components/gallery"));
 const ModelsViewer = lazy(() => import("@/components/models"));
 
 function Homepage() {
-  const [hasChangedTheme, setHasChangedTheme] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">(() =>
-    window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
-  );
-
-  useLayoutEffect(() => {
-    if (theme === "dark") {
-      document.body.classList.add("dark");
-    }
-    return () => {
-      document.body.classList.remove("dark");
-    };
-  }, [theme]);
-
   return (
     <div
       className={clsx(
         "flex min-h-screen flex-col overscroll-none bg-main-100 text-main-900 md:flex-row dark:bg-neutral-900 dark:text-main-100",
       )}
     >
-      {hasChangedTheme && <TransitionMask key={theme} />}
       <div className="top-0 flex h-screen items-center justify-center md:sticky">
         <div className="relative">
           <img
@@ -52,14 +37,7 @@ function Homepage() {
           />
           <div className="absolute bottom-0 flex w-full items-center justify-center md:pr-4">
             <SwitchLang />
-            <SwitchTheme
-              theme={theme}
-              setTheme={(value) => {
-                window.localStorage.setItem("theme", value);
-                setTheme(value);
-                setHasChangedTheme(true);
-              }}
-            />
+            <SwitchTheme />
           </div>
         </div>
         <hr
@@ -108,18 +86,50 @@ function Homepage() {
   );
 }
 
-function SwitchTheme({
-  theme,
-  setTheme,
-}: {
-  theme: "dark" | "light";
-  setTheme: (value: "dark" | "light") => void;
-}) {
+function SwitchTheme() {
+  const [theme, setTheme] = useState<"dark" | "light">(() =>
+    window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
+  );
+
+  useLayoutEffect(() => {
+    if (theme === "dark") {
+      document.body.classList.add("dark");
+    }
+    return () => {
+      document.body.classList.remove("dark");
+    };
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    window.localStorage.setItem("theme", nextTheme);
+    // 1. Fallback for browsers that don't support View Transitions yet
+    if (!document.startViewTransition) {
+      setTheme(nextTheme);
+      updateBodyClass(nextTheme);
+    } else {
+      document.startViewTransition(() => {
+        // Everything inside this callback happens flush together
+        setTheme(nextTheme);
+        updateBodyClass(nextTheme);
+      });
+    }
+  };
+
+  // Helper to keep DOM in sync
+  const updateBodyClass = (currentTheme: "dark" | "light") => {
+    if (currentTheme === "dark") {
+      document.documentElement.classList.add("dark"); // Usually better on html tag than body
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
+
   return (
     <TooltipWrap content="Dark Mode Switch">
       <button
         className="flex items-center gap-1 rounded-full px-4 py-1 font-light text-neutral-500 transition-colors hover:bg-neutral-950/5 active:bg-main-900/20 dark:hover:bg-neutral-50/10"
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        onClick={toggleTheme}
       >
         <span
           className={clsx({
@@ -137,26 +147,6 @@ function SwitchTheme({
         </span>
       </button>
     </TooltipWrap>
-  );
-}
-
-function TransitionMask() {
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    setTimeout(() => {
-      setLoaded(true);
-    }, 100);
-  }, []);
-  return (
-    <div
-      aria-hidden
-      className={clsx(
-        "pointer-events-none fixed inset-0 z-50 bg-neutral-900 transition-opacity [transition-duration:1.5s] ease-in-out select-none dark:bg-main-100",
-        {
-          "opacity-0": loaded,
-        },
-      )}
-    />
   );
 }
 
@@ -210,7 +200,7 @@ function SectionChunk({
 }
 
 function SelfIntro() {
-  const { t } = useTranslation();
+  const { t, fastT } = useTranslation();
   return (
     <SectionChunk title="selfTitle">
       <div className="flex flex-col p-4 text-sm leading-relaxed font-light tracking-wider">
@@ -218,7 +208,7 @@ function SelfIntro() {
         <p className="mb-4">{t("selfP2")}</p>
         <details>
           <summary className="mb-4 cursor-pointer rounded-sm px-2 hover:bg-neutral-500/10">
-            {t("readMore")}
+            {fastT("readMore")}
           </summary>
           <p className="mb-4">{t("selfP1")}</p>
 

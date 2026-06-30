@@ -2,13 +2,15 @@ import { currentLangAtom, progressAtom } from "@/translations";
 import clsx from "clsx";
 import { useAtom, useSetAtom } from "jotai";
 import { TooltipWrap } from "./tooltip";
+import { startTransition, useState } from "react";
 
-const totalCount = 100;
-const delayMs = 40;
+const totalCount = 200;
+const delayMs = 30;
 
 export function SwitchLang() {
   const [lang, setLang] = useAtom(currentLangAtom);
   const setProgress = useSetAtom(progressAtom);
+  const [timer, setTheTimer] = useState<NodeJS.Timeout>();
 
   const toggle = () => {
     setLang(lang === "en-US" ? "zh-TW" : "en-US");
@@ -16,10 +18,15 @@ export function SwitchLang() {
 
     let count = totalCount;
     function inc() {
+      if (timer) {
+        clearTimeout(timer);
+      }
       count -= 1;
-      setProgress((p) => p + 1.01 / totalCount);
+      startTransition(() => {
+        setProgress((p) => p + 1.01 / totalCount);
+      });
       if (count > 0) {
-        setTimeout(inc, delayMs);
+        setTheTimer(setTimeout(inc, delayMs));
       }
     }
     inc();

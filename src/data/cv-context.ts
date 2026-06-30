@@ -1,4 +1,4 @@
-type CVContext = {
+export type CVContext = {
   revision: string;
   var: string;
   intro: string;
@@ -17,6 +17,7 @@ type CVContext = {
     where: string;
     title: string;
     period: string;
+    link?: string;
     projects: {
       title: string;
       extra: string;
@@ -27,7 +28,7 @@ type CVContext = {
 };
 
 export const defaultContexts: CVContext = {
-  revision: "2026.06.18",
+  revision: "2026.06.29",
   var: "",
   intro:
     "Hi, I'm Dennis Chung. I am a full-stack engineer who specializes in modernizing core web architecture, optimizing distributed infrastructure, and orchestrating production-grade AI systems. From engineering low-latency browser DAWs utilizing the Web Audio and Canvas APIs to building context-aware AI platform agents integrated with live Kubernetes clusters, I focus on cutting operational latency and building developer platforms that scale. By anchoring my day-to-day workflow in specification-driven development and advanced AI automation, I bridge the gap between frontend execution, backend telemetry, and extreme delivery speed.",
@@ -77,8 +78,9 @@ export const defaultContexts: CVContext = {
   experiences: [
     {
       where: "Netskope",
-      title: "Senior Software Engineer (WebUI InlineSWG)",
+      title: "Senior Software Engineer",
       period: "2025-09 ~ Now",
+      link: "https://netskope.com",
       projects: [
         {
           title: "Context-Aware AI On-Call Agent (Slack-Native IDP)",
@@ -106,6 +108,7 @@ export const defaultContexts: CVContext = {
       where: "Taiwan AI Labs",
       title: "Lead Software Engineer, Fullstack (Studio Team)",
       period: "2023-09 ~ 2025-09",
+      link: "https://ailabs.tw/",
       projects: [
         {
           title: "Interactive AI-Music Exhibition Pavilion(2025)",
@@ -150,6 +153,7 @@ export const defaultContexts: CVContext = {
       where: "Houzz",
       title: "Fullstack Engineer (Website Services)",
       period: "2022-04 ~ 2023-08",
+      link: "https://houzz.com",
       projects: [
         {
           title: "Prepublish Wizard",
@@ -167,6 +171,7 @@ export const defaultContexts: CVContext = {
       where: "ASUS AICS",
       title: "Software Engineer",
       period: "2021-03 ~ 2022-04",
+      link: "https://aics.asus.com",
       projects: [
         {
           title: "XUI",

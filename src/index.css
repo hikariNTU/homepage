@@ -78,9 +78,12 @@
 }
 
 @layer components {
-
   *:focus-visible {
     outline-color: rgb(138, 68, 107);
+  }
+  ::selection {
+    color: white;
+    background-color: rgb(138, 68, 107);
   }
 }
 
@@ -135,4 +138,12 @@ model-viewer {
 .dark::-webkit-scrollbar-track:hover,
 .dark ::-webkit-scrollbar-track:hover {
   background: rgb(69 69 69);
+}
+
+
+/* Customize the speed of the theme morph */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
 }
