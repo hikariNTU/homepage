@@ -7,63 +7,184 @@ import tankImg from "@/assets/model/tank-poster.webp";
 import tankGlb from "@/assets/model/tank-obj.glb?url";
 import panLidImg from "@/assets/model/panlid-poster.webp";
 import panLidGlb from "@/assets/model/pan-lid.glb?url";
+import { useRef, useState } from "react";
+import clsx from "clsx";
 import { ModelViewerElement } from "@google/model-viewer";
 import { TooltipWrap } from "./tooltip";
+import * as Dialog from "@radix-ui/react-dialog";
+import { InfoIcon, MaximizeIcon, XIcon } from "lucide-react";
 
 function ModelsViewer() {
+  const [active, setActive] = useState(0);
+  const [unlocked, setUnlocked] = useState(false);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const current = models[active];
+  const viewerRef = useRef<ModelViewerElement>(null);
+
+  const switchModel = (i: number) => {
+    if (i === active) return;
+    if (!document.startViewTransition) {
+      setActive(i);
+      return;
+    }
+    document.startViewTransition({
+      types: ["model-switch"],
+      update: () => {
+        setActive(i);
+      },
+    });
+  };
+
   return (
-    <div className="flex w-full min-w-0 flex-col gap-4 p-2">
-      {models.map((m) => (
-        <div key={m.src}>
-          <div className="mb-1 flex items-start justify-between lato text-sm text-main-900 dark:text-main-200">
-            {m.title}
-            {m.description && (
-              <TooltipWrap content={m.description} className="max-w-96 p-6!">
-                <button aria-label="info">
-                  <InfoIcon className="text-xl" />
-                </button>
-              </TooltipWrap>
-            )}
-          </div>
-          <model-viewer
-            camera-controls
-            src={m.src}
-            id={m.src}
+    <div className="w-full min-w-0 p-2 pb-8">
+      <div
+        className="wave-border relative h-80 overflow-hidden md:h-112"
+        style={{ viewTransitionName: "model-stage" }}
+      >
+        <model-viewer
+          key={current.src}
+          ref={viewerRef}
+          camera-controls
+          src={current.src}
+          camera-target={current["camera-target"]}
+          camera-orbit={current["camera-orbit"]}
+          field-of-view={current["field-of-view"]}
+          style={{ height: "100%", width: "100%" }}
+          reveal={unlocked ? "auto" : "manual"}
+        >
+          <img
+            slot="poster"
+            src={current.poster}
+            alt=""
             onClick={() => {
-              const el = document.getElementById(m.src) as ModelViewerElement;
-              if (el) {
-                el.dismissPoster();
-              }
+              viewerRef.current?.dismissPoster();
+              setUnlocked(true);
             }}
-            camera-target={m["camera-target"]}
-            camera-orbit={m["camera-orbit"]}
-            field-of-view={m["field-of-view"]}
-            class="wave-border"
-            reveal="manual"
-          >
-            <img
-              slot="poster"
-              src={m.poster}
-              alt=""
-              className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80 dark:brightness-70"
-            />
-            {m.hotspots.map(({ text, ...data }, index) => {
-              const uid = `hotspot-${index + 1}`;
-              return (
-                <div
-                  key={uid}
-                  slot={uid}
-                  className="pointer-events-none rounded-sm bg-main-100/80 p-1 dark:bg-neutral-950"
-                  data-visibility-attribute="visible"
-                  {...data}
-                >
-                  {text}
-                </div>
-              );
-            })}
-          </model-viewer>
+            className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80 dark:brightness-70"
+          />
+          {current.hotspots.map(({ text, ...data }, index) => {
+            const uid = `hotspot-${index + 1}`;
+            return (
+              <div
+                key={uid}
+                slot={uid}
+                className="pointer-events-none rounded-sm bg-main-100/80 p-1 dark:bg-neutral-950"
+                data-visibility-attribute="visible"
+                {...data}
+              >
+                {text}
+              </div>
+            );
+          })}
+        </model-viewer>
+
+        <div className="absolute top-2 right-2 flex max-w-[70%] items-start gap-1 rounded-sm bg-main-100/80 px-2 py-1 lato text-sm text-main-900 dark:bg-neutral-950/80 dark:text-main-200">
+          <span className="truncate">{current.title}</span>
+          {current.description && (
+            <TooltipWrap
+              content={current.description}
+              className="max-w-96 p-6!"
+            >
+              <button aria-label="info" className="shrink-0">
+                <InfoIcon size="20px" />
+              </button>
+            </TooltipWrap>
+          )}
         </div>
-      ))}
+
+        <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-2 md:bottom-3">
+          {models.map((m, i) => (
+            <button
+              key={m.src}
+              aria-label={m.title}
+              onClick={() => switchModel(i)}
+              className={clsx(
+                "h-10 w-10 shrink-0 overflow-hidden rounded-lg border-2 bg-main-100 transition-colors xs:h-12 xs:w-12 dark:bg-neutral-900",
+                i === active
+                  ? "border-main-800 dark:border-main-200"
+                  : "border-main-900/20 hover:border-main-800/60 dark:border-main-200/20 dark:hover:border-main-200/60",
+              )}
+            >
+              <img
+                src={m.poster}
+                alt=""
+                className="h-full w-full object-cover object-top dark:brightness-70"
+              />
+            </button>
+          ))}
+        </div>
+
+        <button
+          aria-label="fullscreen"
+          onClick={() => setFullscreenOpen(true)}
+          className="absolute right-2 bottom-2 rounded-sm bg-main-100/80 p-1.5 text-main-900 transition-colors hover:bg-main-100 md:bottom-3 dark:bg-neutral-950/80 dark:text-main-200 dark:hover:bg-neutral-950"
+        >
+          <MaximizeIcon className="text-lg" size="1em" />
+        </button>
+      </div>
+
+      <Dialog.Root open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+          <Dialog.Content className="fixed inset-0 z-50 flex p-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 md:p-8">
+            <div className="relative h-full w-full overflow-hidden rounded-lg bg-main-100 dark:bg-neutral-900">
+              <model-viewer
+                key={current.src}
+                camera-controls
+                src={current.src}
+                camera-target={current["camera-target"]}
+                camera-orbit={current["camera-orbit"]}
+                field-of-view={current["field-of-view"]}
+                style={{ height: "100%", width: "100%" }}
+                reveal="auto"
+              />
+
+              <Dialog.Title className="absolute top-2 left-2 flex max-w-[60%] items-start gap-1 rounded-sm bg-main-100/80 px-2 py-1 lato text-sm text-main-900 dark:bg-neutral-950/80 dark:text-main-200">
+                <span className="truncate">{current.title}</span>
+                {current.description && (
+                  <TooltipWrap
+                    content={current.description}
+                    className="max-w-96 p-6!"
+                  >
+                    <button aria-label="info" className="shrink-0">
+                      <InfoIcon size="20px" />
+                    </button>
+                  </TooltipWrap>
+                )}
+              </Dialog.Title>
+
+              <Dialog.Close
+                aria-label="close"
+                className="absolute top-2 right-2 rounded-sm bg-main-100/80 p-1.5 text-main-900 transition-colors hover:bg-main-100 dark:bg-neutral-950/80 dark:text-main-200 dark:hover:bg-neutral-950"
+              >
+                <XIcon className="text-lg" size="1em" />
+              </Dialog.Close>
+
+              <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-2 md:bottom-4">
+                {models.map((m, i) => (
+                  <button
+                    key={m.src}
+                    aria-label={m.title}
+                    onClick={() => setActive(i)}
+                    className={clsx(
+                      "h-10 w-10 shrink-0 overflow-hidden rounded-lg border-2 bg-main-100 transition-colors xs:h-12 xs:w-12 dark:bg-neutral-900",
+                      i === active
+                        ? "border-main-800 dark:border-main-200"
+                        : "border-main-900/20 hover:border-main-800/60 dark:border-main-200/20 dark:hover:border-main-200/60",
+                    )}
+                  >
+                    <img
+                      src={m.poster}
+                      alt=""
+                      className="h-full w-full object-cover object-top dark:brightness-70"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
@@ -236,23 +357,3 @@ const models = [
     autoplay: true,
   },
 ];
-
-const InfoIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="lucide lucide-info"
-    {...props}
-  >
-    <circle cx={12} cy={12} r={10} />
-    <path d="M12 16v-4" />
-    <path d="M12 8h.01" />
-  </svg>
-);

@@ -1,6 +1,6 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@plugin 'tailwindcss-animate';
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -34,7 +34,7 @@
 @utility wave-border {
   position: relative;
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: -1px;
     left: -1px;
@@ -65,14 +65,14 @@
 }
 
 @utility lato {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 700;
   font-style: italic;
 }
 
 @layer utilities {
   html {
-    font-family: 'Noto Sans TC', sans-serif;
+    font-family: "Noto Sans TC", sans-serif;
     font-optical-sizing: auto;
   }
 }
@@ -140,10 +140,25 @@ model-viewer {
   background: rgb(69 69 69);
 }
 
-
-/* Customize the speed of the theme morph */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 1.5s;
+/* Customize the speed of the theme morph. Scoped to the "theme" transition
+   type so it doesn't also slow down other view transitions on the page
+   (e.g. the models section thumbnail switch), since ::view-transition-old/new(root)
+   participates in every view transition regardless of which one triggered it. */
+html:active-view-transition-type(theme)::view-transition-old(root),
+html:active-view-transition-type(theme)::view-transition-new(root) {
+  animation-duration: 1s;
   animation-timing-function: ease-in-out;
+}
+
+/* Faster cross-fade for the models section thumbnail switch */
+html:active-view-transition-type(model-switch)::view-transition-group(
+    model-stage
+  ),
+html:active-view-transition-type(model-switch)::view-transition-old(
+    model-stage
+  ),
+html:active-view-transition-type(model-switch)::view-transition-new(
+    model-stage
+  ) {
+  animation-duration: 0.3s;
 }

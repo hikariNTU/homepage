@@ -108,10 +108,13 @@ function SwitchTheme() {
       setTheme(nextTheme);
       updateBodyClass(nextTheme);
     } else {
-      document.startViewTransition(() => {
-        // Everything inside this callback happens flush together
-        setTheme(nextTheme);
-        updateBodyClass(nextTheme);
+      document.startViewTransition({
+        types: ["theme"],
+        update: () => {
+          // Everything inside this callback happens flush together
+          setTheme(nextTheme);
+          updateBodyClass(nextTheme);
+        },
       });
     }
   };
