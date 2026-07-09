@@ -103,7 +103,7 @@ function ModelsViewer() {
   return (
     <div className="w-full min-w-0 p-2 pb-8">
       <div
-        className="wave-border relative aspect-4/3 max-h-136 min-h-72 overflow-hidden sm:aspect-video md:max-h-160"
+        className="wave-border relative aspect-4/3 max-h-136 min-h-36 overflow-hidden sm:aspect-video md:max-h-160"
         style={{ viewTransitionName: "model-stage" }}
       >
         <ModelStage
