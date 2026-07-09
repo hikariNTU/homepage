@@ -14,6 +14,71 @@ import { TooltipWrap } from "./tooltip";
 import * as Dialog from "@radix-ui/react-dialog";
 import { InfoIcon, MaximizeIcon, XIcon } from "lucide-react";
 
+function ModelStage({
+  current,
+  reveal,
+  viewerRef,
+  onDismissPoster,
+}: {
+  current: (typeof models)[number];
+  reveal: "manual" | "auto";
+  viewerRef?: React.Ref<ModelViewerElement>;
+  onDismissPoster?: () => void;
+}) {
+  return (
+    <model-viewer
+      key={current.src}
+      ref={viewerRef}
+      camera-controls
+      src={current.src}
+      camera-target={current["camera-target"]}
+      camera-orbit={current["camera-orbit"]}
+      field-of-view={current["field-of-view"]}
+      style={{ height: "100%", width: "100%" }}
+      reveal={reveal}
+    >
+      {onDismissPoster && (
+        <img
+          slot="poster"
+          src={current.poster}
+          alt=""
+          onClick={onDismissPoster}
+          className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80 dark:brightness-70"
+        />
+      )}
+      {current.hotspots.map(({ text, ...data }, index) => {
+        const uid = `hotspot-${index + 1}`;
+        return (
+          <div
+            key={uid}
+            slot={uid}
+            className="pointer-events-none rounded-sm bg-main-100/80 p-1 dark:bg-neutral-950"
+            data-visibility-attribute="visible"
+            {...data}
+          >
+            {text}
+          </div>
+        );
+      })}
+    </model-viewer>
+  );
+}
+
+function ModelTitleContent({ current }: { current: (typeof models)[number] }) {
+  return (
+    <>
+      <span className="truncate">{current.title}</span>
+      {current.description && (
+        <TooltipWrap content={current.description} className="max-w-96 p-6!">
+          <button aria-label="info" className="shrink-0">
+            <InfoIcon size="20px" />
+          </button>
+        </TooltipWrap>
+      )}
+    </>
+  );
+}
+
 function ModelsViewer() {
   const [active, setActive] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
@@ -25,71 +90,34 @@ function ModelsViewer() {
     if (i === active) return;
     if (!document.startViewTransition) {
       setActive(i);
-      return;
+    } else {
+      document.startViewTransition({
+        types: ["model-switch"],
+        update: () => {
+          setActive(i);
+        },
+      });
     }
-    document.startViewTransition({
-      types: ["model-switch"],
-      update: () => {
-        setActive(i);
-      },
-    });
   };
 
   return (
     <div className="w-full min-w-0 p-2 pb-8">
       <div
-        className="wave-border relative h-80 overflow-hidden md:h-112"
+        className="wave-border relative aspect-4/3 max-h-136 min-h-72 overflow-hidden sm:aspect-video md:max-h-160"
         style={{ viewTransitionName: "model-stage" }}
       >
-        <model-viewer
-          key={current.src}
-          ref={viewerRef}
-          camera-controls
-          src={current.src}
-          camera-target={current["camera-target"]}
-          camera-orbit={current["camera-orbit"]}
-          field-of-view={current["field-of-view"]}
-          style={{ height: "100%", width: "100%" }}
+        <ModelStage
+          current={current}
           reveal={unlocked ? "auto" : "manual"}
-        >
-          <img
-            slot="poster"
-            src={current.poster}
-            alt=""
-            onClick={() => {
-              viewerRef.current?.dismissPoster();
-              setUnlocked(true);
-            }}
-            className="h-full w-full cursor-pointer object-contain transition-opacity hover:opacity-80 dark:brightness-70"
-          />
-          {current.hotspots.map(({ text, ...data }, index) => {
-            const uid = `hotspot-${index + 1}`;
-            return (
-              <div
-                key={uid}
-                slot={uid}
-                className="pointer-events-none rounded-sm bg-main-100/80 p-1 dark:bg-neutral-950"
-                data-visibility-attribute="visible"
-                {...data}
-              >
-                {text}
-              </div>
-            );
-          })}
-        </model-viewer>
+          viewerRef={viewerRef}
+          onDismissPoster={() => {
+            viewerRef.current?.dismissPoster();
+            setUnlocked(true);
+          }}
+        />
 
         <div className="absolute top-2 right-2 flex max-w-[70%] items-start gap-1 rounded-sm bg-main-100/80 px-2 py-1 lato text-sm text-main-900 dark:bg-neutral-950/80 dark:text-main-200">
-          <span className="truncate">{current.title}</span>
-          {current.description && (
-            <TooltipWrap
-              content={current.description}
-              className="max-w-96 p-6!"
-            >
-              <button aria-label="info" className="shrink-0">
-                <InfoIcon size="20px" />
-              </button>
-            </TooltipWrap>
-          )}
+          <ModelTitleContent current={current} />
         </div>
 
         <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-2 md:bottom-3">
@@ -128,29 +156,10 @@ function ModelsViewer() {
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
           <Dialog.Content className="fixed inset-0 z-50 flex p-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 md:p-8">
             <div className="relative h-full w-full overflow-hidden rounded-lg bg-main-100 dark:bg-neutral-900">
-              <model-viewer
-                key={current.src}
-                camera-controls
-                src={current.src}
-                camera-target={current["camera-target"]}
-                camera-orbit={current["camera-orbit"]}
-                field-of-view={current["field-of-view"]}
-                style={{ height: "100%", width: "100%" }}
-                reveal="auto"
-              />
+              <ModelStage current={current} reveal="auto" />
 
               <Dialog.Title className="absolute top-2 left-2 flex max-w-[60%] items-start gap-1 rounded-sm bg-main-100/80 px-2 py-1 lato text-sm text-main-900 dark:bg-neutral-950/80 dark:text-main-200">
-                <span className="truncate">{current.title}</span>
-                {current.description && (
-                  <TooltipWrap
-                    content={current.description}
-                    className="max-w-96 p-6!"
-                  >
-                    <button aria-label="info" className="shrink-0">
-                      <InfoIcon size="20px" />
-                    </button>
-                  </TooltipWrap>
-                )}
+                <ModelTitleContent current={current} />
               </Dialog.Title>
 
               <Dialog.Close
