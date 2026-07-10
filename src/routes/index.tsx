@@ -9,7 +9,6 @@ import { TranslationsKey, useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Suspense, lazy, useLayoutEffect, useState } from "react";
-import { Fragment } from "react/jsx-runtime";
 import { MoonIcon, SunIcon, NewspaperIcon } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -18,6 +17,9 @@ export const Route = createFileRoute("/")({
 
 const Gallery = lazy(() => import("@/components/gallery"));
 const ModelsViewer = lazy(() => import("@/components/models"));
+const SkillSet = lazy(() =>
+  import("@/components/skills").then((m) => ({ default: m.SkillSet })),
+);
 
 function Homepage() {
   return (
@@ -62,7 +64,11 @@ function Homepage() {
 
         <div className="flex flex-col gap-4 xl:grid xl:grid-cols-2">
           <SelfIntro />
-          <SkillSet />
+          <SectionChunk title="specialTitle">
+            <Suspense fallback={"..."}>
+              <SkillSet />
+            </Suspense>
+          </SectionChunk>
         </div>
 
         <SectionChunk title="photoTitle" condensed>
@@ -217,182 +223,6 @@ function SelfIntro() {
 
           <p className="">{t("selfP3")}</p>
         </details>
-      </div>
-    </SectionChunk>
-  );
-}
-
-const skillIcons = import.meta.glob<{ default: string }>(
-  "../assets/skill_icon/*.svg",
-  {
-    eager: true,
-  },
-);
-
-const skillList: {
-  group: string;
-  skills: {
-    name: string;
-    icon?: string;
-    desc?: string;
-  }[];
-}[] = [
-  {
-    group: "Programming Language",
-    skills: [
-      {
-        name: "Python 3",
-        icon: "python",
-        desc: "Feel familiar with Python Class due to the usage of Blender Python API. I've create some useful addon in my Github page, although the addon used in master thesis was not available since it's not ready for publication.",
-      },
-      {
-        name: "Javascript/Typescript",
-        icon: "es6",
-        desc: "It's over 9000.",
-      },
-      {
-        name: "C++",
-        icon: "c",
-        desc: "The first Programming Language that I learned, which give me the view of data structure and the pointer concept in further language I learned. C# is used for Unity and Qt project.",
-      },
-    ],
-  },
-  {
-    group: "Markups / Template",
-    skills: [
-      {
-        name: "HTML 5",
-        icon: "html5",
-        desc: "A cool thing that I've done is written an automate form filler from Excel text to ASP framework in html 4, AT MILITARY. Only with intranet, the computer I used was totally unacceptable with nowadays development experience. And the html 4 with IE was another big no no. I'm glad I quit from there.",
-      },
-      {
-        name: "CSS 3",
-        icon: "css3",
-        desc: "grid-column-template: repeat(auto, minmax(20rem, 1fr))? Dude, seriously, is this even a simple language? I couldn't correctly write auto repeat style without looking up mdn every single time.",
-      },
-    ],
-  },
-  {
-    group: "Framework",
-    skills: [
-      {
-        name: "React",
-        icon: "react",
-        desc: "Do I love it? No. Do I hate it? Uh, No. Maybe just fix some serious DX issue first?",
-      },
-      {
-        name: "Vue",
-        icon: "vue",
-        desc: "I love Vue, especially Vue 3. But since no one is using Vue, I don't use it anymore.",
-      },
-      {
-        name: "Next.js",
-        icon: "next",
-        desc: "I hate this s**t. But I think we don't have other choices.",
-      },
-      {
-        name: "Nest.js",
-        icon: "nest",
-        desc: "@See {Next.js}",
-      },
-      {
-        name: "Vite",
-        icon: "vite",
-        desc: "Love it, use it. This site is built with it. If you don't use it, you lose it.",
-      },
-    ],
-  },
-  {
-    group: "CI/CD",
-    skills: [
-      {
-        name: "Kubernetes",
-        icon: "k8s",
-        desc: "Writing deployment and ingress is just like writing poem.",
-      },
-      {
-        name: "Docker",
-        icon: "docker",
-        desc: "Why is this layer not been cached?",
-      },
-      {
-        name: "Github Actions",
-        icon: "github",
-        desc: "Worst documentation I've ever seen.",
-      },
-      {
-        name: "Gitlab Pipeline",
-        icon: "git",
-        desc: "The second worst documentation I've ever seen",
-      },
-    ],
-  },
-  {
-    group: "UI/UX Design",
-    skills: [
-      {
-        name: "Figma",
-        icon: "figma",
-        desc: "Best free Illustrator ever created.",
-      },
-      {
-        name: "PhotoShop",
-        icon: "ps",
-        desc: "If you need photo editing, this is the only choice.",
-      },
-      {
-        name: "Illustrator",
-        icon: "ai",
-        desc: "An unnecessary complicated vector editing tool run by Adobe.",
-      },
-      {
-        name: "Blender",
-        icon: "blender",
-        desc: "Best DX. I would say it is basically 3D modeling version of Vim (with GUI).",
-      },
-    ],
-  },
-];
-
-function SkillSet() {
-  return (
-    <SectionChunk title="specialTitle">
-      <div className="p-3">
-        {skillList.map((set) => (
-          <Fragment key={set.group}>
-            <h3 className="mt-4 mb-2 text-sm font-light text-main-800 first:mt-0 max-xs:ml-6 dark:text-main-200">
-              {set.group}
-            </h3>
-            <ul className="flex flex-wrap whitespace-nowrap max-xs:flex-col max-xs:items-start max-xs:pl-6">
-              {set.skills.map((skill) => (
-                <li key={skill.name}>
-                  <TooltipWrap
-                    className="text-light max-w-96 p-6!"
-                    content={skill.desc || "..."}
-                    key={skill.name}
-                  >
-                    <button className="flex cursor-help items-center gap-1 rounded-xl px-2 py-1 lato text-lg text-main-900 transition-colors hover:bg-neutral-500/10 hover:text-main-800 dark:text-neutral-300 dark:hover:text-main-100">
-                      {
-                        <img
-                          width={20}
-                          height={20}
-                          src={
-                            skillIcons[
-                              `../assets/skill_icon/icon-${skill.icon}.svg`
-                            ]?.default
-                          }
-                          className="dark:brightness-[6] dark:grayscale"
-                          alt=""
-                        />
-                      }
-                      {skill.name}
-                    </button>
-                  </TooltipWrap>
-                </li>
-              ))}
-            </ul>
-          </Fragment>
-        ))}
       </div>
     </SectionChunk>
   );
