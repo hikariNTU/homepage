@@ -173,9 +173,12 @@ function SectionChunk({
       })}
     >
       <div
-        className={clsx("shrink-0 p-4 max-xs:flex max-xs:gap-4 max-xs:pb-0", {
-          "max-xl:flex max-xl:gap-4 max-xl:pb-0": condensed,
-        })}
+        className={clsx(
+          "sticky top-0 shrink-0 self-start p-4 max-xs:static max-xs:flex max-xs:gap-4 max-xs:pb-0",
+          {
+            "max-xl:static max-xl:flex max-xl:gap-4 max-xl:pb-0": condensed,
+          },
+        )}
       >
         <h2
           className={clsx(
