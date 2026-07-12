@@ -440,7 +440,7 @@ function buildSkylinePath(
 
 const STAMP_INSET = 10;
 
-function StampScene({
+export function StampScene({
   w,
   h,
   layout,
@@ -775,7 +775,7 @@ function VersionBadge({
   );
 }
 
-interface SkillScene {
+export interface SkillScene {
   height: number;
   layout: LayoutKind;
   zoneAKind: TextureKind;
@@ -792,7 +792,8 @@ interface SkillScene {
   versionVariant: "outline" | "fill" | "fill-dual" | "plain";
 }
 
-function randomSkillScene(): SkillScene {
+// eslint-disable-next-line react-refresh/only-export-components -- shared with the gallery postcard-back stamp; kept beside StampScene it feeds rather than split into its own module
+export function randomSkillScene(): SkillScene {
   const layout = randomOf(LAYOUT_KINDS);
   return {
     height: Math.random() * 60 + 70,

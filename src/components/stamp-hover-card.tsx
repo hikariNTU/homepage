@@ -7,6 +7,14 @@ import {
   randomPostmarkNumber,
   randomPostmarkVariant,
 } from "./postmark-variants";
+import {
+  CLOSINGS,
+  FAKE_ADDRESSES,
+  HANDWRITING_FONTS,
+  POSTMARK_COLORS,
+  RULED_LINE_STYLE,
+  SIGNATURE_NAMES,
+} from "./postcard-flavor";
 import clsx from "clsx";
 import {
   PropsWithChildren,
@@ -21,12 +29,6 @@ import {
 
 const POSTMARK_SIZE = 100;
 
-const POSTMARK_COLORS = [
-  "text-main-800/70 dark:text-main-200/70",
-  "text-neutral-700/70 dark:text-neutral-300/70",
-  "text-red-700/70 dark:text-red-400/70",
-] as const;
-
 const POSTER_SIZES = {
   horizontal: { width: 540, height: 380 },
   vertical: { width: 400, height: 540 },
@@ -39,50 +41,6 @@ interface TriggerRect {
   width: number;
   height: number;
 }
-
-// Decorative flavor text shaped like a real street address (line 1: house
-// number + street, line 2: city + region/country). No zip/postal code here —
-// that's already represented by the zip-box row above it.
-const FAKE_ADDRESSES = [
-  ["27 Maple Grove Rd", "Portland, OR"],
-  ["148 Sycamore St, Apt 4B", "Austin, TX"],
-  ["6 Harbor View Ln", "Halifax, NS"],
-  ["83 Kirchgasse", "Zürich, Switzerland"],
-  ["12 Rue des Lilas", "Lyon, France"],
-  ["215 King Street West", "Toronto, ON"],
-  ["9 Nishiazabu", "Minato City, Tokyo"],
-  ["58 Baker Street", "London, UK"],
-  ["1204 Rivergum Cres", "Brisbane, QLD"],
-  ["36 Auf der Bult", "Hannover, Germany"],
-] as const;
-
-// Google Fonts handwriting-category faces, Latin/English-only — loaded via
-// the <link> tag in index.html. One is picked per mount (see PosterVariant)
-// so different stamps' posters don't all read identically.
-const HANDWRITING_FONTS = [
-  "Caveat",
-  "Kalam",
-  "Shadows Into Light",
-  "Patrick Hand",
-  "Indie Flower",
-] as const;
-
-const CLOSINGS = [
-  "Best,",
-  "Cheers,",
-  "Regards,",
-  "Sincerely,",
-  "Take care,",
-  "Warmly,",
-  "Yours,",
-] as const;
-
-const SIGNATURE_NAMES = [
-  "Dennis",
-  "Dennis C.",
-  "D. Chung",
-  "Chung, Lian",
-] as const;
 
 // Ensures only one stamp's poster is open at a time: every StampHoverCard in
 // the same group shares one "which id is active" slot instead of managing
@@ -191,11 +149,7 @@ export function StampHoverCard({
 
   const size = POSTER_SIZES[variant];
 
-  const ruledLineStyle = {
-    lineHeight: "28px",
-    backgroundImage:
-      "repeating-linear-gradient(transparent 0, transparent 21px, color-mix(in srgb, currentColor 22%, transparent) 21px, color-mix(in srgb, currentColor 22%, transparent) 22px, transparent 22px, transparent 28px)",
-  };
+  const ruledLineStyle = RULED_LINE_STYLE;
 
   // One full line-height of margin, not an arbitrary value — anything else
   // de-syncs this block from the repeating background's 28px cycle, so its
