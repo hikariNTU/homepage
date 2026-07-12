@@ -1,5 +1,12 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Postmark } from "./postmark";
 import {
   randomPostmarkLabel,
@@ -35,6 +42,10 @@ const CAPTION_HEIGHT = 60;
 // a run of tiles toward a specific one doesn't "hijack" the pointer by
 // popping open whichever tile it merely passed over.
 const HOVER_DELAY_MS = 700;
+// Breathing room kept between an enlarged card and the viewport edges. Doubles
+// as the amount subtracted from the viewport when capping an oversized card's
+// footprint (see measureEnlarge).
+const SAFE_MARGIN = 16;
 
 // Postage-stamp footprint on the postcard back, and the cancellation mark
 // stamped across its corner. STAMP sits top-right; the postmark straddles its
@@ -110,6 +121,10 @@ function GalleryCard({
   // instantly hijacking the pointer the moment the cursor lands on a tile.
   const [pending, setPending] = useState(false);
   const hoverTimer = useRef<number | null>(null);
+  // The flow item stays fixed at the mini size regardless of how big the
+  // absolutely-positioned button grows, so its rect gives a stable tile center
+  // to anchor the enlargement against.
+  const outerRef = useRef<HTMLDivElement>(null);
   // Height stays pinned at MINI_HEIGHT; width follows the photo's real
   // aspect ratio so the tile keeps its true proportions instead of being
   // cropped to a square.
@@ -137,6 +152,67 @@ function GalleryCard({
     postmarkColor: randomOf(POSTMARK_COLORS),
     postmarkRotation: Math.random() * 24 - 12,
   }));
+
+  // Enlarged footprint after fitting it to the viewport's safe area: `w`/`h`
+  // are the on-screen size (uniformly scaled down from the card's natural
+  // enlargeWidth/Height when that would overflow the screen), and `dx`/`dy`
+  // nudge the box inward so an edge card grows toward open space instead of
+  // spilling off-screen. Seeded with the uncapped natural size for first paint,
+  // then recomputed from real geometry whenever the card is active.
+  const [enlargeBox, setEnlargeBox] = useState(() => ({
+    w: enlargeWidth,
+    h: enlargeHeight,
+    dx: 0,
+    dy: 0,
+  }));
+
+  const measureEnlarge = useCallback(() => {
+    const el = outerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // Uniform down-scale so an oversized card (a very wide photo) still fits
+    // the screen; capped at 1 so a normal card never scales *up* past its true,
+    // unscaled pixel size.
+    const scale = Math.min(
+      1,
+      (vw - SAFE_MARGIN * 2) / enlargeWidth,
+      (vh - SAFE_MARGIN * 2) / enlargeHeight,
+    );
+    const w = enlargeWidth * scale;
+    const h = enlargeHeight * scale;
+    // Shift by exactly the amount the centered box would overrun each edge.
+    // With the scale cap above the box always fits, so at most one side of each
+    // axis can be out of bounds.
+    let dx = 0;
+    const left = cx - w / 2;
+    const right = cx + w / 2;
+    if (left < SAFE_MARGIN) dx = SAFE_MARGIN - left;
+    else if (right > vw - SAFE_MARGIN) dx = vw - SAFE_MARGIN - right;
+    let dy = 0;
+    const top = cy - h / 2;
+    const bottom = cy + h / 2;
+    if (top < SAFE_MARGIN) dy = SAFE_MARGIN - top;
+    else if (bottom > vh - SAFE_MARGIN) dy = vh - SAFE_MARGIN - bottom;
+    setEnlargeBox({ w, h, dx, dy });
+  }, [enlargeWidth, enlargeHeight]);
+
+  // Measure synchronously before paint on activate so the card animates
+  // straight to its anchored/capped target, and keep it correct if the window
+  // resizes or scrolls while it's open.
+  useLayoutEffect(() => {
+    if (!active) return;
+    measureEnlarge();
+    window.addEventListener("resize", measureEnlarge);
+    window.addEventListener("scroll", measureEnlarge, true);
+    return () => {
+      window.removeEventListener("resize", measureEnlarge);
+      window.removeEventListener("scroll", measureEnlarge, true);
+    };
+  }, [active, measureEnlarge]);
 
   useEffect(() => {
     if (!active) {
@@ -199,6 +275,7 @@ function GalleryCard({
     // absolutely-positioned button painting above later siblings, which
     // would otherwise stack on top per normal DOM paint order.
     <div
+      ref={outerRef}
       className={clsx("relative mr-4 mb-4", active && "z-20")}
       style={{ width: miniWidth, height: MINI_HEIGHT }}
     >
@@ -207,7 +284,11 @@ function GalleryCard({
         data-active={active}
         data-pending={pending}
         className={clsx(
-          "group/gallery absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-0",
+          // Centering translate + the pending "about to enlarge" scale + the
+          // safe-area anchor offset all live together in the inline `transform`
+          // below (they'd otherwise stomp on each other as separate utilities),
+          // so only the static positioning stays here.
+          "group/gallery absolute top-1/2 left-1/2 cursor-pointer border-0 bg-transparent p-0",
           // perspective lives on the direct parent of the flipping element
           // (below) so its 3D viewing context actually reaches it — nesting
           // it behind extra non-preserve-3d wrapper divs flattens the flip
@@ -215,12 +296,6 @@ function GalleryCard({
           "perspective-[1200px]",
           "h-[var(--mini-h)] w-[var(--mini-w)]",
           "transition-[width,height,transform] duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          // Scale up slightly as a "this is about to enlarge" cue. Not
-          // animate-pulse: that oscillates opacity, which — held over the
-          // whole ~700ms hover delay — visibly fades the tile toward the
-          // page's near-white background before it ever enlarges, reading
-          // as a white border flashing in over the photo.
-          "data-[pending=true]:scale-105",
           "data-[active=true]:h-[var(--enlarge-h)] data-[active=true]:w-[var(--enlarge-w)]",
           // Hint the browser to promote the tile to its own compositor layer
           // ahead of time, so the size/transform transition into the
@@ -231,8 +306,16 @@ function GalleryCard({
           {
             "--mini-w": `${miniWidth}px`,
             "--mini-h": `${MINI_HEIGHT}px`,
-            "--enlarge-w": `${enlargeWidth}px`,
-            "--enlarge-h": `${enlargeHeight}px`,
+            // Enlarge to the viewport-fitted footprint, not the raw natural
+            // size — an oversized card is capped so it can't exceed the screen.
+            "--enlarge-w": `${enlargeBox.w}px`,
+            "--enlarge-h": `${enlargeBox.h}px`,
+            // -50%/-50% centers the box on the tile; the dx/dy (active only)
+            // nudges it into the safe area; the pending scale is the pre-open
+            // cue — not animate-pulse, which would oscillate opacity and read
+            // as a white flash over the whole ~700ms hover delay. Expressed as
+            // one string so the width/height/transform transition animates it.
+            transform: `translate(calc(-50% + ${active ? enlargeBox.dx : 0}px), calc(-50% + ${active ? enlargeBox.dy : 0}px)) scale(${pending ? 1.05 : 1})`,
           } as React.CSSProperties
         }
         onMouseEnter={handleMouseEnter}
