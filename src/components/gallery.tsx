@@ -112,10 +112,18 @@ function GalleryCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   // Cursor-driven parallax tilt, applied only while this card is the enlarged
-  // one (see handleMouseMove). Its own wrapper layer, above the flip element,
-  // so the two 3D transforms never share an element — see the tilt wrapper in
-  // the JSX below.
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+  // one (see handleMouseMove). Driven imperatively through this ref rather than
+  // React state: a mousemove fires 60+ times/sec, and pushing each one through
+  // setState would re-render (and reconcile) the whole card — including the
+  // heavy back-face subtree — on every frame. Writing the transform straight to
+  // the DOM node keeps the tilt off React's render path entirely. Its own
+  // wrapper layer, above the flip element, so the two 3D transforms never share
+  // an element — see the tilt wrapper in the JSX below.
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const resetTilt = () => {
+    if (tiltRef.current)
+      tiltRef.current.style.transform = "rotateX(0deg) rotateY(0deg)";
+  };
   // True while the hover-delay timer is counting down but hasn't fired yet —
   // gives a "this is about to open" cue (slight scale + pulse) rather than
   // instantly hijacking the pointer the moment the cursor lands on a tile.
@@ -219,7 +227,7 @@ function GalleryCard({
       setFlipped(false);
       // Shrinking back to a resting stamp — drop any leftover tilt so the
       // mini tile sits flat, not frozen at whatever angle the cursor left it.
-      setTilt({ rx: 0, ry: 0 });
+      resetTilt();
     }
   }, [active]);
 
@@ -244,7 +252,7 @@ function GalleryCard({
   const handleMouseLeave = () => {
     clearHoverTimer();
     setPending(false);
-    setTilt({ rx: 0, ry: 0 });
+    resetTilt();
     onDeactivate();
   };
 
@@ -255,16 +263,19 @@ function GalleryCard({
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!active) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = tiltRef.current;
+    if (!el) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width; // 0 (left) … 1 (right)
     const py = (e.clientY - rect.top) / rect.height; // 0 (top) … 1 (bottom)
     const MAX_TILT = 8; // degrees at the very edges
-    setTilt({
-      // Card leans toward the cursor: pointer near the top lifts the top edge
-      // toward the viewer, pointer to the right swings the right edge back.
-      rx: (0.5 - py) * 2 * MAX_TILT,
-      ry: (px - 0.5) * 2 * MAX_TILT,
-    });
+    // Card leans toward the cursor: pointer near the top lifts the top edge
+    // toward the viewer, pointer to the right swings the right edge back.
+    // Written straight to the node — no setState — so the parallax never
+    // triggers a React re-render.
+    const rx = (0.5 - py) * 2 * MAX_TILT;
+    const ry = (px - 0.5) * 2 * MAX_TILT;
+    el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
   };
 
   return (
@@ -333,8 +344,8 @@ function GalleryCard({
             inside the tilt; being the flip's parent, the lean composes in
             screen space and stays consistent whether the front or back shows. */}
         <div
+          ref={tiltRef}
           className="absolute inset-0 transition-transform duration-[150ms] ease-out transform-3d motion-reduce:transition-none"
-          style={{ transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` }}
         >
           {/* The whole postcard — white mat, photo, and title on the front;
               white mat and description on the back — flips together as one
