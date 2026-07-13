@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/cn";
 import { useMemo } from "react";
 
 interface WavyStampPathOptions {
@@ -95,7 +95,7 @@ export function WavyCardBackground({
   return (
     <svg
       viewBox={`0 0 ${w} ${h}`}
-      className={clsx(
+      className={cn(
         "pointer-events-none absolute inset-0 -z-10 h-full w-full overflow-visible stroke-neutral-500/30",
         className,
       )}

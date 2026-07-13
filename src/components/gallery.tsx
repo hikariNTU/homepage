@@ -342,7 +342,18 @@ function GalleryCard({
               outside the flipping part. */}
           <div
             data-flipped={flipped}
-            className="absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] transform-3d data-[flipped=true]:rotate-y-180 motion-reduce:transition-none"
+            className={clsx(
+              "absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] transform-3d data-[flipped=true]:rotate-y-180 motion-reduce:transition-none",
+              // While the card is enlarged (but before any click-to-flip),
+              // promote this flipping element to its own compositor layer so
+              // the browser rasterizes BOTH faces up front, during the idle
+              // hover-enlarge window. Without this the back face — turned away
+              // and backface-hidden — is never painted until the flip crosses
+              // 90°, forcing a first-time paint of the heavy StampScene/Postmark
+              // SVGs mid-animation (the first-flip hitch). Scoped to the single
+              // active card so we don't keep 13 extra layers alive at rest.
+              "group-data-[active=true]/gallery:will-change-transform",
+            )}
           >
             <div
               className={clsx(
@@ -368,7 +379,7 @@ function GalleryCard({
                 <WavyCardBackground
                   w={miniWidth}
                   h={MINI_HEIGHT}
-                  className="text-white dark:text-neutral-800"
+                  className="stroke-amber-950/10 p-px text-neutral-50 dark:text-neutral-800"
                 />
               )}
               <div
