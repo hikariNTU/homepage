@@ -33,6 +33,10 @@ There is no test runner configured in this project.
 - Keep dependencies minimal; every dependency eventually needs replacing as it goes stale.
 - `lucide-react` icons: import the `*Icon`-suffixed name (e.g. `PencilIcon`, `MaximizeIcon`, `XIcon`), not the bare name (`Pencil`, `Maximize`, `X`).
 
+## Git workflow
+
+`master` requires a **linear history**. Never create a merge commit on it. Do the work on a branch and land it with `git merge --squash <branch>` followed by a commit (or rebase the branch onto `master`). Committing straight to `master` is fine — it stays linear.
+
 ## Deployment
 
 GitHub Actions (`.github/workflows/main.yml`) builds on push to `master` and deploys `dist/` to GitHub Pages.
