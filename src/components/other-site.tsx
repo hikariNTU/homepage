@@ -38,7 +38,7 @@ export function OtherSites() {
   };
 
   return (
-    <div className="w-full columns-[320px] gap-2 max-md:px-4">
+    <div className="w-full columns-xs gap-2 max-md:px-4">
       <LinkPreviewDialog target={target} onClose={() => setTarget(null)} />
       {sites.map((site) => (
         <Link
