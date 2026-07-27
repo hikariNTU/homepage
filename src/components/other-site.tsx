@@ -227,7 +227,7 @@ const sites: {
     title: "Symbols Cheat Sheet",
     img: find("symbols-cover"),
     description:
-      "Correctly use symbol in your paper, presentation, flowchart. This cheating set display some common symbols that you might want to find in the first place. Copy your symbols by clicking it.",
+      "Correctly use symbol in your paper, presentation, flowchart. Search hundreds of symbols by plain description — arrow, degree, shrug — and click one to copy it. The detail view hands you the code point, HTML entity, CSS/JS escape and LaTeX command too.",
     href: "./symbols",
     tech: [TS, REACT],
   },

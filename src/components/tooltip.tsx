@@ -14,6 +14,10 @@ import {
   useState,
 } from "react";
 
+/** Shared so callers driving their own Popover still look like a TooltipWrap. */
+export const tooltipContentClass =
+  "z-50 max-w-80 overflow-hidden rounded-md bg-main-900 px-5 py-3 text-sm text-main-100 shadow-md animate-in fade-in-0 zoom-in-95 focus:outline-0 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95";
+
 export function TooltipWrap({
   className,
   children,
@@ -58,10 +62,7 @@ export function TooltipWrap({
           side={props.side || "top"}
           ref={ref}
           sideOffset={4}
-          className={clsx(
-            "z-50 max-w-80 overflow-hidden rounded-md bg-main-900 px-5 py-3 text-sm text-main-100 shadow-md animate-in fade-in-0 zoom-in-95 focus:outline-0 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-            className,
-          )}
+          className={clsx(tooltipContentClass, className)}
           {...props}
         >
           {content}
