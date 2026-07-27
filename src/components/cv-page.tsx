@@ -1,4 +1,4 @@
-import { ComponentType, PropsWithChildren, ReactNode, useEffect } from "react";
+import { ComponentType, PropsWithChildren, ReactNode } from "react";
 import clsx from "clsx";
 import { startCase } from "lodash";
 import styleLink from "@/styles/cv.css?url";
@@ -7,6 +7,7 @@ import githubIcon from "@/assets/github.png";
 import homepageIcon from "@/assets/homepage-manifest-icon.png";
 import { useStyleData } from "@/lib/useStyleData";
 import { CVContext, getCVContext } from "@/data/cv-context";
+import { getCVRevText } from "@/data/cv-meta";
 import { cvImages } from "@/data/cv-images";
 import {
   BookUserIcon,
@@ -24,11 +25,7 @@ export function CVPage(props: { var: string | undefined }) {
     style: null,
     link: styleLink,
   });
-  const revText = `${contexts.var ? "Resume" : "CV"}, Dennis Chung - Rev.${contexts.revision}${contexts.var ? ` - ${contexts.var}` : ""}`;
-
-  useEffect(() => {
-    document.title = revText;
-  }, [revText]);
+  const revText = getCVRevText(contexts.var);
 
   return (
     <main className="mx-auto max-w-200 p-8 text-neutral-950 max-xs:p-4 print:zoom-110">

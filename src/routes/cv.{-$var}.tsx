@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { getCVRevText } from "@/data/cv-meta";
 
 export const Route = createFileRoute("/cv/{-$var}")({
-  head() {
+  head({ params }) {
     return {
       meta: [
         {
-          title: "CV, Dennis Chung",
+          title: getCVRevText(params.var),
         },
       ],
     };

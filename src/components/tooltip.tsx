@@ -6,16 +6,26 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import clsx from "clsx";
-import { ComponentProps, PropsWithChildren, forwardRef, useState } from "react";
+import {
+  ComponentProps,
+  ComponentRef,
+  PropsWithChildren,
+  Ref,
+  useState,
+} from "react";
 
-export const TooltipWrap = forwardRef<
-  React.ElementRef<typeof PopoverContent>,
-  PropsWithChildren<{
-    content: React.ReactNode;
-    className?: string;
-    side?: ComponentProps<typeof PopoverContent>["side"];
-  }>
->(function PopoverWrap({ className, children, content, ...props }, ref) {
+export function TooltipWrap({
+  className,
+  children,
+  content,
+  ref,
+  ...props
+}: PropsWithChildren<{
+  content: React.ReactNode;
+  className?: string;
+  side?: ComponentProps<typeof PopoverContent>["side"];
+  ref?: Ref<ComponentRef<typeof PopoverContent>>;
+}>) {
   const [open, setOpen] = useState(false);
 
   const handleMouseEnter = () => {
@@ -60,4 +70,4 @@ export const TooltipWrap = forwardRef<
       </PopoverPortal>
     </Popover>
   );
-});
+}

@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import dom2Image from "dom-to-image";
 import { Loader2Icon } from "lucide-react";
@@ -401,61 +395,55 @@ const ADDITIONAL = [
   "M: +81-234-567-890",
   "統一編號：01234567",
 ].join("\n");
-const CardContainer = forwardRef<
-  HTMLDivElement,
-  {
-    name: string;
-    engName: string;
-    position: string;
-    engPosition: string;
-    company: string;
-    engCompany: string;
-    address: string;
-    additional: string;
-    scale: number;
-  }
->(
-  (
-    {
-      name = "王大明",
-      engName = "Daming, Wang",
-      position = "無線網路最佳化實驗室\n行政助理",
-      engPosition = "Admistrator Assistance",
-      company = "某一家很厲害的有限公司",
-      engCompany = "Useful Co. Ltd.",
-      address = "天龍國龍山市養鱒路三段礎幽街\n135 號 7 樓",
-      additional = ADDITIONAL,
-      scale = 1,
-      ...props
-    },
-    ref,
-  ) => {
-    const extra = scale
-      ? {
-          style: getSizeStyle(scale),
-        }
-      : {};
-    return (
-      <div className="card-wrapper" {...props}>
-        <div className="card-container" {...extra} ref={ref}>
-          <div className="card-self">
-            <p>{name}</p>
-            <p>{engName}</p>
-            <p>{position}</p>
-            <p>{engPosition}</p>
-          </div>
-          <div className="card-detail">
-            <h1>{engCompany}</h1>
-            <h2>{company}</h2>
-            <address className="addr">
-              <p>{address}</p>
-              {additional?.split(/\r?\n/).map((v) => (
-                <p key={v}>{v}</p>
-              ))}
-            </address>
-          </div>
+const CardContainer = ({
+  name = "王大明",
+  engName = "Daming, Wang",
+  position = "無線網路最佳化實驗室\n行政助理",
+  engPosition = "Admistrator Assistance",
+  company = "某一家很厲害的有限公司",
+  engCompany = "Useful Co. Ltd.",
+  address = "天龍國龍山市養鱒路三段礎幽街\n135 號 7 樓",
+  additional = ADDITIONAL,
+  scale = 1,
+  ref,
+  ...props
+}: {
+  name: string;
+  engName: string;
+  position: string;
+  engPosition: string;
+  company: string;
+  engCompany: string;
+  address: string;
+  additional: string;
+  scale: number;
+  ref?: Ref<HTMLDivElement>;
+}) => {
+  const extra = scale
+    ? {
+        style: getSizeStyle(scale),
+      }
+    : {};
+  return (
+    <div className="card-wrapper" {...props}>
+      <div className="card-container" {...extra} ref={ref}>
+        <div className="card-self">
+          <p>{name}</p>
+          <p>{engName}</p>
+          <p>{position}</p>
+          <p>{engPosition}</p>
+        </div>
+        <div className="card-detail">
+          <h1>{engCompany}</h1>
+          <h2>{company}</h2>
+          <address className="addr">
+            <p>{address}</p>
+            {additional?.split(/\r?\n/).map((v) => (
+              <p key={v}>{v}</p>
+            ))}
+          </address>
         </div>
       </div>
-    );
-  },
-);
+    </div>
+  );
+};

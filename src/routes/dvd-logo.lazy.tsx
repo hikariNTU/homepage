@@ -2,6 +2,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import "@/styles/dvd-logo.css";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 import {
   CheckIcon,
   GaugeIcon,
@@ -79,26 +80,20 @@ const DVD = () => {
     setHit(0);
   };
 
-  useEffect(() => {
-    // Resize Event Obs
-    const container = document.getElementById(container_id);
-
-    if (!container) {
-      return;
-    }
-
-    const observer = new ResizeObserver((mutList) => {
-      mutList.forEach((mut) => {
-        if (mut.target.id === container_id) {
-          setWidth(mut.contentRect.width);
-          setHeight(mut.contentRect.height);
+  useResizeObserver(
+    () => document.getElementById(container_id),
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.target.id === container_id) {
+          setWidth(entry.contentRect.width);
+          setHeight(entry.contentRect.height);
         }
       });
-    });
-    observer.observe(container, {
-      box: "border-box",
-    });
+    },
+    { box: "border-box" },
+  );
 
+  useEffect(() => {
     let timer: null | number = null;
     const handleBounce = () => {
       setColor(getRandomColor);
@@ -114,16 +109,13 @@ const DVD = () => {
     // Border touch Event
     const bouncer = document.getElementById(bouncer_id);
     if (!bouncer) {
-      return () => {
-        observer.disconnect();
-      };
+      return;
     }
     bouncer.addEventListener("animationiteration", handleBounce);
 
     // Clean Up
     return () => {
       bouncer.removeEventListener("animationiteration", handleBounce);
-      observer.disconnect();
     };
   }, []);
 

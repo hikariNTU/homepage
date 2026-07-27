@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useActionState } from "react";
 import {
   MidiParser,
   type ParsedMidiData,
@@ -13,42 +13,46 @@ export const Route = createLazyFileRoute("/midi-parser")({
   component: MidiPage,
 });
 
+type UploadState = {
+  parsedData: ParsedMidiData | null;
+  error: string | null;
+  fileName: string | null;
+};
+
+const EMPTY_UPLOAD: UploadState = {
+  parsedData: null,
+  error: null,
+  fileName: null,
+};
+
 function MidiPage() {
-  const [parsedData, setParsedData] = useState<ParsedMidiData | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [{ parsedData, error, fileName }, handleFileUpload, isLoading] =
+    useActionState(async (prev: UploadState, file: File) => {
+      if (
+        !file.name.toLowerCase().endsWith(".mid") &&
+        !file.name.toLowerCase().endsWith(".midi")
+      ) {
+        return {
+          ...prev,
+          error: "Please upload a valid MIDI file (.mid or .midi)",
+        };
+      }
 
-  const handleFileUpload = useCallback(async (file: File) => {
-    if (
-      !file.name.toLowerCase().endsWith(".mid") &&
-      !file.name.toLowerCase().endsWith(".midi")
-    ) {
-      setError("Please upload a valid MIDI file (.mid or .midi)");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setFileName(file.name);
-
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const parser = new MidiParser(arrayBuffer);
-      const parsed = parser.parse();
-      setParsedData(parsed);
-    } catch (err) {
-      setError(
-        `Error parsing MIDI file: ${
-          err instanceof Error ? err.message : "Unknown error"
-        }`,
-      );
-      setParsedData(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const parser = new MidiParser(arrayBuffer);
+        return { parsedData: parser.parse(), error: null, fileName: file.name };
+      } catch (err) {
+        return {
+          parsedData: null,
+          fileName: file.name,
+          error: `Error parsing MIDI file: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }`,
+        };
+      }
+    }, EMPTY_UPLOAD);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

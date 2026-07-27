@@ -5,6 +5,7 @@ import { StampHoverCard, StampHoverGroup } from "./stamp-hover-card";
 import { WavyCardBackground } from "./wave-canvas";
 import Masonry from "masonry-layout";
 import { ShuffleIcon } from "lucide-react";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 
 const skillIcons = import.meta.glob<{ default: string }>(
   "../assets/skill_icon/*.svg",
@@ -858,13 +859,12 @@ export function SkillSet() {
     });
     masonry.current = m;
 
-    const observer = new ResizeObserver(() => m.layout?.());
-    observer.observe(ref.current);
     return () => {
-      observer.disconnect();
       m.destroy?.();
     };
   }, [CARD_WIDTH, IMG_FACTOR]);
+
+  useResizeObserver(ref, () => masonry.current?.layout?.());
 
   useLayoutEffect(() => {
     if (rerollNonce === 0) return;

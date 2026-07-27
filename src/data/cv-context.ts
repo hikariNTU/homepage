@@ -1,3 +1,5 @@
+import { CV_REVISION } from "./cv-meta";
+
 export type CVContext = {
   revision: string;
   var: string;
@@ -28,7 +30,7 @@ export type CVContext = {
 };
 
 export const defaultContexts: CVContext = {
-  revision: "2026.06.29",
+  revision: CV_REVISION,
   var: "",
   intro:
     "Hi, I'm Dennis Chung. I am a full-stack engineer who specializes in modernizing core web architecture, optimizing distributed infrastructure, and orchestrating production-grade AI systems. From engineering low-latency browser DAWs utilizing the Web Audio and Canvas APIs to building context-aware AI platform agents integrated with live Kubernetes clusters, I focus on cutting operational latency and building developer platforms that scale. By anchoring my day-to-day workflow in specification-driven development and advanced AI automation, I bridge the gap between frontend execution, backend telemetry, and extreme delivery speed.",

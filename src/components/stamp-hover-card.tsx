@@ -26,6 +26,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useResizeObserver } from "@/lib/use-resize-observer";
 
 const POSTMARK_SIZE = 100;
 
@@ -54,9 +55,9 @@ const StampHoverGroupContext = createContext<{
 export function StampHoverGroup({ children }: PropsWithChildren) {
   const [activeId, setActiveId] = useState<string | null>(null);
   return (
-    <StampHoverGroupContext.Provider value={{ activeId, setActiveId }}>
+    <StampHoverGroupContext value={{ activeId, setActiveId }}>
       {children}
-    </StampHoverGroupContext.Provider>
+    </StampHoverGroupContext>
   );
 }
 
@@ -132,16 +133,15 @@ export function StampHoverCard({
     });
   }, []);
 
+  useResizeObserver(triggerRef, updatePosition, { enabled: open });
+
   useEffect(() => {
     if (!open) return;
     updatePosition();
 
-    const observer = new ResizeObserver(updatePosition);
-    if (triggerRef.current) observer.observe(triggerRef.current);
     window.addEventListener("scroll", updatePosition, true);
     window.addEventListener("resize", updatePosition);
     return () => {
-      observer.disconnect();
       window.removeEventListener("scroll", updatePosition, true);
       window.removeEventListener("resize", updatePosition);
     };
