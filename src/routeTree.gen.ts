@@ -13,6 +13,7 @@ import { Route as SymbolsRouteImport } from './routes/symbols'
 import { Route as ScreenRouteImport } from './routes/screen'
 import { Route as QrcodeRouteImport } from './routes/qrcode'
 import { Route as ProjRouteImport } from './routes/proj'
+import { Route as ParkingRouteImport } from './routes/parking'
 import { Route as MidiParserRouteImport } from './routes/midi-parser'
 import { Route as GradientWallpaperRouteImport } from './routes/gradient-wallpaper'
 import { Route as DvdLogoRouteImport } from './routes/dvd-logo'
@@ -40,6 +41,11 @@ const ProjRoute = ProjRouteImport.update({
   path: '/proj',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParkingRoute = ParkingRouteImport.update({
+  id: '/parking',
+  path: '/parking',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/parking.lazy').then((d) => d.Route))
 const MidiParserRoute = MidiParserRouteImport.update({
   id: '/midi-parser',
   path: '/midi-parser',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
+  '/parking': typeof ParkingRoute
   '/proj': typeof ProjRoute
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
+  '/parking': typeof ParkingRoute
   '/proj': typeof ProjRoute
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/dvd-logo': typeof DvdLogoRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
+  '/parking': typeof ParkingRoute
   '/proj': typeof ProjRoute
   '/qrcode': typeof QrcodeRoute
   '/screen': typeof ScreenRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
+    | '/parking'
     | '/proj'
     | '/qrcode'
     | '/screen'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
+    | '/parking'
     | '/proj'
     | '/qrcode'
     | '/screen'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/dvd-logo'
     | '/gradient-wallpaper'
     | '/midi-parser'
+    | '/parking'
     | '/proj'
     | '/qrcode'
     | '/screen'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   DvdLogoRoute: typeof DvdLogoRoute
   GradientWallpaperRoute: typeof GradientWallpaperRoute
   MidiParserRoute: typeof MidiParserRoute
+  ParkingRoute: typeof ParkingRoute
   ProjRoute: typeof ProjRoute
   QrcodeRoute: typeof QrcodeRoute
   ScreenRoute: typeof ScreenRoute
@@ -190,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/proj'
       fullPath: '/proj'
       preLoaderRoute: typeof ProjRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parking': {
+      id: '/parking'
+      path: '/parking'
+      fullPath: '/parking'
+      preLoaderRoute: typeof ParkingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/midi-parser': {
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   DvdLogoRoute: DvdLogoRoute,
   GradientWallpaperRoute: GradientWallpaperRoute,
   MidiParserRoute: MidiParserRoute,
+  ParkingRoute: ParkingRoute,
   ProjRoute: ProjRoute,
   QrcodeRoute: QrcodeRoute,
   ScreenRoute: ScreenRoute,
