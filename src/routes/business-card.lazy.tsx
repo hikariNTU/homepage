@@ -2,7 +2,7 @@ import { Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import dom2Image from "dom-to-image";
 import { Loader2Icon } from "lucide-react";
-import { Checkbox } from "@radix-ui/react-checkbox";
+import { Checkbox } from "radix-ui";
 import "@google/model-viewer";
 import cardModel from "@/assets/model/business-card-base.glb?url";
 import { ModelViewerElement } from "@google/model-viewer";
@@ -288,7 +288,7 @@ const EntryPage = () => {
         </label>
         <label>
           Show Form
-          <Checkbox
+          <Checkbox.Root
             checked={showForm}
             onCheckedChange={(e) => {
               setShowForm(!!e);

@@ -1,10 +1,4 @@
-import {
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverPortal,
-  PopoverTrigger,
-} from "@radix-ui/react-popover";
+import { Popover } from "radix-ui";
 import clsx from "clsx";
 import {
   ComponentProps,
@@ -27,8 +21,8 @@ export function TooltipWrap({
 }: PropsWithChildren<{
   content: React.ReactNode;
   className?: string;
-  side?: ComponentProps<typeof PopoverContent>["side"];
-  ref?: Ref<ComponentRef<typeof PopoverContent>>;
+  side?: ComponentProps<typeof Popover.Content>["side"];
+  ref?: Ref<ComponentRef<typeof Popover.Content>>;
 }>) {
   const [open, setOpen] = useState(false);
 
@@ -41,16 +35,16 @@ export function TooltipWrap({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         asChild
       >
         {children}
-      </PopoverTrigger>
-      <PopoverPortal>
-        <PopoverContent
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onOpenAutoFocus={(event) => {
@@ -66,9 +60,9 @@ export function TooltipWrap({
           {...props}
         >
           {content}
-          <PopoverArrow className="fill-main-900" />
-        </PopoverContent>
-      </PopoverPortal>
-    </Popover>
+          <Popover.Arrow className="fill-main-900" />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }

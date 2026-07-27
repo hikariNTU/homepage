@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { atom, useAtom } from "jotai";
-import * as Slider from "@radix-ui/react-slider";
-import { Checkbox } from "@radix-ui/react-checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@radix-ui/react-popover";
+import { Checkbox, Popover, Slider } from "radix-ui";
 import {
   Trash2,
   Monitor,
@@ -562,7 +556,7 @@ const ControlPanel: React.FC = () => {
               </div>
               <div className="flex items-center">
                 <label className="ml-1 flex items-center gap-2 text-sm">
-                  <Checkbox
+                  <Checkbox.Root
                     className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-hidden data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                     checked={display.aspect.lock}
                     onCheckedChange={(checked) =>
@@ -580,7 +574,7 @@ const ControlPanel: React.FC = () => {
                         aria-hidden
                       />
                     )}
-                  </Checkbox>
+                  </Checkbox.Root>
                   <LockIcon size={16} />
                 </label>
               </div>
@@ -589,7 +583,7 @@ const ControlPanel: React.FC = () => {
 
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-              <Checkbox
+              <Checkbox.Root
                 className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400 bg-white focus:ring-2 focus:ring-blue-400 focus:outline-hidden data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
                 checked={display.curvature.use}
                 onCheckedChange={(checked) =>
@@ -603,7 +597,7 @@ const ControlPanel: React.FC = () => {
                     aria-hidden
                   />
                 )}
-              </Checkbox>
+              </Checkbox.Root>
               Curved Screen
             </label>
             {display.curvature.use && (
@@ -635,13 +629,13 @@ const ControlPanel: React.FC = () => {
               Save Device
             </button>
 
-            <Popover open={showPresets} onOpenChange={setShowPresets}>
-              <PopoverTrigger asChild>
+            <Popover.Root open={showPresets} onOpenChange={setShowPresets}>
+              <Popover.Trigger asChild>
                 <button className="rounded border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50">
                   Presets
                 </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg">
+              </Popover.Trigger>
+              <Popover.Content className="w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg">
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-900">Device Presets</h3>
                   {devicePresets.map((preset, index) => (
@@ -676,16 +670,16 @@ const ControlPanel: React.FC = () => {
                     </button>
                   ))}
                 </div>
-              </PopoverContent>
-            </Popover>
+              </Popover.Content>
+            </Popover.Root>
 
-            <Popover open={showSaved} onOpenChange={setShowSaved}>
-              <PopoverTrigger asChild>
+            <Popover.Root open={showSaved} onOpenChange={setShowSaved}>
+              <Popover.Trigger asChild>
                 <button className="rounded border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50">
                   Saved
                 </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg">
+              </Popover.Trigger>
+              <Popover.Content className="w-80 rounded-lg border border-gray-300 bg-white p-4 shadow-lg">
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-900">Saved Devices</h3>
                   {display.deviceList.length === 0 ? (
@@ -718,8 +712,8 @@ const ControlPanel: React.FC = () => {
                     ))
                   )}
                 </div>
-              </PopoverContent>
-            </Popover>
+              </Popover.Content>
+            </Popover.Root>
           </div>
         </div>
       </div>

@@ -14,13 +14,7 @@ import {
   SettingsIcon,
   ShrinkIcon,
 } from "lucide-react";
-import {
-  Slider,
-  SliderRange,
-  SliderThumb,
-  SliderTrack,
-} from "@radix-ui/react-slider";
-import { Checkbox, CheckboxIndicator } from "@radix-ui/react-checkbox";
+import { Checkbox, Slider } from "radix-ui";
 
 export const Route = createLazyFileRoute("/dvd-logo")({
   component: () => <DVD />,
@@ -147,53 +141,53 @@ const DVD = () => {
         <span className="flex items-center gap-1 text-sm uppercase">
           <GaugeIcon size={16} /> Speed
         </span>
-        <Slider
+        <Slider.Root
           value={[speed]}
           onValueChange={([v]) => {
             setSpeed(v);
           }}
-          className="relative flex h-5 w-[160px] touch-none items-center select-none"
+          className="relative flex h-5 w-40 touch-none items-center select-none"
           min={1}
           step={1}
           max={50}
         >
-          <SliderTrack className="relative h-[3px] grow rounded-full bg-neutral-400">
-            <SliderRange className="absolute h-full rounded-full bg-white" />
-          </SliderTrack>
-          <SliderThumb
+          <Slider.Track className="relative h-0.75 grow rounded-full bg-neutral-400">
+            <Slider.Range className="absolute h-full rounded-full bg-white" />
+          </Slider.Track>
+          <Slider.Thumb
             className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-hidden"
             aria-label="Volume"
           />
-        </Slider>
+        </Slider.Root>
       </label>
 
       <label className="mb-2 flex flex-col">
         <span className="flex items-center gap-1 text-sm uppercase">
           <ShrinkIcon size={16} /> Size
         </span>
-        <Slider
+        <Slider.Root
           value={[size]}
           onValueChange={([z]) => {
             setSize(z);
           }}
-          className="relative flex h-5 w-[160px] touch-none items-center select-none"
+          className="relative flex h-5 w-40 touch-none items-center select-none"
           min={3}
           step={0.1}
           max={30}
         >
-          <SliderTrack className="relative h-[3px] grow rounded-full bg-neutral-400">
-            <SliderRange className="absolute h-full rounded-full bg-white" />
-          </SliderTrack>
-          <SliderThumb
+          <Slider.Track className="relative h-0.75 grow rounded-full bg-neutral-400">
+            <Slider.Range className="absolute h-full rounded-full bg-white" />
+          </Slider.Track>
+          <Slider.Thumb
             className="hover:bg-violet3 block size-3 rounded-[10px] bg-white shadow-[0_2px_10px] shadow-neutral-600 focus:shadow-[0_0_0_2px] focus:outline-hidden"
             aria-label="Volume"
           />
-        </Slider>
+        </Slider.Root>
       </label>
 
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Show Line
-        <Checkbox
+        <Checkbox.Root
           className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={outline}
           onCheckedChange={(e) => {
@@ -204,15 +198,15 @@ const DVD = () => {
             setOutline(e);
           }}
         >
-          <CheckboxIndicator>
+          <Checkbox.Indicator>
             <CheckIcon size={12} />
-          </CheckboxIndicator>
-        </Checkbox>
+          </Checkbox.Indicator>
+        </Checkbox.Root>
       </label>
 
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Show Status
-        <Checkbox
+        <Checkbox.Root
           className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={showStatus}
           onCheckedChange={(e) => {
@@ -223,15 +217,15 @@ const DVD = () => {
             setShowStatus(e);
           }}
         >
-          <CheckboxIndicator>
+          <Checkbox.Indicator>
             <CheckIcon size={12} />
-          </CheckboxIndicator>
-        </Checkbox>
+          </Checkbox.Indicator>
+        </Checkbox.Root>
       </label>
 
       <label className="mb-2 flex items-center justify-between gap-2 text-sm">
         Inverted Color
-        <Checkbox
+        <Checkbox.Root
           className="inline-flex size-4 items-center justify-center rounded-sm bg-white"
           checked={inverted}
           onCheckedChange={(e) => {
@@ -242,10 +236,10 @@ const DVD = () => {
             setInverted(e);
           }}
         >
-          <CheckboxIndicator>
+          <Checkbox.Indicator>
             <CheckIcon size={12} />
-          </CheckboxIndicator>
-        </Checkbox>
+          </Checkbox.Indicator>
+        </Checkbox.Root>
       </label>
     </div>
   );
@@ -257,7 +251,7 @@ const DVD = () => {
     >
       {/* Bouncer Element */}
       <div
-        className={clsx("ud leading-[0]", {
+        className={clsx("ud leading-0", {
           "outline-2 outline-blue-500 outline-solid": outline,
         })}
         style={{
@@ -268,7 +262,7 @@ const DVD = () => {
         id={bouncer_id}
       >
         <div
-          className={clsx("lr leading-[0]", {
+          className={clsx("lr leading-0", {
             "outline-2 outline-red-500 outline-solid": outline,
             "bg-current": inverted,
           })}

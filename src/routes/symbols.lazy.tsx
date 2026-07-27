@@ -2,14 +2,7 @@ import { tooltipContentClass } from "@/components/tooltip";
 import { allSymbols, symbolGroups, type SymbolItem } from "@/data/symbols";
 import { cn } from "@/lib/cn";
 import { useTheme } from "@/lib/theme";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverArrow,
-  PopoverContent,
-  PopoverPortal,
-} from "@radix-ui/react-popover";
+import { Dialog, Popover } from "radix-ui";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
@@ -480,8 +473,8 @@ function HoverTooltip({
   box: React.CSSProperties | undefined;
 }) {
   return (
-    <Popover open={Boolean(item)}>
-      <PopoverAnchor
+    <Popover.Root open={Boolean(item)}>
+      <Popover.Anchor
         style={{
           ...box,
           pointerEvents: "none",
@@ -489,8 +482,8 @@ function HoverTooltip({
         }}
       />
       {item && (
-        <PopoverPortal>
-          <PopoverContent
+        <Popover.Portal>
+          <Popover.Content
             side="top"
             sideOffset={-2}
             onOpenAutoFocus={(e) => e.preventDefault()}
@@ -508,11 +501,11 @@ function HoverTooltip({
                 </span>
               )}
             </div>
-            <PopoverArrow className="fill-main-900" />
-          </PopoverContent>
-        </PopoverPortal>
+            <Popover.Arrow className="fill-main-900" />
+          </Popover.Content>
+        </Popover.Portal>
       )}
-    </Popover>
+    </Popover.Root>
   );
 }
 

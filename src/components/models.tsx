@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import { ModelViewerElement } from "@google/model-viewer";
 import { TooltipWrap } from "./tooltip";
-import * as Dialog from "@radix-ui/react-dialog";
+import { Dialog } from "radix-ui";
 import { InfoIcon, MaximizeIcon, XIcon } from "lucide-react";
 
 function ModelStage({

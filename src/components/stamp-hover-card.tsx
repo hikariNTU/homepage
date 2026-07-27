@@ -1,6 +1,5 @@
-import { Portal } from "@radix-ui/react-portal";
-import { Presence } from "@radix-ui/react-presence";
-import { HoverCard, HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { HoverCard, Portal } from "radix-ui";
+import { Presence } from "radix-ui/internal";
 import { Postmark } from "./postmark";
 import {
   randomPostmarkLabel,
@@ -181,13 +180,13 @@ export function StampHoverCard({
   );
 
   return (
-    <HoverCard open={open} onOpenChange={setOpen} openDelay={1}>
-      <HoverCardTrigger ref={triggerRef} asChild>
+    <HoverCard.Root open={open} onOpenChange={setOpen} openDelay={1}>
+      <HoverCard.Trigger ref={triggerRef} asChild>
         {children}
-      </HoverCardTrigger>
+      </HoverCard.Trigger>
       {rect && (
-        <Portal>
-          <Presence present={open}>
+        <Portal.Root>
+          <Presence.Root present={open}>
             <div
               data-state={open ? "open" : "closed"}
               style={{
@@ -251,7 +250,7 @@ export function StampHoverCard({
                 </>
               )}
             </div>
-          </Presence>
+          </Presence.Root>
           {/* Postmark: its bottom edge ends flush with the stamp's own
               bottom edge, so the mark overlaps up into the stamp rather
               than mostly sitting below it — like a real cancellation mark
@@ -272,7 +271,7 @@ export function StampHoverCard({
             className="pointer-events-none fixed z-30"
           >
             <div style={{ transform: `rotate(${postmarkRotation}deg)` }}>
-              <Presence present={open}>
+              <Presence.Root present={open}>
                 <Postmark
                   variant={postmarkVariant}
                   label={postmarkLabel}
@@ -286,11 +285,11 @@ export function StampHoverCard({
                     "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
                   )}
                 />
-              </Presence>
+              </Presence.Root>
             </div>
           </div>
-        </Portal>
+        </Portal.Root>
       )}
-    </HoverCard>
+    </HoverCard.Root>
   );
 }
