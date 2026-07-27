@@ -5,13 +5,18 @@ type ExtraDef = {
   reveal?: "auto" | "manual";
 };
 
+// The second `DetailedHTMLProps` argument is the element a `ref` points at, not
+// another bag of attributes — getting that wrong is what made `ref={...}` on a
+// <model-viewer> unassignable.
+type ModelViewerProps = React.DetailedHTMLProps<
+  React.AllHTMLAttributes<ModelViewerElement> & ExtraDef,
+  ModelViewerElement
+>;
+
 export declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "model-viewer": React.DetailedHTMLProps<
-        React.AllHTMLAttributes<Partial<ModelViewerElement>> & ExtraDef,
-        React.AllHTMLAttributes<Partial<ModelViewerElement>> & ExtraDef
-      >;
+      "model-viewer": ModelViewerProps;
     }
   }
 }
@@ -19,10 +24,7 @@ export declare global {
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "model-viewer": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & ModelViewerAttributes,
-        React.AllHTMLAttributes<Partial<ModelViewerElement>> & ExtraDef
-      >;
+      "model-viewer": ModelViewerProps;
     }
   }
 }

@@ -73,8 +73,8 @@ function buildWavyStampPath(
 }
 
 interface WavyBgProps extends WavyStampPathOptions {
-  w: number;
-  h: number;
+  w?: number;
+  h?: number;
   className?: string;
 }
 

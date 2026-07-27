@@ -20,7 +20,7 @@ export const Route = createLazyFileRoute("/dvd-logo")({
   component: () => <DVD />,
 });
 
-const DVDLogo = ({ inverted = false }: { inverted: boolean }) => (
+const DVDLogo = ({ inverted = false }: { inverted?: boolean }) => (
   <div className="relative inline font-[consolas,sans-serif] font-black italic transition-[font-size] duration-100 ease-linear">
     <div
       className={clsx("scale-y-50 leading-[0.3em]", {

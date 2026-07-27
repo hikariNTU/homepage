@@ -118,7 +118,7 @@ export function vitePluginImageProcessor(
       const absoluteTargetDir = path.resolve(server.config.root, targetDir);
 
       // Run initial check on server startup
-      processImagesInDir(absoluteTargetDir);
+      void processImagesInDir(absoluteTargetDir);
 
       // Watch for changes while dev server is running
       server.watcher.add(absoluteTargetDir);
@@ -128,7 +128,7 @@ export function vitePluginImageProcessor(
           const ext = path.extname(filePath).toLowerCase();
           // Avoid infinite loops by ignoring the manifest itself and generated webps
           if (ext !== ".json" && ext !== ".webp") {
-            processImagesInDir(absoluteTargetDir);
+            void processImagesInDir(absoluteTargetDir);
           }
         }
       };

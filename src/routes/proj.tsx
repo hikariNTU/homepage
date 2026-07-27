@@ -7,7 +7,7 @@ export const Route = createFileRoute("/proj")({
       <button
         className="fixed top-4 right-4 bg-red-300 p-2"
         onClick={() => {
-          document.body.requestFullscreen();
+          void document.body.requestFullscreen();
         }}
       >
         全螢幕

@@ -45,9 +45,9 @@ if (!rootElement.innerHTML) {
 async function removeOldSW() {
   if (typeof window !== "undefined") {
     const swList = await navigator.serviceWorker.getRegistrations();
-    swList
+    await swList
       .find((sw) => sw.scope === "https://hikarintu.github.io/homepage/")
       ?.unregister();
   }
 }
-removeOldSW();
+void removeOldSW();

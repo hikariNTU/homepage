@@ -405,15 +405,15 @@ const CardContainer = ({
   ref,
   ...props
 }: {
-  name: string;
-  engName: string;
-  position: string;
-  engPosition: string;
-  company: string;
-  engCompany: string;
-  address: string;
-  additional: string;
-  scale: number;
+  name?: string;
+  engName?: string;
+  position?: string;
+  engPosition?: string;
+  company?: string;
+  engCompany?: string;
+  address?: string;
+  additional?: string;
+  scale?: number;
   ref?: Ref<HTMLDivElement>;
 }) => {
   const extra = scale
