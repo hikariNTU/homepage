@@ -29,29 +29,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version-file: ".nvmrc"
           cache: "npm"
       - name: Install dependencies
         run: npm ci
-      - name: Check formatting
-        run: npm run format:check
-      - name: Lint
-        run: npm run lint
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Build
-        run: npm run build
+      # Runs format, lint, typecheck and build. Every one of them runs even if
+      # an earlier one fails, so a single run reports every problem at once.
+      # The build is the last step, so `dist/` is ready for the upload below.
+      - name: Check
+        run: npm run check
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           # Upload dist repository
           path: "./dist"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
