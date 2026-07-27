@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "sortTailwindcss": {
+    "stylesheet": "./src/index.css"
+  },
+  "ignorePatterns": [
+    "dist",
+    ".claude",
+    "openspec",
+    "src/routeTree.gen.ts",
+    "src/assets/sites/.image-manifest.json"
+  ]
+}

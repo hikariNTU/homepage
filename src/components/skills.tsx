@@ -793,7 +793,9 @@ export interface SkillScene {
   versionVariant: "outline" | "fill" | "fill-dual" | "plain";
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- shared with the gallery postcard-back stamp; kept beside StampScene it feeds rather than split into its own module
+// Non-component export: shared with the gallery postcard-back stamp; kept beside
+// StampScene it feeds rather than split into its own module. Costs this file its
+// react-refresh fast-refresh boundary.
 export function randomSkillScene(): SkillScene {
   const layout = randomOf(LAYOUT_KINDS);
   return {

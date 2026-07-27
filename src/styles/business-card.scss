@@ -3,7 +3,8 @@
 $scale: 2;
 $primary: rgb(180, 56, 91);
 
-@mixin Shadow($color: rgba(34, 34, 34, 0.133)) { // #2222 equivalent
+@mixin Shadow($color: rgba(34, 34, 34, 0.133)) {
+  // #2222 equivalent
   border: none;
   border-radius: 10px;
   box-shadow: 0 0 15px 2px $color;
@@ -63,7 +64,11 @@ h2 {
       width: 90%;
       padding: 2em;
       // FIX: Changed undefined $color to existing $primary
-      background: linear-gradient(45deg, $primary, color.adjust($primary, $lightness: -15%));
+      background: linear-gradient(
+        45deg,
+        $primary,
+        color.adjust($primary, $lightness: -15%)
+      );
       @include Shadow(rgba(34, 34, 34, 0.333)); // #2225 equivalent
       transform: translateY(-25%);
     }
@@ -228,7 +233,10 @@ h2 {
   padding: 1em;
   box-sizing: border-box;
   position: relative;
-  transition: font-size 1s, width 1s, height 1s;
+  transition:
+    font-size 1s,
+    width 1s,
+    height 1s;
   @media print {
     font-size: 2.5mm;
     width: 90mm;
@@ -471,7 +479,8 @@ nav {
   // border: #eee5 solid 2px;
   @include Shadow(#eee9);
   backdrop-filter: blur(20px);
-  font-family: "Lato", "Noto Sans", "Noto Sans CJK", "Noto Sans CJK TC", sans-serif;
+  font-family:
+    "Lato", "Noto Sans", "Noto Sans CJK", "Noto Sans CJK TC", sans-serif;
   > h1 {
     color: #333;
     font-weight: 100;

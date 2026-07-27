@@ -10,7 +10,8 @@ Dennis Chung's personal homepage — a single-page-feeling site built as a colle
 
 - `npm run dev` — start Vite dev server
 - `npm run build` — type-check (`tsc`) implicitly via Vite build, then production build to `dist/`
-- `npm run lint` — ESLint over `.ts`/`.tsx`, zero warnings allowed (`--max-warnings 0`)
+- `npm run lint` — oxlint (`.oxlintrc.json`), zero warnings allowed (`--max-warnings 0`)
+- `npm run format` / `npm run format:check` — oxfmt (`.oxfmtrc.json`), including built-in Tailwind class sorting
 - `npm run preview` — preview the production build locally
 - `npm run transform-image` — runs `npx tsx ./src/shrink.ts` (image processing helper using `sharp`) (not needed after integrated within vite plugin)
 

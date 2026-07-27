@@ -311,14 +311,13 @@ const EntryPage = () => {
                   {Object.entries(fieldset).map(
                     ([label, { value, handle, ...options }]) => {
                       return (
-                        <label className="flex flex-col">
+                        <label className="flex flex-col" key={`input-${label}`}>
                           {label}
                           <textarea
                             className="rounded-lg bg-neutral-100 px-4 py-2 focus-within:bg-neutral-50"
                             defaultValue={value}
                             id={label}
                             onChange={(e) => handle(e.currentTarget.value)}
-                            key={`input-${label}`}
                             {...options}
                           />
                         </label>
@@ -348,11 +347,9 @@ const EntryPage = () => {
               title="Image Data create from webpage"
             />
             <div className="update-btn">
-              <button
-                disabled={updating}
-                onClick={handleUpdateImageClick}
-                children="Update Image"
-              />
+              <button disabled={updating} onClick={handleUpdateImageClick}>
+                Update Image
+              </button>
               {updating && <Loader2Icon size={24} />}
             </div>
             <label>
