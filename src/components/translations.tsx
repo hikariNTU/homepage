@@ -10,7 +10,7 @@ const delayMs = 30;
 export function SwitchLang() {
   const [lang, setLang] = useAtom(currentLangAtom);
   const setProgress = useSetAtom(progressAtom);
-  const [timer, setTheTimer] = useState<NodeJS.Timeout>();
+  const [timer, setTheTimer] = useState<ReturnType<typeof setTimeout>>();
 
   const toggle = () => {
     setLang(lang === "en-US" ? "zh-TW" : "en-US");

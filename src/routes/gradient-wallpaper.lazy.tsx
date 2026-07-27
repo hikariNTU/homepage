@@ -13,7 +13,8 @@ const Wallpaper = () => {
   const [stop2, setStop2] = useState("#333333");
   const [where, setWhere] = useState([0, 0]);
   const [globalOpacity, setGlobalOpacity] = useState(100);
-  const [globalOpacityID, setGlobalOpacityID] = useState<NodeJS.Timeout>();
+  const [globalOpacityID, setGlobalOpacityID] =
+    useState<ReturnType<typeof setTimeout>>();
   const [globalOpacityArray, setGlobalOpacityArray] = useState<string[]>([]);
   const [composite, setComposite] =
     useState<GlobalCompositeOperation>("source-over");
