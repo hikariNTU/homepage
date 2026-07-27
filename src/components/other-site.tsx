@@ -38,14 +38,14 @@ export function OtherSites() {
   };
 
   return (
-    <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-x-2 gap-y-6 max-md:px-4">
+    <div className="w-full columns-[320px] gap-2 max-md:px-4">
       <LinkPreviewDialog target={target} onClose={() => setTarget(null)} />
       {sites.map((site) => (
         <Link
           to={site.href}
           key={site.title}
           onClick={(e) => handleClick(e, site)}
-          className="group relative flex flex-col p-2"
+          className="group relative mb-6 flex break-inside-avoid flex-col p-2"
         >
           <div
             aria-hidden
