@@ -11,5 +11,7 @@
     "react/exhaustive-deps": "error",
     "react/rules-of-hooks": "error"
   },
-  "ignorePatterns": ["dist", "src/routeTree.gen.ts"]
+  // `openspec/**` holds design references, including a vendored runtime from the
+  // design tool that exports the mocks. It is documentation, not our source.
+  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "openspec"]
 }

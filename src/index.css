@@ -14,6 +14,95 @@
 }
 
 /*
+  Modernist — the design system behind /e2ee (Claude Design project "Modernist":
+  flat, architectural, Archivo throughout, near-mono red on ink, zero radius,
+  strong 2px rules). Prefixed `mn-` and used by that route only; the rest of the
+  site keeps `main-*`.
+
+  Declared `inline` so the utilities compile to `var(--mn-*)` and follow the
+  `.dark` override below. Modernist itself ships light only — the dark values are
+  derived from its own ramps (see ui-improvement-2.md §4.4), not invented.
+*/
+@theme inline {
+  --color-mn-bg: var(--mn-bg);
+  --color-mn-surface: var(--mn-surface);
+  --color-mn-raised: var(--mn-raised);
+  --color-mn-ink: var(--mn-ink);
+  --color-mn-line: var(--mn-line);
+  --color-mn-dim: var(--mn-dim);
+  --color-mn-dimmer: var(--mn-dimmer);
+  --color-mn-accent: var(--mn-accent);
+  --color-mn-accent-text: var(--mn-accent-text);
+  --color-mn-accent-tint: var(--mn-accent-tint);
+
+  --font-mn: "Archivo", system-ui, sans-serif;
+  --font-mn-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --animate-mn-pop: mn-pop 0.35s ease-out;
+  --animate-mn-blink: mn-blink 1.2s steps(1, end) infinite;
+  --animate-mn-halo: mn-halo 1.6s ease-in-out infinite;
+}
+
+@layer base {
+  :root {
+    --mn-bg: #f3f2f2;
+    --mn-surface: #eae9e9;
+    --mn-raised: #ffffff;
+    --mn-ink: #201e1d;
+    --mn-line: color-mix(in srgb, #201e1d 40%, transparent);
+    --mn-dim: #7d7979;
+    --mn-dimmer: #bab6b6;
+    --mn-accent: #ec3013;
+    --mn-accent-text: #ae1800;
+    --mn-accent-tint: #fff2ef;
+  }
+
+  .dark {
+    --mn-bg: #1a1918;
+    --mn-surface: #232120;
+    --mn-raised: #2d2b2b;
+    --mn-ink: #f8f4f4;
+    --mn-line: color-mix(in srgb, #f8f4f4 34%, transparent);
+    --mn-dim: #9b9797;
+    --mn-dimmer: #605d5d;
+    --mn-accent: #ec3013;
+    --mn-accent-text: #ff9783;
+    --mn-accent-tint: #4d170e;
+  }
+}
+
+@keyframes mn-pop {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes mn-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes mn-halo {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--mn-accent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--mn-accent) 30%, transparent);
+  }
+}
+
+/*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
