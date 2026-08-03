@@ -8,6 +8,10 @@ export const Route = createFileRoute("/cv/{-$var}")({
         {
           title: getCVRevText(params.var),
         },
+        {
+          name: "robots",
+          content: "noindex",
+        },
       ],
     };
   },

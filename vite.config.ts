@@ -26,6 +26,7 @@ export default defineConfig({
       // bounded /cv/{-$var} values — keep in sync with getCVContext in
       // src/data/cv-context.ts
       extraPaths: ["cv/default", "cv/su"],
+      noindexPaths: ["cv", "cv/default", "cv/su"],
     }),
   ],
 });
