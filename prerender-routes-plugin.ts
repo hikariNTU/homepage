@@ -6,6 +6,9 @@ interface PrerenderRoutesOptions {
   // Route paths that cannot be derived from the files in src/routes,
   // e.g. the bounded values of a dynamic param.
   extraPaths?: string[];
+  // Route paths whose shells get a robots noindex meta tag so search
+  // engines leave them out of results.
+  noindexPaths?: string[];
 }
 
 // Derive static route paths ("dvd-logo", "cv", ...) from the files in
@@ -60,13 +63,21 @@ export function vitePluginPrerenderRoutes(
         ...(options.extraPaths ?? []),
       ];
 
+      const shellHtml = fs.readFileSync(indexHtml, "utf-8");
+      const noindexShellHtml = shellHtml.replace(
+        "</head>",
+        '  <meta name="robots" content="noindex" />\n  </head>',
+      );
+      const noindexPaths = new Set(options.noindexPaths ?? []);
+
       for (const routePath of routePaths) {
+        const html = noindexPaths.has(routePath) ? noindexShellHtml : shellHtml;
         const flatFile = path.join(outDir, `${routePath}.html`);
         const dirFile = path.join(outDir, routePath, "index.html");
         fs.mkdirSync(path.dirname(flatFile), { recursive: true });
         fs.mkdirSync(path.dirname(dirFile), { recursive: true });
-        fs.copyFileSync(indexHtml, flatFile);
-        fs.copyFileSync(indexHtml, dirFile);
+        fs.writeFileSync(flatFile, html);
+        fs.writeFileSync(dirFile, html);
       }
       console.log(
         `[prerender-routes] wrote shells for: ${routePaths.join(", ")}`,
