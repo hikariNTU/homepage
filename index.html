@@ -16,6 +16,11 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <title>Landing Page | Hikari personal website</title> -->
+    <script>
+      // Redirect legacy hash-router URLs (/homepage/#/foo) to real paths
+      if (location.hash.startsWith("#/"))
+        location.replace("/homepage" + location.hash.slice(1));
+    </script>
   </head>
 
   <body>
