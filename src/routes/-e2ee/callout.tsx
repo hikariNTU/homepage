@@ -37,7 +37,7 @@ export function FloatingNote({
         // note pinned to the bottom of the document would never be seen.
         "animate-mn-pop fixed right-4 bottom-4 z-30 flex w-[min(22rem,calc(100vw-2rem))] items-start gap-3 border-2 p-3 shadow-lg motion-reduce:animate-none",
         tone === "ink"
-          ? "border-mn-ink bg-mn-ink text-mn-bg"
+          ? "border-mn-line bg-mn-solid text-mn-on-solid"
           : "border-mn-accent bg-mn-accent-tint text-mn-ink",
       )}
     >
@@ -56,9 +56,9 @@ export function FloatingNote({
         >
           {kicker}
         </Label>
-        <div className="font-mn text-[13px] font-bold">{title}</div>
+        <div className="font-mn-display text-base">{title}</div>
         {body && (
-          <div className="mt-1 text-[11px] leading-snug opacity-80">{body}</div>
+          <div className="mt-1 text-sm leading-snug opacity-80">{body}</div>
         )}
       </div>
       <button

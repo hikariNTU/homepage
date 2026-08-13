@@ -19,15 +19,19 @@ import {
 } from "../primitives";
 import type { Action, DeviceId, Packet, PendingStep, World } from "../types";
 import {
+  deviceOf,
   nextId,
-  peerOf,
   withDevice,
   withPacket,
   withPacketPatch,
 } from "../world";
 
+/** Display name for a device id. Ids are slugs; nothing else parses them. */
 export function nameOf(device: DeviceId): string {
-  return device === "alice" ? "Alice" : "Bob";
+  return device
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 export function step(
@@ -90,7 +94,7 @@ export function keygenAction(device: DeviceId): Action {
   };
 }
 
-export function publishAction(device: DeviceId): Action {
+export function publishAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-publish`);
   const packetId = nextId("pkt");
   return {
@@ -107,7 +111,7 @@ export function publishAction(device: DeviceId): Action {
           "Turn the public key into bytes that can be sent. The private key is not touched.",
         run: async (world) => {
           const raw = await exportRawPublicKey(
-            world[device].identityKeyPair!.publicKey,
+            deviceOf(world, device).identityKeyPair!.publicKey,
           );
           return {
             world: withDevice(world, device, { publicKeyRaw: raw }),
@@ -127,11 +131,11 @@ export function publishAction(device: DeviceId): Action {
         prose:
           "No cryptography here — bytes simply move. Everything on the wire is public, and Eve keeps a copy of all of it.",
         run: async (world) => {
-          const payload = world[device].publicKeyRaw!;
+          const payload = deviceOf(world, device).publicKeyRaw!;
           const packet: Packet = {
             id: packetId,
             from: device,
-            to: peerOf(device),
+            to: peer,
             kind: "public-key",
             label: `${nameOf(device)}'s public key`,
             payload,
@@ -159,9 +163,8 @@ export function publishAction(device: DeviceId): Action {
   };
 }
 
-export function receiveKeyAction(device: DeviceId): Action {
+export function receiveKeyAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-recvkey`);
-  const peer = peerOf(device);
   const findKeyPacket = (world: World) => {
     const packet = world.packets.find(
       (candidate) =>
@@ -202,7 +205,7 @@ export function receiveKeyAction(device: DeviceId): Action {
         op: "crypto.subtle.importKey",
         crypto: "subtle",
         prose:
-          "The bytes become a usable ECDH public key. Note what is missing: nothing here proves whose key it is. That is L1's third weakness.",
+          "The bytes become a usable ECDH public key. Note what is missing: nothing here proves whose key it is. That is Mission 01's third weakness.",
         run: async (world) => {
           const packet = findKeyPacket(world);
           const key = await importRawPublicKey(packet.payload);
@@ -232,9 +235,8 @@ export function receiveKeyAction(device: DeviceId): Action {
   };
 }
 
-export function agreeAction(device: DeviceId): Action {
+export function agreeAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-agree`);
-  const peer = peerOf(device);
   return {
     id,
     label: `${device}.ecdh(${peer})`,
@@ -248,7 +250,7 @@ export function agreeAction(device: DeviceId): Action {
         prose:
           "Own private key plus the peer's public key. Both devices reach the same 32 bytes, and those bytes are never sent — this is the whole trick.",
         run: async (world) => {
-          const self = world[device];
+          const self = deviceOf(world, device);
           const secret = await ecdhSharedSecret(
             self.identityKeyPair!.privateKey,
             self.peerPublicKey!,

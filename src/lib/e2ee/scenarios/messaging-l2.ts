@@ -18,7 +18,14 @@
 
 import { hkdfBits, hkdfInfo, importHkdfBaseKey, PARAMS } from "../primitives";
 import type { Action, DeviceId, LevelInfo } from "../types";
-import { nextId, peerOf, withDevice, withRatchet } from "../world";
+import {
+  ALICE,
+  BOB,
+  deviceOf,
+  nextId,
+  withDevice,
+  withRatchet,
+} from "../world";
 import {
   agreeAction,
   keygenAction,
@@ -27,7 +34,6 @@ import {
   receiveKeyAction,
   step,
 } from "./common";
-import { ratchetSendActions } from "./ratchet";
 
 export const MESSAGING_L2: LevelInfo = {
   level: "L2",
@@ -40,7 +46,7 @@ export const MESSAGING_L2: LevelInfo = {
       id: "l2-replay-dead",
       title: "Replays no longer open",
       detail:
-        "Run the replay that worked at L1. The receiving chain has already moved past that counter and the message key for it was deleted after one use, so there is nothing left to decrypt with. The rejection is a missing key, not a policy.",
+        "Run the replay that worked at Mission 01. The receiving chain has already moved past that counter and the message key for it was deleted after one use, so there is nothing left to decrypt with. The rejection is a missing key, not a policy.",
       answers: "L1",
       attack: "replay",
     },
@@ -66,7 +72,7 @@ export const MESSAGING_L2: LevelInfo = {
       id: "l2-no-skipped-keys",
       title: "Skipped messages stall the chain",
       detail:
-        "Real Signal stores the message keys it skipped, so messages that arrive late or out of order still open. This level deliberately does not: drop one message and the next one is refused, which makes the chain's position visible. It is a simplification, not a property of the ratchet.",
+        "Real Signal stores the message keys it skipped, so messages that arrive late or out of order still open. This mission deliberately does not: drop one message and the next one is refused, which makes the chain's position visible. It is a simplification, not a property of the ratchet.",
       answeredBy: null,
     },
     {
@@ -87,9 +93,8 @@ const HKDF_INFO = hkdfInfo("L2/root");
  * each device's first ratchet key pair, so whichever device speaks first can do a
  * genuine DH ratchet against a key the other already holds.
  */
-function rootInitAction(device: DeviceId): Action {
+function rootInitAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-derive`);
-  const peer = peerOf(device);
   return {
     id,
     label: `${device}.initRatchet()`,
@@ -101,9 +106,9 @@ function rootInitAction(device: DeviceId): Action {
         op: "crypto.subtle.importKey",
         crypto: "subtle",
         prose:
-          "Same call as L1, different destination: this secret will not become a message key. It becomes the root key the ratchet starts from.",
+          "Same call as Mission 01, different destination: this secret will not become a message key. It becomes the root key the ratchet starts from.",
         run: async (world) => {
-          const secret = world[device].sharedSecret!;
+          const secret = deviceOf(world, device).sharedSecret!;
           const baseKey = await importHkdfBaseKey(secret);
           return {
             world: withDevice(world, device, { hkdfBaseKey: baseKey }),
@@ -126,11 +131,11 @@ function rootInitAction(device: DeviceId): Action {
           "The root key is the ratchet's starting point and never encrypts anything itself. No sending chain exists yet, which is exactly right: the first device to speak owes a DH ratchet step, and that is what gives its first message a key nobody can predict from this secret alone.",
         run: async (world) => {
           const rootKey = await hkdfBits(
-            world[device].hkdfBaseKey!,
+            deviceOf(world, device).hkdfBaseKey!,
             HKDF_INFO,
             256,
           );
-          const self = world[device];
+          const self = deviceOf(world, device);
           return {
             // The identity key pair is adopted as the initial ratchet key pair —
             // bookkeeping, not a call: both devices already hold these keys.
@@ -171,17 +176,15 @@ function rootInitAction(device: DeviceId): Action {
 /** The full L2 Script: L1's handshake, the root key, then one ratcheted message. */
 export function messagingL2Script(): Action[] {
   return [
-    keygenAction("alice"),
-    keygenAction("bob"),
-    publishAction("alice"),
-    publishAction("bob"),
-    receiveKeyAction("bob"),
-    receiveKeyAction("alice"),
-    agreeAction("alice"),
-    agreeAction("bob"),
-    rootInitAction("alice"),
-    rootInitAction("bob"),
+    keygenAction(ALICE),
+    keygenAction(BOB),
+    publishAction(ALICE, BOB),
+    publishAction(BOB, ALICE),
+    receiveKeyAction(BOB, ALICE),
+    receiveKeyAction(ALICE, BOB),
+    agreeAction(ALICE, BOB),
+    agreeAction(BOB, ALICE),
+    rootInitAction(ALICE, BOB),
+    rootInitAction(BOB, ALICE),
   ];
 }
-
-export { ratchetSendActions as messagingL2SendActions };

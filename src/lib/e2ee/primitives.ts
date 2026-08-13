@@ -24,15 +24,12 @@ export const PARAMS = {
   sharedSecretBits: 256,
 } as const;
 
-export const PARAMS_SUMMARY =
-  "ECDH P-256 → HKDF-SHA-256 → AES-GCM-256, 12-byte nonce, AAD binds sender + counter";
-
-/** What each Level actually runs, for the header's ⓘ. */
-export const PARAMS_BY_LEVEL: Record<string, string> = {
-  L1: PARAMS_SUMMARY,
-  L2: "Static ECDH P-256 to seed a root key, then Signal's double ratchet: HMAC-SHA-256 chain KDF per message, HKDF-SHA-256 root KDF per direction change, AES-GCM-256 per message key, key deleted after one use",
-  L3: "X3DH over P-256: ECDSA-signed prekey, four ECDH deriveBits combined through HKDF-SHA-256 into the root key, then the same double ratchet as L2",
-};
+/*
+  The per-Level parameter summaries used to live here, for the header's ⓘ. They
+  are now `MissionBrief.params` in `briefs.ts`, next to the pipeline they
+  summarise — a one-line answer and a full one drifting apart in two files was
+  only ever a matter of time.
+*/
 
 export function utf8(text: string): Bytes {
   return encoder.encode(text);
@@ -137,6 +134,17 @@ export async function exportAesKeyBytes(key: CryptoKey): Promise<Bytes> {
   return bytes(await crypto.subtle.exportKey("raw", key));
 }
 
+/**
+ * A fresh random AES-GCM key, from nothing but the CSPRNG.
+ *
+ * L4's attachment key. Notice what it is *not* derived from: no ratchet, no
+ * chain, no root key. That is deliberate in real messengers and it is why the
+ * file still opens next week — and why stealing this one key opens it too.
+ */
+export function generateAesKey(): Promise<CryptoKey> {
+  return crypto.subtle.generateKey(PARAMS.aes, true, ["encrypt", "decrypt"]);
+}
+
 /** A raw 32-byte key, back as an AES-GCM `CryptoKey`. */
 export function importAesKey(raw: Bytes): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", raw, PARAMS.aes, true, [
@@ -226,6 +234,58 @@ export async function hkdfBits(
   );
 }
 
+// —— password-based derivation (L5) ————————————————————————————————————————
+
+/**
+ * PBKDF2, at a work factor a phone will accept.
+ *
+ * The iteration count is the only lever cryptography has against a guessable
+ * secret, and it is a weak one: it multiplies the attacker's cost by a constant
+ * while multiplying the honest user's by the same constant. Against a six-digit
+ * PIN a constant is not enough, which is the whole of L5.
+ */
+export const PBKDF2_ITERATIONS = 100_000;
+
+export function importPbkdf2BaseKey(secret: Bytes): Promise<CryptoKey> {
+  return crypto.subtle.importKey("raw", secret, "PBKDF2", false, [
+    "deriveKey",
+    "deriveBits",
+  ]);
+}
+
+export function derivePbkdf2AesKey(
+  baseKey: CryptoKey,
+  salt: Bytes,
+): Promise<CryptoKey> {
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      hash: PARAMS.hkdfHash,
+      salt,
+      iterations: PBKDF2_ITERATIONS,
+    },
+    baseKey,
+    PARAMS.aes,
+    true,
+    ["encrypt", "decrypt"],
+  );
+}
+
+export function randomBytes(length: number): Bytes {
+  return crypto.getRandomValues(new Uint8Array(length)) as Bytes;
+}
+
+/** Six digits, uniformly. Rejection-sampled so no PIN is likelier than another. */
+export function randomPin(digits = 6): string {
+  let pin = "";
+  while (pin.length < digits) {
+    const value = crypto.getRandomValues(new Uint8Array(1))[0];
+    if (value >= 250) continue;
+    pin += String(value % 10);
+  }
+  return pin;
+}
+
 // —— signatures and digests (L3) ——————————————————————————————————————————
 
 /**
@@ -278,6 +338,11 @@ export async function sha256(data: Bytes): Promise<Bytes> {
 
 // —— wire framing ——————————————————————————————————————————————————————————
 
+/** Constant-time-ish comparison is not the point here; correctness is. */
+export function bytesEqual(a: Bytes, b: Bytes): boolean {
+  return a.length === b.length && a.every((byte, index) => byte === b[index]);
+}
+
 export function concatBytes(parts: Bytes[]): Bytes {
   const total = parts.reduce((sum, part) => sum + part.length, 0);
   const out = new Uint8Array(total) as Bytes;
@@ -326,7 +391,7 @@ export function decodeFields(payload: Bytes, count: number): Bytes[] | null {
 /** 12 bytes: 8-byte sender tag, then the counter big-endian in the last 4. */
 export function nonceFor(sender: DeviceId, counter: number): Bytes {
   const nonce = new Uint8Array(PARAMS.nonceBytes);
-  nonce.set(utf8(sender === "alice" ? "alice---" : "bob-----").slice(0, 8), 0);
+  nonce.set(utf8(sender.padEnd(8, "-")).slice(0, 8), 0);
   new DataView(nonce.buffer).setUint32(8, counter, false);
   return nonce;
 }
@@ -419,7 +484,7 @@ export function assertPacketCarriesNoPrivateMaterial(
   world: World,
 ) {
   if (!import.meta.env?.DEV) return;
-  for (const device of [world.alice, world.bob]) {
+  for (const device of Object.values(world.devices)) {
     const priv = device.privateKeyBytes;
     if (priv && includesSubsequence(packet.payload, priv)) {
       throw new Error(

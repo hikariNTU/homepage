@@ -17,7 +17,24 @@ import {
   messagingL3Script,
   messagingL3SendActions,
 } from "./scenarios/messaging-l3";
+import {
+  MESSAGING_L4,
+  messagingL4Script,
+  messagingL4SendActions,
+} from "./scenarios/messaging-l4";
+import {
+  MESSAGING_L5,
+  messagingL5Script,
+  messagingL5SendActions,
+} from "./scenarios/messaging-l5";
+import {
+  MESSAGING_L6,
+  messagingL6Script,
+  messagingL6SendActions,
+} from "./scenarios/messaging-l6";
 import { ratchetSendActions } from "./scenarios/ratchet";
+import { eveOpenAction } from "./attacks";
+import { holdsSealingKey } from "./exposure";
 import type {
   Action,
   ActionRecord,
@@ -30,9 +47,16 @@ import type {
   StepResult,
   World,
 } from "./types";
-import { initialWorld } from "./world";
+import { ALICE, BOB, deviceOf, initialWorld } from "./world";
 
-export const LEVELS: LevelInfo[] = [MESSAGING_L1, MESSAGING_L2, MESSAGING_L3];
+export const LEVELS: LevelInfo[] = [
+  MESSAGING_L1,
+  MESSAGING_L2,
+  MESSAGING_L3,
+  MESSAGING_L4,
+  MESSAGING_L5,
+  MESSAGING_L6,
+];
 
 export function levelInfo(level: Level): LevelInfo {
   const info = LEVELS.find((candidate) => candidate.level === level);
@@ -50,10 +74,16 @@ function scriptFor(level: Level, world: World): Action[] {
       // the opening message is queued as a send like any other.
       return [
         ...messagingL2Script(),
-        ...ratchetSendActions(world, "alice", L2_FIRST_MESSAGE),
+        ...ratchetSendActions(world, ALICE, BOB, L2_FIRST_MESSAGE),
       ];
     case "L3":
       return messagingL3Script(world);
+    case "L4":
+      return messagingL4Script(world);
+    case "L5":
+      return messagingL5Script(world);
+    case "L6":
+      return messagingL6Script(world);
   }
 }
 
@@ -67,16 +97,50 @@ export function sendActionsFor(
   level: Level,
   world: World,
   from: DeviceId,
+  to: DeviceId,
   text: string,
 ): Action[] {
-  switch (level) {
-    case "L1":
-      return messagingL1SendActions(from, text);
-    case "L2":
-      return ratchetSendActions(world, from, text);
-    case "L3":
-      return messagingL3SendActions(world, from, text);
-  }
+  const send = (): Action[] => {
+    switch (level) {
+      case "L1":
+        return messagingL1SendActions(from, to, text);
+      case "L2":
+        return ratchetSendActions(world, from, to, text);
+      case "L3":
+        return messagingL3SendActions(world, from, to, text);
+      case "L4":
+        return messagingL4SendActions(world, from, to, text);
+      case "L5":
+        return messagingL5SendActions(world, from, to, text);
+      case "L6":
+        return messagingL6SendActions(world, from, to, text);
+    }
+  };
+
+  // Once Eve holds a key that never changes, reading the rest of the conversation
+  // is not a further attack she has to launch — it is simply what she can do. So the
+  // open rides along with the send, and the plaintext on her side is recovered by a
+  // real `decrypt` like every other plaintext on the page.
+  return holdsSealingKey(world, level) ? [...send(), eveOpenAction()] : send();
+}
+
+/**
+ * Whether this device could send right now, at this Level.
+ *
+ * Not "does it hold a message key". At L1 that happens to be the same question —
+ * one static key, never deleted — but from L2 the message key is *deleted after
+ * every message on purpose*, because forward secrecy is the entire lesson of that
+ * Level. Asking for one there disables the composer the moment the Script ends
+ * and never re-enables it. What a sender actually needs is a ratchet that can
+ * produce the next key: a sending chain to step, or the peer's ratchet public key
+ * to open a fresh chain against.
+ */
+export function canSend(level: Level, world: World, from: DeviceId): boolean {
+  const device = deviceOf(world, from);
+  if (level === "L1") return device.messageKey !== null;
+  const ratchet = device.ratchet;
+  if (!ratchet) return false;
+  return ratchet.sendChainKey !== null || ratchet.peerPublic !== null;
 }
 
 function recordOf(action: Action): ActionRecord {
@@ -99,14 +163,6 @@ export function initialSnapshot(level: Level): Snapshot {
     queue: script.flatMap((action) => action.steps),
     actions: script.map(recordOf),
   };
-}
-
-export function isAtEnd(snapshot: Snapshot): boolean {
-  return snapshot.queue.length === 0;
-}
-
-export function nextStepOf(snapshot: Snapshot): PendingStep | null {
-  return snapshot.queue[0] ?? null;
 }
 
 /** A PendingStep minus the work it does — what remains once it has run. */

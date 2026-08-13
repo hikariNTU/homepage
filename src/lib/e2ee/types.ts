@@ -15,13 +15,36 @@ export type Bytes = Uint8Array<ArrayBuffer>;
 /** A product shape whose E2EE story differs in kind. Only `messaging` exists today. */
 export type Scenario = "messaging";
 
-/** A depth rung within one Scenario. Higher Levels answer weaknesses of lower ones. */
-export type Level = "L1" | "L2" | "L3";
+/**
+ * A depth rung within one Scenario. Higher Levels answer weaknesses of lower ones.
+ * L4 upward are specified but not built — `LevelInfo.available` is what says so.
+ */
+export type Level = "L1" | "L2" | "L3" | "L4" | "L5" | "L6";
 
-export type DeviceId = "alice" | "bob";
+/**
+ * A device handle.
+ *
+ * Deliberately an open string rather than the `"alice" | "bob"` union it used to
+ * be. The union made every two-device assumption invisible — it type-checked, so
+ * nothing pointed at the places that would break when one person owns a phone and
+ * a laptop. Ids are short slugs (`alice`, `alice-laptop`); nothing parses them,
+ * but `nonceFor` tags the nonce with the first 8 bytes, so they must be distinct
+ * within that prefix. `assertDeviceIdsAreDistinct` enforces it at construction.
+ */
+export type DeviceId = string;
 
-/** Who performed a Step. `wire` covers transport and Eve's meddling. */
-export type Actor = DeviceId | "wire";
+/**
+ * Ids that are not devices. They share the `DeviceId` space because a Step's
+ * actor is one field, and the transport and the adversary have to be nameable in
+ * it — so they are reserved instead, and `initialWorld` refuses to hand either to
+ * a real Device.
+ */
+export const WIRE = "wire";
+export const EVE = "eve";
+export const RESERVED_ACTOR_IDS: readonly string[] = [WIRE, EVE];
+
+/** Who performed a Step: a device, or one of the reserved ids above. */
+export type Actor = DeviceId;
 
 /** One labelled value shown in the byte inspector. */
 export type StepValue = {
@@ -58,7 +81,15 @@ export type StepMeta = {
   standIn?: string;
 };
 
-export type PacketKind = "public-key" | "prekey-bundle" | "sealed-message";
+export type PacketKind =
+  | "public-key"
+  | "prekey-bundle"
+  | "sealed-message"
+  /**
+   * L6 only. A sealed message wrapped a second time, to a key only the recipient
+   * holds, so the envelope the server routes on carries no sender.
+   */
+  | "sealed-envelope";
 
 /**
  * The cleartext header on a sealed message. `sender` and `counter` exist at every
@@ -101,6 +132,45 @@ export type Packet = {
   tampered: boolean;
   /** True when this Packet is a re-send of an already delivered one. */
   replayOf?: string;
+  /**
+   * L6: the sender is inside the envelope, not on it.
+   *
+   * `from` still holds the real id because the engine has to route the bytes
+   * somewhere — but that field is a delivery detail of this simulation, not part
+   * of what travels. Nothing on Eve's side may read it while this flag is set,
+   * and `traceTraffic` is written against `to`, size and order for that reason.
+   */
+  hidesSender?: boolean;
+  /**
+   * L6: the bytes that actually travelled — the envelope.
+   *
+   * `payload` and `header` stay as the inner message because the engine has to
+   * deliver it, but while `hidesSender` is set they are not what was on the wire.
+   * Every Eve-facing surface reads this field instead.
+   */
+  envelope?: Bytes;
+  /** L6: the envelope's ephemeral public key. All the routing layer ever gets. */
+  envelopeEphemeralRaw?: Bytes;
+};
+
+/**
+ * A Packet Eve genuinely decrypted, with what came out.
+ *
+ * A record of work she did, not a property of the Packet: the call happened, at a
+ * point in History, and returned these bytes. Whether a Packet is *readable* by her
+ * is a different question and never stored — see `openablePackets`.
+ */
+export type CrackedMessage = {
+  packetId: string;
+  plaintext: Bytes;
+  text: string;
+};
+
+export type SentEntry = {
+  packetId: string;
+  to: DeviceId;
+  counter: number;
+  text: string;
 };
 
 export type InboxEntry = {
@@ -177,6 +247,60 @@ export type PrekeyState = {
   safetyNumber: Bytes | null;
 };
 
+/**
+ * L4. An attachment is the one thing a messenger deliberately does *not* push
+ * through the ratchet: it gets its own random AES key, the ciphertext goes to an
+ * ordinary CDN, and only a pointer travels inside a sealed message.
+ *
+ * The key therefore outlives every chain key in the session, on purpose — the file
+ * has to still open next week. That is the trade, and it is a hole either way.
+ */
+export type MediaState = {
+  /** The random per-file key. Never derived from the ratchet, and never deleted. */
+  key: CryptoKey | null;
+  keyBytes: Bytes | null;
+  /** The file itself: the sender's before, the recipient's after opening it. */
+  plaintext: Bytes | null;
+  ciphertext: Bytes | null;
+  /** SHA-256 over the ciphertext, so a swapped blob is caught before decrypting. */
+  digest: Bytes | null;
+  /** Which object in `World.store` this refers to. */
+  objectId: string | null;
+  /** Recipient side: what the digest check concluded. `null` until it has run. */
+  digestMatched: boolean | null;
+};
+
+/**
+ * L5. The device's own plaintext history, sealed under a key derived from a short
+ * PIN and handed to the provider. Where end-to-end encryption actually ends for
+ * most people.
+ */
+export type VaultState = {
+  /** Six digits, chosen at random when the Level starts. Never sent. */
+  pin: string | null;
+  salt: Bytes | null;
+  /** The archive before sealing — every message this device can still read. */
+  archiveBytes: Bytes | null;
+  /** The same archive, sealed. Held so the upload Step can be honest about doing no cryptography. */
+  sealedArchive: Bytes | null;
+  backupKey: CryptoKey | null;
+  backupKeyBytes: Bytes | null;
+  objectId: string | null;
+};
+
+/**
+ * L6. The sealed-sender envelope: an ephemeral ECDH to the recipient's identity
+ * key, wrapping an already-sealed message together with the sender's name.
+ */
+export type SealState = {
+  ephemeralKeyPair: CryptoKeyPair | null;
+  ephemeralPublicRaw: Bytes | null;
+  envelopeKey: CryptoKey | null;
+  envelopeKeyBytes: Bytes | null;
+  /** Recipient side: the sender id that came out of the envelope. */
+  revealedSender: DeviceId | null;
+};
+
 /** The public half of a peer's prekey bundle, decoded from the wire. */
 export type PeerBundle = {
   signingPublicRaw: Bytes;
@@ -215,18 +339,104 @@ export type DeviceState = {
   ratchet: RatchetState | null;
   /** L3 only. */
   prekeys: PrekeyState | null;
+  /** L4 only. */
+  media: MediaState | null;
+  /** L5 only. */
+  vault: VaultState | null;
+  /** L6 only. */
+  seal: SealState | null;
   /** Counter for messages this Device has sent; feeds the nonce and the AAD. */
   sendCounter: number;
   /** A message sealed but not yet handed to the Wire. */
   outbox: { packetId: string; ciphertext: Bytes; counter: number } | null;
   inbox: InboxEntry[];
+  /**
+   * What this device has sent, in the clear, as any messaging app keeps it. The
+   * ratchet deletes the *keys*; the message list on the phone is untouched by that,
+   * which is exactly what L5 backs up.
+   */
+  sentLog: SentEntry[];
 };
 
 /** Everything that exists at one instant. Replaced wholesale by each Step. */
+/**
+ * One piece of key material Eve took off a device, with the real bytes she got.
+ *
+ * Separate from `packets` because it did not travel: a captured Packet is Eve
+ * doing her job on the Wire, and this is Eve holding the phone. Keeping the two
+ * apart is the point — the wire loot is what encryption is *supposed* to leak.
+ */
+export type StolenKind =
+  | "identity-private"
+  | "message-key"
+  | "root-key"
+  | "send-chain"
+  | "recv-chain";
+
+export type StolenItem = {
+  id: string;
+  /** What kind of key this is, so nothing has to match on the label prose. */
+  kind: StolenKind;
+  label: string;
+  from: DeviceId;
+  bytes: Bytes;
+  /**
+   * The usable key handle, where the device had one. Not a copy or a re-import —
+   * the same `CryptoKey` object that was sitting on the phone she is holding, which
+   * is what makes her later `decrypt` calls real rather than staged.
+   */
+  key?: CryptoKey;
+  format: string;
+  /** What holding this actually buys her, which is the whole lesson. */
+  note: string;
+};
+
 export type World = {
-  alice: DeviceState;
-  bob: DeviceState;
+  /**
+   * Every device that exists, by id. A map rather than named fields: `alice` and
+   * `bob` as World keys meant "two" was baked into the type of the world itself.
+   * Read it through `deviceOf`, which throws on an unknown id.
+   */
+  devices: Record<DeviceId, DeviceState>;
+  /** Stable order, which is the order the stage lays its columns out in. */
+  deviceOrder: DeviceId[];
   packets: Packet[];
+  /** Everything Eve has taken off a device, in the order she took it. */
+  stolen: StolenItem[];
+  /** Packets she has actually opened, with the plaintext each call returned. */
+  cracked: CrackedMessage[];
+  /**
+   * Bytes parked on a server: a CDN blob at L4, a backup archive at L5.
+   *
+   * A third place bytes can live, and the only one nobody in the conversation
+   * controls. Unlike a Packet it does not move and is never delivered — it simply
+   * sits there, for as long as the operator likes.
+   */
+  store: StoredObject[];
+  /**
+   * Public keys Eve generated for herself, by the id of the Action that made them.
+   *
+   * An impersonation takes two Steps — generate a key, then write it into
+   * something in flight — and the bytes shown in the first must be the bytes
+   * written in the second. Keeping them in the World rather than in a closure is
+   * what makes that true: a Step's only channel to the next one is the World it
+   * returns, and the second Step then genuinely performs no cryptography.
+   */
+  forged: Record<string, Bytes>;
+};
+
+export type StoreHolder = "cdn" | "backup";
+
+export type StoredObject = {
+  id: string;
+  holder: StoreHolder;
+  label: string;
+  bytes: Bytes;
+  uploadedBy: DeviceId;
+  /** What the operator can do with this, which is the reason it is shown. */
+  note: string;
+  /** True once Eve has replaced the bytes with her own. */
+  swapped: boolean;
 };
 
 export type StepResult = {
@@ -255,7 +465,7 @@ export type ExecutedStep = StepMeta & {
 export type Action = {
   id: string;
   label: string;
-  actor: DeviceId | "eve";
+  actor: Actor;
   steps: PendingStep[];
 };
 
@@ -263,7 +473,7 @@ export type Action = {
 export type ActionRecord = {
   id: string;
   label: string;
-  actor: DeviceId | "eve";
+  actor: Actor;
   stepIds: string[];
 };
 
@@ -292,7 +502,13 @@ export type AttackKind =
   | "replay"
   | "tamper"
   | "compromise"
-  | "substituteKey";
+  | "substituteKey"
+  /** L4: rewrite the blob sitting on the CDN, which nobody in the chat controls. */
+  | "swapBlob"
+  /** L5: take the backup off the provider and guess the PIN offline. */
+  | "crackBackup"
+  /** L6: read nothing, and describe the conversation from its shape alone. */
+  | "traceTraffic";
 
 /** A weakness a Level still carries, and the Level that answers it. */
 export type Weakness = {

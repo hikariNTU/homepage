@@ -58,9 +58,11 @@ import type {
   World,
 } from "../types";
 import {
+  ALICE,
+  BOB,
+  deviceOf,
   findPacket,
   nextId,
-  peerOf,
   withDevice,
   withPacket,
   withPacketPatch,
@@ -68,20 +70,20 @@ import {
   withRatchet,
 } from "../world";
 import { keygenAction, nameOf, step } from "./common";
-import { ratchetSendActions } from "./ratchet";
+import { ratchetSendActions, type SendOptions } from "./ratchet";
 
 export const MESSAGING_L3: LevelInfo = {
   level: "L3",
   title: "X3DH prekey bundle",
   summary:
-    "Bob publishes an identity key, a signed prekey and a one-time prekey, then goes offline. Alice verifies the signature, combines four Diffie-Hellman outputs into a root key, and sends a sealed message with no round trip. The ratchet from L2 takes over from there.",
+    "Bob publishes an identity key, a signed prekey and a one-time prekey, then goes offline. Alice verifies the signature, combines four Diffie-Hellman outputs into a root key, and sends a sealed message with no round trip. The ratchet from Mission 02 takes over from there.",
   available: true,
   defences: [
     {
       id: "l3-signed-prekey",
       title: "A substituted prekey is caught",
       detail:
-        "Eve swaps the prekey in the bundle for her own and leaves the signature alone. `crypto.subtle.verify` returns false, Alice aborts, and no message is ever sealed. This is the weakness L1 and L2 both carried.",
+        "Eve swaps the prekey in the bundle for her own and leaves the signature alone. `crypto.subtle.verify` returns false, Alice aborts, and no message is ever sealed. This is the weakness Mission 01 and Mission 02 both carried.",
       answers: "L1",
       attack: "substituteKey",
     },
@@ -113,7 +115,7 @@ export const MESSAGING_L3: LevelInfo = {
       id: "l3-skipped-keys",
       title: "Skipped messages still stall the chain",
       detail:
-        "Inherited from L2 and still a deliberate simplification: no store of skipped message keys, so an out-of-order message is refused rather than held.",
+        "Inherited from Mission 02 and still a deliberate simplification: no store of skipped message keys, so an out-of-order message is refused rather than held.",
       answeredBy: null,
     },
   ],
@@ -129,7 +131,7 @@ const SIGNING_STAND_IN =
   "Real X3DH uses one Curve25519 identity key for both Diffie-Hellman and signatures, via XEdDSA. Web Crypto will not use one key for two algorithms, so identity here is two key pairs: an ECDH P-256 pair and an ECDSA P-256 pair. Everything the signature proves still holds; it is simply carrying an extra public key.";
 
 function prekeysOf(world: World, device: DeviceId) {
-  const prekeys = world[device].prekeys;
+  const prekeys = deviceOf(world, device).prekeys;
   if (!prekeys) throw new Error(`[e2ee] ${device} has no prekeys`);
   return prekeys;
 }
@@ -138,7 +140,7 @@ function encodeBundle(device: DeviceId, world: World): Bytes {
   const prekeys = prekeysOf(world, device);
   return encodeFields([
     prekeys.signingPublicRaw!,
-    world[device].publicKeyRaw!,
+    deviceOf(world, device).publicKeyRaw!,
     prekeys.signedPreKeyPublicRaw!,
     prekeys.signedPreKeySignature!,
     prekeys.oneTimePreKeyPublicRaw!,
@@ -175,10 +177,9 @@ export function bundlePacketOf(world: World): Packet | null {
 
 // —— Bob, before he goes offline ————————————————————————————————————————————
 
-function publishBundleAction(device: DeviceId): Action {
+function publishBundleAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-bundle`);
   const packetId = nextId("pkt");
-  const peer = peerOf(device);
   return {
     id,
     label: `${device}.publishPrekeyBundle()`,
@@ -237,7 +238,7 @@ function publishBundleAction(device: DeviceId): Action {
         op: "crypto.subtle.sign",
         crypto: "subtle",
         prose:
-          "This signature is what makes the bundle worth anything. Without it, the bundle is a pile of public keys with no claim about their origin — which is precisely L1's third weakness.",
+          "This signature is what makes the bundle worth anything. Without it, the bundle is a pile of public keys with no claim about their origin — which is precisely Mission 01's third weakness.",
         run: async (world) => {
           const prekeys = prekeysOf(world, device);
           const message = prekeys.signedPreKeyPublicRaw!;
@@ -329,9 +330,12 @@ function publishBundleAction(device: DeviceId): Action {
  * out. Passing them in keeps the abort real: nothing downstream runs, rather than
  * a warning being shown and the handshake continuing anyway.
  */
-function fetchBundleAction(device: DeviceId, abortIds: string[]): Action {
+function fetchBundleAction(
+  device: DeviceId,
+  peer: DeviceId,
+  abortIds: string[],
+): Action {
   const id = nextId(`${device}-fetchbundle`);
-  const peer = peerOf(device);
   const bundlePacket = (world: World) => {
     const packet = bundlePacketOf(world);
     if (!packet) throw new Error("[e2ee] no prekey bundle on the wire");
@@ -492,7 +496,7 @@ function fetchBundleAction(device: DeviceId, abortIds: string[]): Action {
         prose:
           "SHA-256 over both identity keys, in a fixed order. Both devices compute the same digest, and comparing it out of band — in person, over the phone — is the only thing that catches an Eve who replaced the whole bundle, signature and all. Cryptography cannot introduce two strangers.",
         run: async (world) => {
-          const self = world[device];
+          const self = deviceOf(world, device);
           const bundle = prekeysOf(world, device).peerBundle!;
           const pair = [self.publicKeyRaw!, bundle.identityPublicRaw].sort(
             (a, b) => (toHex(a) < toHex(b) ? -1 : 1),
@@ -525,9 +529,8 @@ function fetchBundleAction(device: DeviceId, abortIds: string[]): Action {
 }
 
 /** Alice's four exchanges and the one HKDF that combines them. */
-function initiatorX3dhAction(device: DeviceId): Action {
+function initiatorX3dhAction(device: DeviceId, peer: DeviceId): Action {
   const id = nextId(`${device}-x3dh`);
-  const peer = peerOf(device);
 
   const dhStep = (
     index: number,
@@ -594,7 +597,7 @@ function initiatorX3dhAction(device: DeviceId): Action {
         `DH1 — ${nameOf(device)}'s identity key against the prekey`,
         "Binds this handshake to Alice's long-term identity: only the holder of her private identity key can produce this output.",
         async (world) => ({
-          privateKey: world[device].identityKeyPair!.privateKey,
+          privateKey: deviceOf(world, device).identityKeyPair!.privateKey,
           publicRaw: prekeysOf(world, device).peerBundle!.signedPreKeyPublicRaw,
           label: "the signed prekey",
         }),
@@ -674,12 +677,12 @@ function initiatorX3dhAction(device: DeviceId): Action {
           "Real X3DH also binds IK_A ‖ IK_B into the first message's associated data. Here the AAD binds the ratchet header, which carries both of those keys on the first message, so the same bytes are authenticated by a slightly different route.",
         run: async (world) => {
           const rootKey = await hkdfBits(
-            world[device].hkdfBaseKey!,
+            deviceOf(world, device).hkdfBaseKey!,
             X3DH_INFO,
             256,
           );
           const prekeys = prekeysOf(world, device);
-          const self = world[device];
+          const self = deviceOf(world, device);
           const peerRatchet = await importRawPublicKey(
             prekeys.peerBundle!.signedPreKeyPublicRaw,
           );
@@ -715,9 +718,12 @@ function initiatorX3dhAction(device: DeviceId): Action {
 // —— Bob, coming back online ————————————————————————————————————————————————
 
 /** The mirror: the same four exchanges from the private halves Bob kept. */
-function responderX3dhAction(device: DeviceId, packetId: string): Action {
+export function responderX3dhAction(
+  device: DeviceId,
+  peer: DeviceId,
+  packetId: string,
+): Action {
   const id = nextId(`${device}-x3dh`);
-  const peer = peerOf(device);
 
   const dhStep = (
     index: number,
@@ -774,7 +780,16 @@ function responderX3dhAction(device: DeviceId, packetId: string): Action {
         run: async (world) => {
           const header = findPacket(world, packetId).header!;
           return {
-            world: withPrekeys(world, device, { dhOutputs: [] }),
+            // The sender's identity key is recorded on the device, not just read:
+            // it is now something he knows about the other party, and L6 needs it
+            // to seal an envelope back the other way.
+            world: withPrekeys(
+              withDevice(world, device, {
+                peerPublicKeyRaw: header.identityPublicRaw ?? null,
+              }),
+              device,
+              { dhOutputs: [] },
+            ),
             inputs: [
               { label: "sender identity key", bytes: header.identityPublicRaw },
               {
@@ -809,7 +824,7 @@ function responderX3dhAction(device: DeviceId, packetId: string): Action {
         `DH2 — the identity key against the ephemeral key`,
         "The mirror of DH2.",
         (world, header) => ({
-          privateKey: world[device].identityKeyPair!.privateKey,
+          privateKey: deviceOf(world, device).identityKeyPair!.privateKey,
           publicRaw: header.ephemeralPublicRaw!,
           label: "sender ephemeral key",
         }),
@@ -870,7 +885,7 @@ function responderX3dhAction(device: DeviceId, packetId: string): Action {
           "Identical to the root key on the other device, reached with no round trip and nothing secret on the wire. The one-time prekey is destroyed at this point: it has done its one job.",
         run: async (world) => {
           const rootKey = await hkdfBits(
-            world[device].hkdfBaseKey!,
+            deviceOf(world, device).hkdfBaseKey!,
             X3DH_INFO,
             256,
           );
@@ -919,24 +934,38 @@ const FIRST_MESSAGE = "hey bob — you were not even online for this";
 /**
  * Bob publishes and goes quiet; Alice does the whole handshake alone; her first
  * message is sealed and sent; only then does Bob do anything.
+ *
+ * The opening message is the caller's, because every Level from L4 up is this
+ * handshake with a different first thing to say — an attachment pointer, a
+ * message that will end up in a backup, a sealed-sender envelope. Only the
+ * handshake is shared, and only it lives here.
  */
-export function messagingL3Script(world: World): Action[] {
-  const x3dh = initiatorX3dhAction("alice");
-  const sendActions = messagingL3SendActions(world, "alice", FIRST_MESSAGE, {
-    firstMessage: true,
-  });
+export function x3dhScript(
+  world: World,
+  opening: (world: World) => Action[],
+): Action[] {
+  const x3dh = initiatorX3dhAction(ALICE, BOB);
+  const openingActions = opening(world);
 
   // The signature check aborts everything after it, so it has to know their ids.
-  const abortIds = [x3dh.id, ...sendActions.map((action) => action.id)];
+  const abortIds = [x3dh.id, ...openingActions.map((action) => action.id)];
 
   return [
-    keygenAction("alice"),
-    keygenAction("bob"),
-    publishBundleAction("bob"),
-    fetchBundleAction("alice", abortIds),
+    keygenAction(ALICE),
+    keygenAction(BOB),
+    publishBundleAction(BOB, ALICE),
+    fetchBundleAction(ALICE, BOB, abortIds),
     x3dh,
-    ...sendActions,
+    ...openingActions,
   ];
+}
+
+export function messagingL3Script(world: World): Action[] {
+  return x3dhScript(world, (current) =>
+    messagingL3SendActions(current, ALICE, BOB, FIRST_MESSAGE, {
+      firstMessage: true,
+    }),
+  );
 }
 
 /**
@@ -946,18 +975,34 @@ export function messagingL3Script(world: World): Action[] {
 export function messagingL3SendActions(
   world: World,
   from: DeviceId,
+  to: DeviceId,
   text: string,
-  options: { firstMessage?: boolean } = {},
+  options: { firstMessage?: boolean } & SendOptions = {},
 ): Action[] {
-  if (!options.firstMessage) return ratchetSendActions(world, from, text);
-  const to = peerOf(from);
-  return ratchetSendActions(world, from, text, {
+  const { firstMessage, ...send } = options;
+  if (!firstMessage) return ratchetSendActions(world, from, to, text, send);
+  return ratchetSendActions(world, from, to, text, {
+    ...send,
+    ...firstMessageOptions(from, to),
+  });
+}
+
+/**
+ * What makes a message the *first* one: the two public keys the recipient needs
+ * to reconstruct the secret he was offline for, and his half of X3DH run before
+ * he can ratchet. Exported because L4 and L6 open their own conversations.
+ */
+export function firstMessageOptions(
+  from: DeviceId,
+  to: DeviceId,
+): Pick<SendOptions, "extraHeader" | "beforeDelivery"> {
+  return {
     extraHeader: (current) => ({
-      identityPublicRaw: current[from].publicKeyRaw ?? undefined,
+      identityPublicRaw: deviceOf(current, from).publicKeyRaw ?? undefined,
       ephemeralPublicRaw:
-        current[from].prekeys?.ephemeralPublicRaw ?? undefined,
+        deviceOf(current, from).prekeys?.ephemeralPublicRaw ?? undefined,
       usedOneTimePreKey: true,
     }),
-    beforeDelivery: (packetId) => [responderX3dhAction(to, packetId)],
-  });
+    beforeDelivery: (packetId) => [responderX3dhAction(to, from, packetId)],
+  };
 }

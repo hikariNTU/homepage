@@ -27,9 +27,11 @@ import {
 } from "../primitives";
 import type { Action, DeviceId, LevelInfo, Packet } from "../types";
 import {
+  ALICE,
+  BOB,
+  deviceOf,
   findPacket,
   nextId,
-  peerOf,
   withDevice,
   withPacket,
   withPacketPatch,
@@ -98,7 +100,7 @@ function deriveAction(device: DeviceId): Action {
         prose:
           "A raw ECDH output is not a good symmetric key — it has structure. HKDF is the standard way to turn it into one, and its input key must be non-extractable.",
         run: async (world) => {
-          const secret = world[device].sharedSecret!;
+          const secret = deviceOf(world, device).sharedSecret!;
           const baseKey = await importHkdfBaseKey(secret);
           return {
             world: withDevice(world, device, { hkdfBaseKey: baseKey }),
@@ -118,10 +120,10 @@ function deriveAction(device: DeviceId): Action {
         op: "crypto.subtle.deriveKey",
         crypto: "subtle",
         prose:
-          "HKDF-SHA-256 with a fixed salt and info string yields an AES-GCM-256 key. At L1 this one key protects every message in the session — which is exactly why L1 has no forward secrecy.",
+          "HKDF-SHA-256 with a fixed salt and info string yields an AES-GCM-256 key. At Mission 01 this one key protects every message in the session — which is exactly why Mission 01 has no forward secrecy.",
         run: async (world) => {
           const key = await deriveMessageKey(
-            world[device].hkdfBaseKey!,
+            deviceOf(world, device).hkdfBaseKey!,
             HKDF_INFO,
           );
           const keyBytes = await exportAesKeyBytes(key);
@@ -141,7 +143,7 @@ function deriveAction(device: DeviceId): Action {
                 {
                   label: "message key",
                   bytes: keyBytes,
-                  note: "Same on both devices. Used for every message at this level.",
+                  note: "Same on both devices. Used for every message in this mission.",
                 },
               ],
             },
@@ -198,7 +200,7 @@ export function deliverAction(packetId: string, to: DeviceId): Action {
           "AES-GCM verifies the tag before it returns any plaintext. If a single byte changed, this call throws and the recipient learns nothing.",
         run: async (world) => {
           const packet = findPacket(world, packetId);
-          const recipient = world[packet.to];
+          const recipient = deviceOf(world, packet.to);
           const counter = packet.header!.counter;
           const nonce = nonceFor(packet.header!.sender, counter);
           const aad = aadFor(packet.header!.sender, counter);
@@ -243,7 +245,7 @@ export function deliverAction(packetId: string, to: DeviceId): Action {
                     bytes: plaintext,
                     text,
                     note: packet.replayOf
-                      ? "Accepted a second time. L1 keeps no record of counters already opened."
+                      ? "Accepted a second time. Mission 01 keeps no record of counters already opened."
                       : undefined,
                   },
                 ],
@@ -270,10 +272,13 @@ export function deliverAction(packetId: string, to: DeviceId): Action {
 }
 
 /** Sealing plus handing to the Wire, then the matching delivery. */
-export function sendActions(from: DeviceId, text: string): Action[] {
+export function sendActions(
+  from: DeviceId,
+  to: DeviceId,
+  text: string,
+): Action[] {
   const id = nextId(`${from}-send`);
   const packetId = nextId("pkt");
-  const to = peerOf(from);
   const sendAction: Action = {
     id,
     label: `${from}.send(${JSON.stringify(text)})`,
@@ -287,7 +292,7 @@ export function sendActions(from: DeviceId, text: string): Action[] {
         prose:
           "AES-GCM encrypts and authenticates in one pass. The nonce carries the sender's counter, and the sender and counter are also bound in as additional data — authenticated, but readable on the wire.",
         run: async (world) => {
-          const self = world[from];
+          const self = deviceOf(world, from);
           const counter = self.sendCounter;
           const nonce = nonceFor(from, counter);
           const aad = aadFor(from, counter);
@@ -334,7 +339,7 @@ export function sendActions(from: DeviceId, text: string): Action[] {
         prose:
           "In flight. From here until it is delivered, Eve can drop it, keep it and re-send it later, or alter its bytes.",
         run: async (world) => {
-          const outbox = world[from].outbox!;
+          const outbox = deviceOf(world, from).outbox!;
           const packet: Packet = {
             id: outbox.packetId,
             from,
@@ -374,16 +379,16 @@ export function sendActions(from: DeviceId, text: string): Action[] {
 /** The full L1 Script: bring both Devices up, then send one message. */
 export function messagingL1Script(): Action[] {
   return [
-    keygenAction("alice"),
-    keygenAction("bob"),
-    publishAction("alice"),
-    publishAction("bob"),
-    receiveKeyAction("bob"),
-    receiveKeyAction("alice"),
-    agreeAction("alice"),
-    agreeAction("bob"),
-    deriveAction("alice"),
-    deriveAction("bob"),
-    ...sendActions("alice", "hey bob, this one is real crypto"),
+    keygenAction(ALICE),
+    keygenAction(BOB),
+    publishAction(ALICE, BOB),
+    publishAction(BOB, ALICE),
+    receiveKeyAction(BOB, ALICE),
+    receiveKeyAction(ALICE, BOB),
+    agreeAction(ALICE, BOB),
+    agreeAction(BOB, ALICE),
+    deriveAction(ALICE),
+    deriveAction(BOB),
+    ...sendActions(ALICE, BOB, "hey bob, this one is real crypto"),
   ];
 }

@@ -15,12 +15,16 @@ import { cn } from "@/lib/cn";
 import { CheckIcon, CircleIcon, PlayIcon, XIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { StepDetail } from "./step-detail";
-import { Btn, Label } from "./ui";
+import { Btn, Label, ScrollPane } from "./ui";
 
+/**
+ * Only Eve gets a colour. Devices are deliberately not enumerated here — one
+ * accent means "the adversary did this", and a per-device palette would spend
+ * the page's single hue on something that is not a consequence.
+ */
 const ACTOR_STYLES: Record<string, string> = {
-  alice: "text-mn-ink",
-  bob: "text-mn-ink",
   eve: "text-mn-accent-text",
+  wire: "text-mn-dim",
 };
 
 type Row = {
@@ -94,113 +98,125 @@ export function Rail({
 
   return (
     <div className="flex h-full min-h-0 flex-col md:flex-row">
-      <ol className="min-h-0 shrink-0 basis-2/5 overflow-y-auto border-b-2 border-mn-line md:max-w-96 md:basis-auto md:border-r-2 md:border-b-0 lg:w-96">
-        {groups.map(({ action, rows }) => (
-          <li key={action.id}>
-            <h3
-              className={cn(
-                "sticky top-0 z-10 border-b-2 border-mn-line bg-mn-raised px-3 py-1 font-mn-mono text-[10px] font-bold",
-                ACTOR_STYLES[action.actor] ?? "text-mn-dim",
-              )}
-            >
-              {action.label}
-            </h3>
-            <ol>
-              {rows.map((row) => {
-                const done = row.at !== null;
-                const isCurrent = done && row.at === cursor;
-                const failed = row.executed ? !row.executed.outcome.ok : false;
-
-                return (
-                  <li key={row.stepId} ref={isCurrent ? currentRef : undefined}>
-                    <button
-                      type="button"
-                      disabled={(!done && !row.isNext) || (row.isNext && busy)}
-                      onClick={() =>
-                        done ? onSeek(row.at as number) : onRunNext()
-                      }
-                      className={cn(
-                        "flex w-full cursor-pointer items-center gap-2 border-l-2 px-3 py-1.5 text-left text-[11px]",
-                        isCurrent
-                          ? failed
-                            ? "border-mn-accent bg-mn-accent-tint"
-                            : "border-mn-ink bg-mn-surface"
-                          : "border-transparent hover:bg-mn-surface",
-                        !done && !row.isNext && "cursor-default opacity-40",
-                      )}
-                    >
-                      <span className="w-5 shrink-0 font-mn-mono text-[10px] text-mn-dim">
-                        {String(row.number).padStart(2, "0")}
-                      </span>
-                      <span className="shrink-0">
-                        {failed ? (
-                          <XIcon size={12} className="text-mn-accent" />
-                        ) : done ? (
-                          <CheckIcon size={12} className="text-mn-ink" />
-                        ) : row.isNext ? (
-                          <PlayIcon size={12} className="text-mn-accent" />
-                        ) : (
-                          <CircleIcon size={12} className="text-mn-dimmer" />
-                        )}
-                      </span>
-                      <span
-                        className={cn(
-                          "min-w-0 flex-1 truncate text-mn-ink",
-                          isCurrent && "font-bold",
-                        )}
-                      >
-                        {row.meta.title}
-                      </span>
-                      {row.meta.crypto === "subtle" && (
-                        <span className="size-1.5 shrink-0 bg-mn-accent" />
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          </li>
-        ))}
-      </ol>
-
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-        {selected ? (
-          <>
-            <Label tone="dim">
-              step {String(selected.number).padStart(2, "0")} / {total} ·{" "}
-              {selected.actionLabel}
-            </Label>
-            <div className="mt-0.5 mb-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h4 className="font-mn text-[13px] font-extrabold text-mn-ink">
-                {selected.meta.title}
-              </h4>
-              <code
+      <ScrollPane className="min-h-0 shrink-0 basis-2/5 border-b-2 border-mn-line md:max-w-96 md:basis-auto md:border-r-2 md:border-b-0 lg:w-96">
+        <ol>
+          {groups.map(({ action, rows }) => (
+            <li key={action.id}>
+              <h3
                 className={cn(
-                  "font-mn-mono text-[11px]",
-                  selected.meta.crypto === "subtle"
-                    ? "text-mn-accent-text"
-                    : "text-mn-dim",
+                  "sticky top-0 z-10 border-b-2 border-mn-line bg-mn-raised px-3 py-1 font-mn-mono text-sm font-bold",
+                  ACTOR_STYLES[action.actor] ?? "text-mn-ink",
                 )}
               >
-                {selected.meta.op ?? "no cryptography"}
-              </code>
+                {action.label}
+              </h3>
+              <ol>
+                {rows.map((row) => {
+                  const done = row.at !== null;
+                  const isCurrent = done && row.at === cursor;
+                  const failed = row.executed
+                    ? !row.executed.outcome.ok
+                    : false;
+
+                  return (
+                    <li
+                      key={row.stepId}
+                      ref={isCurrent ? currentRef : undefined}
+                    >
+                      <button
+                        type="button"
+                        disabled={
+                          (!done && !row.isNext) || (row.isNext && busy)
+                        }
+                        onClick={() =>
+                          done ? onSeek(row.at as number) : onRunNext()
+                        }
+                        className={cn(
+                          "flex w-full cursor-pointer items-center gap-2 border-l-2 px-3 py-1.5 text-left text-sm",
+                          isCurrent
+                            ? failed
+                              ? "border-mn-accent bg-mn-accent-tint"
+                              : "border-mn-ink bg-mn-surface"
+                            : "border-transparent hover:bg-mn-surface",
+                          !done && !row.isNext && "cursor-default opacity-40",
+                        )}
+                      >
+                        <span className="w-5 shrink-0 font-mn-mono text-xs text-mn-dim">
+                          {String(row.number).padStart(2, "0")}
+                        </span>
+                        <span className="shrink-0">
+                          {failed ? (
+                            <XIcon size={14} className="text-mn-accent" />
+                          ) : done ? (
+                            <CheckIcon size={14} className="text-mn-ink" />
+                          ) : row.isNext ? (
+                            <PlayIcon size={14} className="text-mn-accent" />
+                          ) : (
+                            <CircleIcon size={14} className="text-mn-dimmer" />
+                          )}
+                        </span>
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 truncate text-mn-ink",
+                            isCurrent && "font-bold",
+                          )}
+                        >
+                          {row.meta.title}
+                        </span>
+                        {row.meta.crypto === "subtle" && (
+                          <span className="size-1.5 shrink-0 bg-mn-accent" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </li>
+          ))}
+        </ol>
+      </ScrollPane>
+
+      {/* `@container` so StepDetail can split in/out on its own width. */}
+      <ScrollPane className="@container min-h-0 flex-1">
+        <div className="px-4 py-3">
+          {selected ? (
+            <>
+              <Label tone="dim">
+                step {String(selected.number).padStart(2, "0")} / {total} ·{" "}
+                {selected.actionLabel}
+              </Label>
+              <div className="mt-0.5 mb-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h4 className="font-mn-display text-lg text-mn-ink">
+                  {selected.meta.title}
+                </h4>
+                <code
+                  className={cn(
+                    "font-mn-mono text-sm",
+                    selected.meta.crypto === "subtle"
+                      ? "text-mn-accent-text"
+                      : "text-mn-dim",
+                  )}
+                >
+                  {selected.meta.op ?? "no cryptography"}
+                </code>
+              </div>
+              {selected.executed && <StepDetail step={selected.executed} />}
+            </>
+          ) : (
+            <div className="flex flex-col items-start gap-2">
+              <Label tone="dim">start of the script</Label>
+              <p className="max-w-md text-sm leading-relaxed text-mn-dim">
+                Nothing has run yet. Each row on the left is one call — the ▶
+                row is next. Red squares mark the rows that are real{" "}
+                <code className="font-mn-mono">crypto.subtle</code> calls.
+              </p>
+              <Btn size="sm" disabled={busy} onClick={onRunNext}>
+                <PlayIcon size={14} /> run the first step
+              </Btn>
             </div>
-            {selected.executed && <StepDetail step={selected.executed} />}
-          </>
-        ) : (
-          <div className="flex flex-col items-start gap-2">
-            <Label tone="dim">start of the script</Label>
-            <p className="max-w-md text-[11px] leading-relaxed text-mn-dim">
-              Nothing has run yet. Each row on the left is one call — the ▶ row
-              is next. Red squares mark the rows that are real{" "}
-              <code className="font-mn-mono">crypto.subtle</code> calls.
-            </p>
-            <Btn size="sm" disabled={busy} onClick={onRunNext}>
-              <PlayIcon size={12} /> run the first step
-            </Btn>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ScrollPane>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function QuestBar({
   const total = history.length - 1 + frontier.queue.length;
 
   return (
-    <Collapsible.Root className="flex-none border-t-2 border-mn-line bg-mn-raised">
+    <Collapsible.Root className="mn-etch flex-none border-t-2 border-mn-accent bg-mn-raised">
       <Collapsible.Content className="h-[46vh] border-b-2 border-mn-line">
         <Rail
           history={history}
@@ -77,7 +77,7 @@ export function QuestBar({
             content={cursor === 0 ? "Already at the start." : "One step back."}
           >
             <Btn size="icon" disabled={cursor === 0} onClick={onPrev}>
-              <SkipBackIcon size={13} />
+              <SkipBackIcon size={15} />
             </Btn>
           </Tip>
           <Btn
@@ -87,21 +87,21 @@ export function QuestBar({
             className="h-8"
           >
             {atFrontier ? "next move" : "step forward"}
-            <PlayIcon size={12} />
+            <PlayIcon size={14} />
           </Btn>
           <Tip content={playing ? "Pause." : "Play one step at a time."}>
             <Btn size="icon" disabled={!canStepForward} onClick={onTogglePlay}>
-              {playing ? <PauseIcon size={13} /> : <PlayIcon size={13} />}
+              {playing ? <PauseIcon size={15} /> : <PlayIcon size={15} />}
             </Btn>
           </Tip>
           <Tip content="Start over. Fresh keys, empty wire.">
             <Btn size="icon" onClick={onReset}>
-              <RotateCcwIcon size={13} />
+              <RotateCcwIcon size={15} />
             </Btn>
           </Tip>
         </div>
 
-        <ol className="flex min-w-64 flex-1 items-start gap-0">
+        <ol className="mn-frame mn-lane flex min-w-64 flex-1 items-start gap-0 border-2 border-mn-line px-3 py-1.5">
           {checkpoints.map((checkpoint, index) => (
             <li
               key={checkpoint.id}
@@ -122,13 +122,13 @@ export function QuestBar({
                 )}
               >
                 {checkpoint.state === "done" ? (
-                  <CheckIcon size={13} />
+                  <CheckIcon size={15} />
                 ) : checkpoint.state === "current" ? (
                   <span className="size-3.5 animate-mn-blink bg-mn-accent motion-reduce:animate-none" />
                 ) : (
                   <span className="size-3.5 border-2 border-mn-dimmer" />
                 )}
-                <span className="font-mn text-[9px] font-extrabold tracking-[0.06em] whitespace-nowrap uppercase">
+                <span className="font-mn-display text-xs tracking-[0.06em] whitespace-nowrap uppercase">
                   {checkpoint.label}
                   {checkpoint.state === "current" && " ◀ you are here"}
                 </span>
@@ -145,7 +145,7 @@ export function QuestBar({
           ))}
         </ol>
 
-        <div className="flex max-w-md min-w-56 flex-1 items-baseline gap-2 text-[11px]">
+        <div className="flex max-w-md min-w-56 flex-1 items-baseline gap-2 text-sm">
           {atFrontier && nextStep ? (
             <>
               <Label tone="accent" className="shrink-0">
@@ -178,13 +178,13 @@ export function QuestBar({
 
         <Collapsible.Trigger asChild>
           <Btn size="sm" className="group shrink-0">
-            <ListIcon size={12} />
+            <ListIcon size={14} />
             <span className="font-mn-mono">
               {cursor}/{total}
             </span>
             steps
             <ChevronUpIcon
-              size={12}
+              size={14}
               className="transition-transform group-data-[state=open]:rotate-180 motion-reduce:transition-none"
             />
           </Btn>

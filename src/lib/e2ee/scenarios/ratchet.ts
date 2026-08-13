@@ -52,9 +52,9 @@ import type {
   World,
 } from "../types";
 import {
+  deviceOf,
   findPacket,
   nextId,
-  peerOf,
   withDevice,
   withPacket,
   withPacketPatch,
@@ -63,7 +63,7 @@ import {
 import { nameOf, step } from "./common";
 
 function ratchetOf(world: World, device: DeviceId) {
-  const ratchet = world[device].ratchet;
+  const ratchet = deviceOf(world, device).ratchet;
   if (!ratchet) throw new Error(`[e2ee] ${device} has no ratchet`);
   return ratchet;
 }
@@ -74,8 +74,11 @@ function ratchetOf(world: World, device: DeviceId) {
  * Four Steps: a fresh ratchet key pair, one ECDH, the HKDF import, and the root
  * KDF. Queued only when the direction of conversation has changed.
  */
-function dhRatchetSteps(device: DeviceId, actionId: string): PendingStep[] {
-  const peer = peerOf(device);
+function dhRatchetSteps(
+  device: DeviceId,
+  peer: DeviceId,
+  actionId: string,
+): PendingStep[] {
   return [
     step(actionId, {
       actor: device,
@@ -143,7 +146,7 @@ function dhRatchetSteps(device: DeviceId, actionId: string): PendingStep[] {
       prose:
         "The root KDF is HKDF-SHA-256, and HKDF input key material has to be a non-extractable CryptoKey.",
       run: async (world) => {
-        const output = world[device].sharedSecret!;
+        const output = deviceOf(world, device).sharedSecret!;
         const baseKey = await importHkdfBaseKey(output);
         return {
           world: withDevice(world, device, { hkdfBaseKey: baseKey }),
@@ -167,7 +170,7 @@ function dhRatchetSteps(device: DeviceId, actionId: string): PendingStep[] {
       run: async (world) => {
         const ratchet = ratchetOf(world, device);
         const bits = await rootRatchetBits(
-          world[device].hkdfBaseKey!,
+          deviceOf(world, device).hkdfBaseKey!,
           ratchet.rootKey,
         );
         const { rootKey, chainKey } = splitRootKdf(bits);
@@ -211,10 +214,10 @@ function dhRatchetSteps(device: DeviceId, actionId: string): PendingStep[] {
 /** The receiving mirror: import the header's ratchet key, then the same three Steps. */
 function recvRatchetSteps(
   device: DeviceId,
+  peer: DeviceId,
   actionId: string,
   packetId: string,
 ): PendingStep[] {
-  const peer = peerOf(device);
   return [
     step(actionId, {
       actor: device,
@@ -278,7 +281,7 @@ function recvRatchetSteps(
       crypto: "subtle",
       prose: "Same as on the sending side: HKDF needs a CryptoKey.",
       run: async (world) => {
-        const output = world[device].sharedSecret!;
+        const output = deviceOf(world, device).sharedSecret!;
         const baseKey = await importHkdfBaseKey(output);
         return {
           world: withDevice(world, device, { hkdfBaseKey: baseKey }),
@@ -300,7 +303,7 @@ function recvRatchetSteps(
       run: async (world) => {
         const ratchet = ratchetOf(world, device);
         const bits = await rootRatchetBits(
-          world[device].hkdfBaseKey!,
+          deviceOf(world, device).hkdfBaseKey!,
           ratchet.rootKey,
         );
         const { rootKey, chainKey } = splitRootKdf(bits);
@@ -459,7 +462,7 @@ function chainSteps(
       crypto: "subtle",
       prose: "32 bytes of HMAC output, imported as an AES-GCM-256 key.",
       run: async (world) => {
-        const keyBytes = world[device].messageKeyBytes!;
+        const keyBytes = deviceOf(world, device).messageKeyBytes!;
         const key = await importAesKey(keyBytes);
         return {
           world: withDevice(world, device, { messageKey: key }),
@@ -491,7 +494,7 @@ function burnStep(
       const ratchet = ratchetOf(world, device);
       const position = which === "send" ? ratchet.sendCount : ratchet.recvCount;
       const label = `${which === "send" ? "sent" : "read"} #${Math.max(0, position - 1)}`;
-      const bytes = world[device].messageKeyBytes;
+      const bytes = deviceOf(world, device).messageKeyBytes;
       return {
         world: withDevice(
           withRatchet(world, device, { burned: [...ratchet.burned, label] }),
@@ -535,6 +538,12 @@ export type SendOptions = {
    */
   extraHeader?: (world: World) => Partial<PacketHeader>;
   /**
+   * The plaintext, when it is not known until the Step runs. L4's message is a
+   * pointer at a blob that does not exist yet when the Action is built — the key
+   * and digest in it come from Steps that have not happened.
+   */
+  resolveText?: (world: World) => string;
+  /**
    * Actions to run after the message is on the wire but before it is delivered,
    * given the id of the Packet they will read. L3 uses this for the recipient's
    * half of X3DH: he cannot ratchet until he has derived the root key, and he
@@ -546,20 +555,21 @@ export type SendOptions = {
 export function ratchetSendActions(
   world: World,
   from: DeviceId,
+  to: DeviceId,
   text: string,
   options: SendOptions = {},
 ): Action[] {
-  const to = peerOf(from);
   const packetId = nextId("pkt");
   const actions: Action[] = [];
 
-  if (needsDhRatchet(world, from)) {
+  const senderRatchets = needsDhRatchet(world, from);
+  if (senderRatchets) {
     const ratchetId = nextId(`${from}-dhratchet`);
     actions.push({
       id: ratchetId,
       label: `${from}.dhRatchet()`,
       actor: from,
-      steps: dhRatchetSteps(from, ratchetId),
+      steps: dhRatchetSteps(from, to, ratchetId),
     });
   }
 
@@ -578,7 +588,7 @@ export function ratchetSendActions(
         prose:
           "AES-GCM under a key that will never be used again. The header — sender, counter, ratchet public key — travels in the clear but is bound in as additional data, so altering any of it fails the tag.",
         run: async (world) => {
-          const self = world[from];
+          const self = deviceOf(world, from);
           const ratchet = ratchetOf(world, from);
           const counter = ratchet.sendCount - 1;
           const header: PacketHeader = {
@@ -589,7 +599,8 @@ export function ratchetSendActions(
           };
           const nonce = nonceFor(from, counter);
           const aad = aadForHeader(header);
-          const plaintext = utf8(text);
+          const body = options.resolveText?.(world) ?? text;
+          const plaintext = utf8(body);
           const ciphertext = await sealAesGcm(
             self.messageKey!,
             nonce,
@@ -600,9 +611,11 @@ export function ratchetSendActions(
             world: withDevice(world, from, {
               sendCounter: self.sendCounter + 1,
               outbox: { packetId, ciphertext, counter },
+              // The app's own message list, which no amount of ratcheting touches.
+              sentLog: [...self.sentLog, { packetId, to, counter, text: body }],
             }),
             inputs: [
-              { label: "plaintext", bytes: plaintext, text },
+              { label: "plaintext", bytes: plaintext, text: body },
               { label: "message key", bytes: self.messageKeyBytes! },
               { label: "nonce (iv)", bytes: nonce },
               { label: "additional data", bytes: aad, text: fromUtf8(aad) },
@@ -627,9 +640,9 @@ export function ratchetSendActions(
         op: null,
         crypto: "none",
         prose:
-          "In flight, with its public header. Eve can drop it, alter it, or keep it and send it again later — the difference from L1 is what happens when she does.",
+          "In flight, with its public header. Eve can drop it, alter it, or keep it and send it again later — the difference from Mission 01 is what happens when she does.",
         run: async (world) => {
-          const outbox = world[from].outbox!;
+          const outbox = deviceOf(world, from).outbox!;
           const ratchet = ratchetOf(world, from);
           const packet: Packet = {
             id: outbox.packetId,
@@ -671,7 +684,9 @@ export function ratchetSendActions(
   });
 
   if (options.beforeDelivery) actions.push(...options.beforeDelivery(packetId));
-  actions.push(...ratchetDeliverActions(world, packetId, to));
+  actions.push(
+    ...ratchetDeliverActions(world, packetId, to, from, senderRatchets),
+  );
   return actions;
 }
 
@@ -684,19 +699,27 @@ export function ratchetDeliverActions(
   world: World,
   packetId: string,
   to: DeviceId,
+  from: DeviceId,
+  senderRatchets?: boolean,
 ): Action[] {
   const receiveId = `receive-${packetId}`;
   const openId = `open-${packetId}`;
   const ratchet = ratchetOf(world, to);
 
-  // Whether a DH ratchet is due is a property of the header, which already exists
-  // for a replay and does not for a message still being composed. Unknown means
-  // "assume one is due": the Step itself re-checks and skips nothing silently.
+  // Whether a DH ratchet is due is a property of the header — which exists for a
+  // replay, and does not for a message still being composed.
+  //
+  // For a message being composed the caller says instead, because it knows: the
+  // receiver ratchets exactly when the sender did, since that is what puts a key
+  // the receiver has not seen into the header. Defaulting to `true` here was a
+  // bug — a second message in the same direction carries the *same* ratchet key,
+  // and running the receiving ratchet against it derives a fresh recv chain and
+  // resets the counter, so the next `open` fails the tag on an honest message.
   const packet = world.packets.find((candidate) => candidate.id === packetId);
   const headerKey = packet?.header?.ratchetPublicRaw;
   const dhDue = headerKey
     ? toHex(headerKey) !== toHex(ratchet.peerPublicRaw ?? new Uint8Array(0))
-    : true;
+    : (senderRatchets ?? true);
 
   return [
     {
@@ -737,7 +760,7 @@ export function ratchetDeliverActions(
           op: null,
           crypto: "none",
           prose:
-            "The receiving chain is at a definite position. A message whose counter is behind it cannot be opened, because the key for that position was deleted after it was used — this is the check L1 does not have, and it is why a replay stops here.",
+            "The receiving chain is at a definite position. A message whose counter is behind it cannot be opened, because the key for that position was deleted after it was used — this is the check Mission 01 does not have, and it is why a replay stops here.",
           run: async (world) => {
             const packet = findPacket(world, packetId);
             const ratchet = ratchetOf(world, to);
@@ -797,7 +820,7 @@ export function ratchetDeliverActions(
             };
           },
         }),
-        ...(dhDue ? recvRatchetSteps(to, receiveId, packetId) : []),
+        ...(dhDue ? recvRatchetSteps(to, from, receiveId, packetId) : []),
         ...chainSteps(to, receiveId, "recv"),
       ],
     },
@@ -815,7 +838,7 @@ export function ratchetDeliverActions(
             "AES-GCM verifies the tag over both the ciphertext and the header before it returns any plaintext. One altered byte anywhere and this call throws.",
           run: async (world) => {
             const packet = findPacket(world, packetId);
-            const recipient = world[packet.to];
+            const recipient = deviceOf(world, packet.to);
             const header = packet.header!;
             const counter = header.counter;
             const nonce = nonceFor(header.sender, counter);

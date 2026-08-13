@@ -6,7 +6,7 @@
  * no per-Step bookkeeping to keep in sync with what the Steps actually do.
  */
 
-import type { DeviceId, DeviceState, World } from "./types";
+import type { DeviceState, World } from "./types";
 
 /** Dotted field paths (`"alice.sharedSecret"`) and Packet ids that changed. */
 export type ChangeSet = {
@@ -59,19 +59,24 @@ export function diffWorlds(prev: World | null, next: World): ChangeSet {
   const fields = new Set<string>();
   const packets = new Set<string>();
 
-  for (const id of ["alice", "bob"] as const satisfies readonly DeviceId[]) {
+  for (const id of next.deviceOrder) {
+    const was = prev.devices[id];
+    const is = next.devices[id];
+    // A device that did not exist a Step ago has nothing to diff against; it is
+    // new, which the UI learns from `deviceOrder` rather than from a field path.
+    if (!was || !is) continue;
     for (const key of WATCHED) {
-      if (prev[id][key] !== next[id][key]) fields.add(`${id}.${key}`);
+      if (was[key] !== is[key]) fields.add(`${id}.${key}`);
     }
-    const wasRatchet = prev[id].ratchet;
-    const isRatchet = next[id].ratchet;
+    const wasRatchet = was.ratchet;
+    const isRatchet = is.ratchet;
     if (wasRatchet && isRatchet) {
       for (const key of WATCHED_RATCHET) {
         if (wasRatchet[key] !== isRatchet[key]) fields.add(`${id}.${key}`);
       }
     }
-    const wasPrekeys = prev[id].prekeys;
-    const isPrekeys = next[id].prekeys;
+    const wasPrekeys = was.prekeys;
+    const isPrekeys = is.prekeys;
     if (wasPrekeys && isPrekeys) {
       for (const key of WATCHED_PREKEYS) {
         if (wasPrekeys[key] !== isPrekeys[key]) fields.add(`${id}.${key}`);
@@ -79,14 +84,17 @@ export function diffWorlds(prev: World | null, next: World): ChangeSet {
     }
   }
 
+  if (prev.stolen !== next.stolen) fields.add("eve.stolen");
+  if (prev.cracked !== next.cracked) fields.add("eve.cracked");
+
   const before = new Map(prev.packets.map((packet) => [packet.id, packet]));
   for (const packet of next.packets) {
-    const was = before.get(packet.id);
+    const previous = before.get(packet.id);
     if (
-      !was ||
-      was.payload !== packet.payload ||
-      was.status !== packet.status ||
-      was.tampered !== packet.tampered
+      !previous ||
+      previous.payload !== packet.payload ||
+      previous.status !== packet.status ||
+      previous.tampered !== packet.tampered
     ) {
       packets.add(packet.id);
     }

@@ -18,9 +18,14 @@ Not a "mode" (overloaded in UI code) and not a "protocol" (Level also varies the
 
 ### Level
 
-A depth rung within one Scenario: `L1`, `L2`, `L3`. Each Level is a more complete protocol
-than the one below it, and exists because a named weakness in the Level below can be
-demonstrated. Levels are freely selectable — a Level is a viewpoint, not an achievement.
+A depth rung within one Scenario: `L1` … `L6`. Each Level is a more complete protocol than
+the one below it, and exists because a named weakness in the Level below can be demonstrated.
+Levels are freely selectable — a Level is a viewpoint, not an achievement.
+
+L1–L3 build the session: a static key, then the double ratchet, then X3DH. L4 upward are all
+"L3's session, plus one idea the session cannot solve on its own" — an attachment that has to
+outlive forward secrecy, a backup that bypasses it entirely, an envelope that hides who sent
+what. A Level is allowed to fix nothing: L5 has no defences at all, which is the finding.
 
 ### Script
 
@@ -58,9 +63,15 @@ cryptography; moving anywhere behind it only re-reads History.
 
 ### Device
 
-One participant's machine: `Alice` or `Bob`. A Device owns key material. The defining property
-of a Device is that its private key material is never observable outside it — neither to the
-other Device, nor to the Wire, nor to Eve.
+One participant's machine. A Device owns key material. The defining property of a Device is
+that its private key material is never observable outside it — neither to another Device, nor
+to the Wire, nor to Eve.
+
+A `DeviceId` is an open string, not a fixed pair of names, and `World.devices` is a map keyed
+by it. Today every Level starts with two — `alice` and `bob` — but nothing in the engine is
+built on there being two, because multi-device is the point of the map. `wire` and `eve` are
+reserved ids: they can appear as a Step's actor and are refused as Device ids. Ids must stay
+distinct within their first 8 characters, which is the sender tag inside every AES-GCM nonce.
 
 ### Wire
 
@@ -69,8 +80,20 @@ is considered public. The Wire is Eve's territory.
 
 ### Packet
 
-A unit of bytes in flight on the Wire — a public key, a sealed message, a prekey bundle. A
-Packet is what Eve can see, keep, re-send, or alter.
+A unit of bytes in flight on the Wire — a public key, a sealed message, a prekey bundle, a
+sealed-sender envelope. A Packet is what Eve can see, keep, re-send, or alter.
+
+A sealed envelope (L6) keeps its real `from` so the engine can route it, and sets
+`hidesSender`. While that flag is set, `from` and `header` are delivery bookkeeping rather
+than facts about the wire: what travelled is `envelope`, and every Eve-facing surface —
+including her own Attacks — must read that instead.
+
+### Store
+
+Bytes parked on a server: a CDN blob (L4), a backup archive (L5). Not a Packet — it does not
+move, is never delivered, and belongs to nobody in the conversation. It is the third place
+bytes can live, after a Device and the Wire, and the only one whose operator can keep them
+after everyone involved has deleted the message.
 
 ### Eve
 
