@@ -11,6 +11,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Suspense, lazy } from "react";
 import { MoonIcon, SunIcon, NewspaperIcon } from "lucide-react";
+import { useStyleData } from "@/lib/useStyleData";
+import homeStyle from "@/routes/homepage.css?url";
 
 export const Route = createFileRoute("/")({
   component: Homepage,
@@ -23,6 +25,11 @@ const SkillSet = lazy(() =>
 );
 
 function Homepage() {
+  useStyleData({
+    id: "homepage-css",
+    link: homeStyle,
+    style: null,
+  });
   return (
     <div
       className={clsx(

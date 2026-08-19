@@ -14,54 +14,55 @@
 }
 
 /*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+  Modernist — the design system behind /e2ee (Claude Design project "Modernist":
+  flat, architectural, Archivo throughout, near-mono red on ink, zero radius,
+  strong 2px rules). Prefixed `mn-` and used by that route only; the rest of the
+  site keeps `main-*`.
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+  Only the mapping lives here, because `@theme` has to be in the Tailwind entry
+  for `bg-mn-ink` and friends to be generated at all. The values it points at,
+  the keyframes it names, and the chassis classes built on top of them are in
+  `src/routes/-e2ee/e2ee.css`, which that route imports — so no other page on the
+  site downloads any of it.
+
+  Declared `inline` so the utilities compile to `var(--mn-*)` and pick up whatever
+  ramp is in scope.
 */
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
+@theme inline {
+  --color-mn-bg: var(--mn-bg);
+  --color-mn-surface: var(--mn-surface);
+  --color-mn-raised: var(--mn-raised);
+  --color-mn-ink: var(--mn-ink);
+  --color-mn-line: var(--mn-line);
+  --color-mn-dim: var(--mn-dim);
+  --color-mn-dimmer: var(--mn-dimmer);
+  --color-mn-accent: var(--mn-accent);
+  --color-mn-accent-text: var(--mn-accent-text);
+  --color-mn-accent-tint: var(--mn-accent-tint);
+  /* Reversed-out surfaces. Not `--mn-ink`: on the dark ramp ink is the
+     foreground, so a "solid ink field" there has to be darker than the ground. */
+  --color-mn-solid: var(--mn-solid);
+  --color-mn-on-solid: var(--mn-on-solid);
 
-@utility wave-border {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    display: block;
-    box-sizing: border-box;
-    border: 0.4rem solid #f9f6f2;
-    border-image-source: url(./assets/border-fill.svg);
-    border-image-slice: 10%;
-    border-image-repeat: round;
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 1;
-  }
+  /* Indirected through `--mn-font*` for the same reason the colours above are:
+     `@theme inline` bakes the *value* into the utility, so a utility written as
+     a literal font stack can never be repointed by a route. Written this way,
+     `font-mn` / `font-mn-display` resolve at use time, and a route that owns a
+     ramp swaps both faces from one place (see `-e2ee/e2ee.css`). The fallbacks
+     are what a page without a Modernist ramp gets. */
+  --font-mn: var(--mn-font, "Archivo", system-ui, sans-serif);
+  --font-mn-display: var(--mn-font-display, "Archivo", system-ui, sans-serif);
+  --font-mn-mono: var(
+    --mn-font-mono,
+    ui-monospace,
+    "SF Mono",
+    Menlo,
+    monospace
+  );
 
-  .dark &::after {
-    border-image-source: url(./assets/border-fill-dark.svg);
-  }
-}
-
-@utility dark {
-  & .wave-border::after {
-    border-image-source: url(./assets/border-fill-dark.svg);
-  }
+  --animate-mn-pop: mn-pop 0.35s ease-out;
+  --animate-mn-unroll: mn-unroll 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  --animate-mn-blink: mn-blink 1.2s steps(1, end) infinite;
 }
 
 @utility lato {
@@ -77,69 +78,6 @@
   }
 }
 
-@layer components {
-  *:focus-visible {
-    outline-color: rgb(138, 68, 107);
-  }
-  ::selection {
-    color: white;
-    background-color: rgb(138, 68, 107);
-  }
-}
-
-model-viewer {
-  width: 100%;
-  height: min(30rem, calc(80vh - 3rem));
-  background: linear-gradient(45deg, #6662 0%, #6661 100%);
-  --poster-color: transparent;
-  --progress-mask: transparent;
-  --progress-bar-color: #22254f;
-  --progress-bar-height: 0.2rem;
-}
-
-::-webkit-scrollbar {
-  width: 14px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgb(249, 246, 242);
-}
-
-::-webkit-scrollbar-track:hover {
-  background: #8882;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgb(138, 68, 107, 0.4);
-  border-radius: 8px;
-  border: solid 3px rgb(249, 246, 242);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(138, 68, 107) !important;
-  border-width: 2px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(172, 111, 144) !important;
-}
-
-.dark::-webkit-scrollbar-thumb,
-.dark ::-webkit-scrollbar-thumb {
-  background-color: rgb(138, 68, 107);
-  border: solid 3px rgb(23 23 23);
-}
-
-.dark::-webkit-scrollbar-track,
-.dark ::-webkit-scrollbar-track {
-  background: rgb(23 23 23);
-}
-
-.dark::-webkit-scrollbar-track:hover,
-.dark ::-webkit-scrollbar-track:hover {
-  background: rgb(69 69 69);
-}
-
 /* Customize the speed of the theme morph. Scoped to the "theme" transition
    type so it doesn't also slow down other view transitions on the page
    (e.g. the models section thumbnail switch), since ::view-transition-old/new(root)
@@ -148,17 +86,4 @@ html:active-view-transition-type(theme)::view-transition-old(root),
 html:active-view-transition-type(theme)::view-transition-new(root) {
   animation-duration: 1s;
   animation-timing-function: ease-in-out;
-}
-
-/* Faster cross-fade for the models section thumbnail switch */
-html:active-view-transition-type(
-  model-switch
-)::view-transition-group(model-stage),
-html:active-view-transition-type(
-  model-switch
-)::view-transition-old(model-stage),
-html:active-view-transition-type(
-  model-switch
-)::view-transition-new(model-stage) {
-  animation-duration: 0.3s;
 }

@@ -1,0 +1,300 @@
+/*
+  The route's two faces, fetched here and nowhere else.
+
+  This stylesheet is mounted as a `<link>` only while /e2ee is on screen, so the
+  `@import` fires the first time the route opens and no other page ever pays for
+  the download. `display=swap` so the HUD is readable before the faces land.
+
+  First rule in the file on purpose: `@import` is only allowed to be preceded by
+  `@charset` and `@layer` statements, and leading it avoids depending on that.
+*/
+@import url("https://fonts.googleapis.com/css2?family=Asap:wght@400..700&family=Bungee&family=Chivo+Mono:wght@400..700&family=Handjet&display=swap");
+
+/*
+  Layer order, restated. Tailwind's entry (`src/index.css`) already declares it,
+  and this file only ever loads after that one — but naming it here costs a line
+  and removes the ordering from the set of things that have to stay true.
+
+  Restated rather than pulled in: `@import "tailwindcss"` here builds a *second*
+  copy of the framework into this stylesheet — preflight and every utility the
+  scanner finds — on top of the one the entry already ships. Nothing below needs
+  Tailwind's engine, so nothing below asks for it.
+*/
+@layer theme, base, components, utilities;
+
+/*
+  Everything the /e2ee HUD is made of: the Modernist ramp it runs on, its
+  keyframes, and the chassis layers.
+
+  Plain CSS on purpose, and attached by `useStyleData` rather than imported for
+  its side effect: the route pulls it in as a URL and mounts a `<link>` only while
+  the page is on screen, so neither the download nor the rules reach any other
+  page. Nothing here needs Tailwind's engine — only the `--color-mn-*` → `--mn-*`
+  mapping does, and that stays in `index.css` because `@theme` has to live in the
+  Tailwind entry. So this file is ordinary classes rather than `@utility`.
+
+  `.mn-dark` is the ramp the route pins itself to, whatever the site theme is:
+  the frames, lanes and glows below are HUD grammar and only read on a dark
+  ground. Modernist ships light-only, so these values are derived from its own
+  ramps (ui-improvement-2.md §4.4) rather than invented.
+
+  `--mn-ink` is the *foreground* here, which is why the reversed-out surfaces
+  (header bar, a private key's tile, a tooltip) use `--mn-solid` instead: on the
+  light ramp "solid field" means ink, and on the dark one it has to mean darker
+  than the ground, or the loudest thing on the page becomes a white slab.
+*/
+@layer theme {
+  .mn-dark {
+    /*
+      The type ramp, and the only place to change it. `font-mn-display` and
+      `font-mn` read these (`index.css` maps the Tailwind names onto them), so
+      swapping either face is a one-line edit here rather than a sweep through
+      the panels. Both fall back to Archivo, which is what shows while the
+      webfonts are still in flight.
+
+      Bungee carries a single weight, so titles that use it set no `font-*`
+      weight — asking for 800 there only gets a synthetic bold. Asap is variable
+      (400..700 loaded), so body text can still be genuinely bold.
+    */
+    --mn-font-display: "Handjet", "Archivo", system-ui, sans-serif;
+    --mn-font: "Handjet", "Archivo", system-ui, sans-serif;
+    /*
+      The mono was the one face still left to the system, which meant every
+      machine drew the hex at a different size — `ui-monospace` is SF Mono here,
+      Consolas there, and neither was picked to sit next to Asap. Chivo Mono is
+      Asap's own superfamily sibling, so the byte dumps now share metrics and a
+      designer with the text around them.
+    */
+    --mn-font-mono: "Handjet", ui-monospace, Menlo, monospace;
+
+    --mn-bg: #1a1918;
+    --mn-surface: #232120;
+    --mn-raised: #2d2b2b;
+    --mn-ink: #f8f4f4;
+    --mn-line: color-mix(in srgb, #f8f4f4 34%, transparent);
+    --mn-dim: #9b9797;
+    --mn-dimmer: #605d5d;
+    --mn-accent: #ec3013;
+    --mn-accent-text: #ff9783;
+    --mn-accent-tint: #4d170e;
+    --mn-solid: #100f0f;
+    --mn-on-solid: #f8f4f4;
+  }
+
+  @keyframes mn-pop {
+    from {
+      transform: translateY(6px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  /*
+    The byte inspector's entrance. It is anchored flush under the tile it belongs
+    to, so it unrolls downward out of that edge instead of arriving as a card:
+    scaled from the top, and clipped so nothing is visible above the fold.
+  */
+  @keyframes mn-unroll {
+    from {
+      clip-path: inset(0 0 100% 0);
+      transform: scaleY(0.82);
+      opacity: 0.4;
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  @keyframes mn-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+}
+
+/*
+  The chassis, one class per layer. In `components` so that a Tailwind utility
+  always wins: the panels carry border and background utilities that encode
+  meaning (accent = changed this step, solid = private), and chrome that outranked
+  them would break the grammar. Unlayered, these classes beat every utility on the
+  page — which is the whole reason the layer is named rather than left to chance.
+
+  `.mn-frame` and `.mn-etch` paint only in pseudo-elements and `background-image`,
+  so they never contend with a utility in the first place. `.mn-lane` and
+  `.mn-stage` do set `background-color`, and are the two that need the layer to be
+  right. Colour comes from `--mn-tick`, so a component retints its own chrome with
+  `[--mn-tick:var(--color-mn-accent)]` and nothing else has to know.
+
+  This is where the art pass lands: `.mn-frame`'s `::after` becomes a
+  `border-image-source`, and no component changes.
+*/
+
+@layer components {
+  /* Inset bevel plus four corner ticks — the "this is a machined part" read. */
+  .mn-frame {
+    position: relative;
+  }
+
+  .mn-frame::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    pointer-events: none;
+    border: 1px solid color-mix(in srgb, var(--mn-ink) 10%, transparent);
+  }
+
+  .mn-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* Falls back to the element's own text colour, so a tick is legible on a
+       solid-filled tile and on a raised one without either being told. Resolved
+       into a second property because a `--mn-tick` declared here would shadow the
+       one a component sets on itself. */
+    --mn-tick-ink: var(
+      --mn-tick,
+      color-mix(in srgb, currentColor 45%, transparent)
+    );
+    background-image:
+      linear-gradient(var(--mn-tick-ink), var(--mn-tick-ink)),
+      linear-gradient(var(--mn-tick-ink), var(--mn-tick-ink)),
+      linear-gradient(var(--mn-tick-ink), var(--mn-tick-ink)),
+      linear-gradient(var(--mn-tick-ink), var(--mn-tick-ink));
+    background-size: 5px 5px;
+    background-position:
+      0 0,
+      100% 0,
+      0 100%,
+      100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  /*
+    Faint diagonal hatch, for surfaces that should read as material not paper.
+    Keyed to `currentColor` rather than `--mn-ink` so it survives being put on a
+    reversed-out surface, where an ink hatch would simply be invisible.
+  */
+  .mn-etch {
+    background-image: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, currentColor 6%, transparent) 0 1px,
+      transparent 1px 6px
+    );
+  }
+
+  /* A recessed channel with tick marks: the packet's runway. */
+  .mn-lane {
+    background-color: color-mix(in srgb, var(--mn-ink) 8%, var(--mn-bg));
+    background-image: repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--mn-ink) 22%, transparent) 0 1px,
+      transparent 1px 16px
+    );
+    box-shadow: inset 0 2px 0 0
+      color-mix(in srgb, var(--mn-ink) 14%, transparent);
+  }
+
+  /* The empty half of a device panel: a stage for the flight animation to cross. */
+  .mn-stage {
+    background-color: color-mix(in srgb, var(--mn-ink) 5%, var(--mn-bg));
+    background-image:
+      radial-gradient(
+        120% 90% at 50% 120%,
+        color-mix(in srgb, var(--mn-accent) 9%, transparent) 0%,
+        transparent 70%
+      ),
+      repeating-linear-gradient(
+        to right,
+        color-mix(in srgb, var(--mn-ink) 7%, transparent) 0 1px,
+        transparent 1px 22px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--mn-ink) 7%, transparent) 0 1px,
+        transparent 1px 22px
+      );
+  }
+
+  /*
+    The art pass, as a mode rather than a replacement.
+
+    `art.ts` sets `data-art` and the `--mn-art-*` URLs on `<html>` — on the root
+    and not on the page's own `<main>`, because the dialogs portal to `body` and
+    would otherwise keep the drawn chassis while the page behind them changed.
+    Nothing here knows where a URL came from, and no component changes: every
+    panel, tile, card and chip already wears `mn-frame`.
+
+    Both rules are inert until a file exists. `art.ts` only writes `authored`
+    when it globbed something, and an unset `var()` in `border-image-source`
+    is invalid at computed-value time, which falls back to `none` — so a
+    half-supplied art set degrades slot by slot instead of breaking.
+  */
+  :root[data-art="authored"] .mn-frame::after {
+    /* The four corner ticks step aside for the supplied edge. */
+    background-image: none;
+    border-image-source: var(--mn-art-frame);
+    /* Tuned against the drawn ticks, which sit in a 5px corner on a 48px tile.
+       Expect to move this once real art lands — it is a property of the file. */
+    border-image-slice: 16 fill;
+    border-image-width: 8px;
+    border-image-repeat: round;
+  }
+
+  :root[data-art="authored"] .mn-stage {
+    /* Layered *under* the accent glow and the grid, not instead of them: the
+       backdrop is asked to be subtle, and the glow is what says which panel just
+       changed. Last in the list is furthest back. */
+    background-image:
+      radial-gradient(
+        120% 90% at 50% 120%,
+        color-mix(in srgb, var(--mn-accent) 9%, transparent) 0%,
+        transparent 70%
+      ),
+      repeating-linear-gradient(
+        to right,
+        color-mix(in srgb, var(--mn-ink) 7%, transparent) 0 1px,
+        transparent 1px 22px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--mn-ink) 7%, transparent) 0 1px,
+        transparent 1px 22px
+      ),
+      var(--mn-art-stage);
+    background-repeat: no-repeat, repeat, repeat, repeat;
+  }
+}
+
+@layer base {
+  /*
+    The whole HUD's size lever, and the only one. Everything on the route sizes
+    itself in `rem` — Tailwind's type scale and its spacing scale both — so this
+    single number scales type, padding, gaps and icon boxes together, which is
+    the reason there is no `--mn-text-*` ramp any more: a ramp in `rem` moved
+    with this value anyway, so it was nine extra names buying nothing.
+
+    Scoped by mounting, not by selector: this stylesheet is only linked while
+    /e2ee is on screen, so the rest of the site keeps the browser default.
+  */
+  :root {
+    overscroll-behavior: none;
+  }
+
+  *:focus-visible {
+    outline-color: rgb(125, 255, 125);
+  }
+  ::selection {
+    color: white;
+    background-color: rgb(14, 114, 22);
+  }
+}

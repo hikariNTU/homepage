@@ -16,6 +16,7 @@ import { Route as ProjRouteImport } from './routes/proj'
 import { Route as ParkingRouteImport } from './routes/parking'
 import { Route as MidiParserRouteImport } from './routes/midi-parser'
 import { Route as GradientWallpaperRouteImport } from './routes/gradient-wallpaper'
+import { Route as E2eeRouteImport } from './routes/e2ee'
 import { Route as DvdLogoRouteImport } from './routes/dvd-logo'
 import { Route as BusinessCardRouteImport } from './routes/business-card'
 import { Route as IndexRouteImport } from './routes/index'
@@ -58,6 +59,11 @@ const GradientWallpaperRoute = GradientWallpaperRouteImport.update({
 } as any).lazy(() =>
   import('./routes/gradient-wallpaper.lazy').then((d) => d.Route),
 )
+const E2eeRoute = E2eeRouteImport.update({
+  id: '/e2ee',
+  path: '/e2ee',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/e2ee.lazy').then((d) => d.Route))
 const DvdLogoRoute = DvdLogoRouteImport.update({
   id: '/dvd-logo',
   path: '/dvd-logo',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
   '/dvd-logo': typeof DvdLogoRoute
+  '/e2ee': typeof E2eeRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
   '/parking': typeof ParkingRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
   '/dvd-logo': typeof DvdLogoRoute
+  '/e2ee': typeof E2eeRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
   '/parking': typeof ParkingRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/business-card': typeof BusinessCardRoute
   '/dvd-logo': typeof DvdLogoRoute
+  '/e2ee': typeof E2eeRoute
   '/gradient-wallpaper': typeof GradientWallpaperRoute
   '/midi-parser': typeof MidiParserRoute
   '/parking': typeof ParkingRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/'
     | '/business-card'
     | '/dvd-logo'
+    | '/e2ee'
     | '/gradient-wallpaper'
     | '/midi-parser'
     | '/parking'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/'
     | '/business-card'
     | '/dvd-logo'
+    | '/e2ee'
     | '/gradient-wallpaper'
     | '/midi-parser'
     | '/parking'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/'
     | '/business-card'
     | '/dvd-logo'
+    | '/e2ee'
     | '/gradient-wallpaper'
     | '/midi-parser'
     | '/parking'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BusinessCardRoute: typeof BusinessCardRoute
   DvdLogoRoute: typeof DvdLogoRoute
+  E2eeRoute: typeof E2eeRoute
   GradientWallpaperRoute: typeof GradientWallpaperRoute
   MidiParserRoute: typeof MidiParserRoute
   ParkingRoute: typeof ParkingRoute
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GradientWallpaperRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/e2ee': {
+      id: '/e2ee'
+      path: '/e2ee'
+      fullPath: '/e2ee'
+      preLoaderRoute: typeof E2eeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dvd-logo': {
       id: '/dvd-logo'
       path: '/dvd-logo'
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BusinessCardRoute: BusinessCardRoute,
   DvdLogoRoute: DvdLogoRoute,
+  E2eeRoute: E2eeRoute,
   GradientWallpaperRoute: GradientWallpaperRoute,
   MidiParserRoute: MidiParserRoute,
   ParkingRoute: ParkingRoute,
